@@ -52,6 +52,12 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid #2a
 .form input,.form textarea{font:inherit;background:#141414;color:var(--text);border:1px solid #3a3a3a;border-radius:8px;padding:12px}
 .form input:focus,.form textarea:focus{outline:2px solid var(--gold);border-color:var(--gold)}
 .form textarea{min-height:150px;resize:vertical}.form button{border:0;cursor:pointer;justify-self:start;font-size:16px}
+.live{font-size:15px}.live a{color:var(--gold2)}
+.browser{border:2px solid var(--gold);border-radius:12px;overflow:hidden;background:#041827}
+.browser .bar{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#1a1a1a;border-bottom:1px solid var(--gold)}
+.browser .bar i{width:11px;height:11px;border-radius:50%;background:#555;display:inline-block}
+.browser .url{flex:1;margin-left:8px;background:#0d0d0d;color:var(--muted);border-radius:999px;padding:4px 12px;font-size:13px;font-family:monospace}
+.browser .demo{border:0;border-radius:0}
 .hp{position:absolute;left:-9999px}.status{min-height:1.5em;color:var(--gold2)}
 </style>
 <script type="application/ld+json">
@@ -107,6 +113,8 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid #2a
 <h3 style="margin:0;font-family:Georgia,serif;color:var(--gold2)">Binary Decoder</h3>
 <p>A browser based tool I built that converts between text and binary and includes Aurum Script, a custom cipher language I designed. It decodes 8 bit and 7 bit binary, continuous bit streams and reversed bit order, and translates text to and from Aurum glyphs using a shifting key. It can also generate translation pairs as training data for AI models. Everything runs in the browser, and output can be copied or downloaded as a text file. Try it below.</p>
 <div class="tags"><span>JavaScript</span><span>HTML/CSS</span><span>Runs locally</span><span>Custom language</span></div>
+<p class="live">Live sites: <a href="https://aurum-script.netlify.app" target="_blank" rel="noopener">Netlify</a> · <a href="https://aurum-script.pages.dev" target="_blank" rel="noopener">Cloudflare</a> · <a href="https://malachigreatmind07.github.io/aurum-script/" target="_blank" rel="noopener">GitHub Pages</a></p>
+<div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">https://aurum-script.netlify.app</span></div>
 <iframe class="demo" title="Binary Decoder interactive demo" sandbox="allow-scripts allow-downloads allow-modals" srcdoc="&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;
 &lt;title&gt;Binary Decoder and Aurum Script&lt;/title&gt;&lt;style&gt;
 :root{--g:#d4af37;--g2:#f5d77a;--bg:#050505;--p:#0d0d0d;--t:#e9e4d4;--m:#8a8470}
@@ -180,10 +188,12 @@ window.AURUM.gen=gen;
 $(&#x27;genBtn&#x27;).onclick=function(){var n=Math.max(1,Math.min(100000,parseInt($(&#x27;nPairs&#x27;).value)||1000));dl(&#x27;aurum_training_data.jsonl&#x27;,gen(n),&#x27;application/jsonl&#x27;)};
 var lg=$(&#x27;legend&#x27;);Array.from(C).forEach(function(c,k){var d=document.createElement(&#x27;div&#x27;);d.innerHTML=&#x27;&lt;b&gt;&#x27;+G[k]+&#x27;&lt;/b&gt;&#x27;+(c===&#x27; &#x27;?&#x27;space&#x27;:c);lg.appendChild(d)});
 })();
-&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe></div>
 <h3 style="margin:24px 0 0;font-family:Georgia,serif;color:var(--gold2)">Brainapedia</h3>
 <p>An interactive neurology study tool I built. It has a clickable brain atlas that zooms into each region, a searchable dictionary of 31 conditions, a quiz, flashcards and a study assistant that works offline. Try it below or open the full site.</p>
 <div class="tags"><span>JavaScript</span><span>HTML/CSS</span><span>Neuroscience</span><span>Study tool</span></div>
+<p class="live">Live sites: <a href="https://brainapedia.netlify.app" target="_blank" rel="noopener">Netlify</a> · <a href="https://brainapedia.pages.dev" target="_blank" rel="noopener">Cloudflare</a> · <a href="https://malachigreatmind07.github.io/brainapedia/" target="_blank" rel="noopener">GitHub Pages</a></p>
+<div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">https://brainapedia.netlify.app</span></div>
 <iframe class="demo" title="Brainapedia interactive demo" sandbox="allow-scripts allow-modals" srcdoc="&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
@@ -733,7 +743,7 @@ addEventListener(&quot;keydown&quot;,e=&gt;{if(e.key===&quot;Escape&quot;&amp;&a
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-"></iframe>
+"></iframe></div>
 <p><a href="https://brainapedia.netlify.app" target="_blank" rel="noopener">Open full site</a></p>
 </div></section>
 

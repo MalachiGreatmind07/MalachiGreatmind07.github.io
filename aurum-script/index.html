@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aurum Script | Binary and Glyph Decoder by Malachi Batiste</title>
+<meta name="description" content="Aurum Script is a browser based binary and glyph decoder by Malachi Batiste. Convert text to 8 bit or 7 bit binary, decode bit streams and translate Aurum glyphs with a shifting key.">
+<link rel="canonical" href="https://malachigreatmind07.github.io/aurum-script/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Aurum Script | Binary and Glyph Decoder by Malachi Batiste">
+<meta property="og:description" content="Aurum Script is a browser based binary and glyph decoder by Malachi Batiste. Convert text to 8 bit or 7 bit binary, decode bit streams and translate Aurum glyphs with a shifting key.">
+<meta property="og:url" content="https://malachigreatmind07.github.io/aurum-script/">
+<meta property="og:site_name" content="Aurum Script"><style>
+:root{--g:#d4af37;--g2:#f5d77a;--bg:#050505;--p:#0d0d0d;--t:#e9e4d4;--m:#8a8470}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#1a1405 0,#050505 60%);color:var(--t);font-family:ui-monospace,Menlo,Consolas,monospace;min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(212,175,55,.04) 0 1px,transparent 1px 3px);animation:scan 8s linear infinite}
+@keyframes scan{to{background-position:0 300px}}
+.wrap{max-width:980px;margin:0 auto;padding:14px}
+h1{margin:4px 0;font-size:clamp(20px,4vw,30px);color:var(--g2);letter-spacing:2px;text-shadow:0 0 12px rgba(212,175,55,.6)}
+h1 .cur{animation:bl 1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
+.sub{color:var(--m);font-size:13px;margin-bottom:12px}
+.card{background:rgba(13,13,13,.9);border:1px solid rgba(212,175,55,.45);border-radius:12px;padding:14px;box-shadow:0 0 24px rgba(212,175,55,.12),inset 0 0 30px rgba(212,175,55,.04);margin-bottom:12px}
+.modes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.modes button{background:#111;color:var(--m);border:1px solid #333}
+.modes button.on{color:#000;background:linear-gradient(90deg,var(--g),var(--g2));border-color:var(--g);box-shadow:0 0 12px rgba(212,175,55,.5)}
+button{font:inherit;font-size:13px;padding:8px 12px;border-radius:8px;cursor:pointer;background:linear-gradient(90deg,var(--g),var(--g2));color:#000;border:1px solid var(--g);font-weight:700;transition:.2s}
+button:hover{box-shadow:0 0 14px rgba(245,215,122,.7);transform:translateY(-1px)}
+button.ghost{background:transparent;color:var(--g2)}
+textarea{width:100%;min-height:110px;background:#000;color:var(--g2);border:1px solid #333;border-radius:8px;padding:10px;font:inherit;font-size:14px;resize:vertical}
+textarea:focus{outline:none;border-color:var(--g);box-shadow:0 0 10px rgba(212,175,55,.4)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+label.opt{font-size:12px;color:var(--m);display:flex;gap:5px;align-items:center}
+input[type=number]{width:96px;background:#000;color:var(--g2);border:1px solid #333;border-radius:6px;padding:6px;font:inherit}
+pre#output{white-space:pre-wrap;word-break:break-word;background:#000;border:1px solid #222;border-radius:8px;padding:12px;min-height:60px;margin:0;color:var(--g2);font-size:15px;text-shadow:0 0 6px rgba(245,215,122,.45)}
+.info{font-size:12px;color:var(--m)}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}
+.legend div{border:1px solid #2a2a2a;border-radius:6px;text-align:center;padding:4px;font-size:11px;color:var(--m)}
+.legend b{display:block;font-size:20px;color:var(--g2);text-shadow:0 0 8px rgba(212,175,55,.6)}
+h2{font-size:14px;color:var(--g);margin:0 0 8px;letter-spacing:1px}
+</style></head><body><div class="wrap">
+<h1>&gt; BINARY DECODER // AURUM SCRIPT<span class="cur">_</span></h1>
+<div class="sub">Runs entirely in your browser. No data leaves your computer.</div>
+<div class="card"><div class="modes" id="modes">
+<button data-m="t2b" class="on">Text to Binary</button><button data-m="b2t">Binary to Text</button><button data-m="t2g">Text to Glyph</button><button data-m="g2t">Glyph to Text</button><button data-m="b2g">Binary to Glyph</button></div>
+<textarea id="binIn" placeholder="Type or paste input here"></textarea>
+<div class="row"><button id="decodeBtn">Run</button><button id="clearBtn" class="ghost">Clear</button>
+<label class="opt"><input type="checkbox" id="seven"> 7 bit</label>
+<label class="opt"><input type="checkbox" id="rev"> Reversed bit order</label>
+<label class="opt"><input type="checkbox" id="auto" checked> Auto detect when decoding</label></div></div>
+<div class="card"><h2>OUTPUT</h2><pre id="output">Output appears here.</pre>
+<div class="row"><button id="copyBtn" class="ghost">Copy</button><button id="downloadBtn">Download .txt</button><span class="info" id="tries"></span></div></div>
+<div class="card"><h2>AURUM SCRIPT KEY</h2><div class="info" style="margin-bottom:8px">Each character maps to one glyph. The key drifts: the glyph for the character at position i is taken 3 &times; i steps further along the alphabet, so repeated letters look different. A &#8963; marks a capital letter. Table shows position 0.</div><div class="legend" id="legend"></div></div>
+<div class="card"><h2>TRAINING DATA</h2><div class="info">Generate random phrase pairs (English to glyph, glyph to English, text to binary, binary to text) as JSONL for training AI models.</div>
+<div class="row"><label class="opt">Pairs <input type="number" id="nPairs" value="1000" min="1"></label><button id="genBtn">Generate training data</button></div></div>
+</div><script>
+(function(){
+var A={"name": "Aurum Script", "caps_marker": "⌃", "rule": "Position i (0 based, counting only mapped characters) shifts the glyph index forward by 3*i mod N. Uppercase letters are preceded by the caps marker.", "shift_step": 3, "chars": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?':;", "glyphs": "◇◆○●□■△▲▽▼◁▷◈◉◎⊕⊗⊙⊚⊛⊞⊟⊠⊡⌬★⟁☆✚⧫✪❖✦✧✶✷✸✹⋈⋇⌘⍟⍜⁘"};var C=A.chars,G=Array.from(A.glyphs),N=C.length,K=A.caps_marker,S=A.shift_step;
+var $=function(i){return document.getElementById(i)};var mode='t2b';
+function toGlyph(t){var o='',i=0;for(var ch of t){var u=ch.toUpperCase(),k=C.indexOf(u);if(k<0){o+=ch;continue}if(ch!==u||/[A-Z]/.test(ch)&&ch===u&&ch!==ch.toLowerCase())o+=(ch!==ch.toLowerCase()?K:'');o+=G[(k+S*i)%N];i++}return o}
+function fromGlyph(g){var o='',i=0,cap=false;for(var ch of g){if(ch===K){cap=true;continue}var k=G.indexOf(ch);if(k<0){o+=ch;continue}var c=C[((k-S*i)%N+N*S*1000)%N];o+=cap?c:c.toLowerCase();cap=false;i++}return o}
+function toBin(t){var bits=$('seven').checked?7:8;return Array.from(new TextEncoder().encode(t)).map(function(b){var s=b.toString(2).padStart(bits,'0');return $('rev').checked?s.split('').reverse().join(''):s}).join(' ')}
+function decodeWith(tokens,size,rev){var bytes=[];for(var t of tokens){if(rev)t=t.split('').reverse().join('');bytes.push(parseInt(t,2))}try{return new TextDecoder('utf-8',{fatal:true}).decode(new Uint8Array(bytes))}catch(e){return String.fromCharCode.apply(null,bytes)}}
+function score(t){if(!t)return -1;var p=0;for(var c of t){var x=c.charCodeAt(0);if(x>=32&&x<127)p++;if(/[a-zA-Z ]/.test(c))p+=.5}return p/t.length}
+function fromBin(s){var tries=0,best=null;var clean=s.replace(/[^01\s,;|\/-]/g,'');var tokens=clean.split(/[\s,;|\/-]+/).filter(Boolean);var stream=tokens.join('');
+var sizes=$('auto').checked?[8,7]:[$('seven').checked?7:8];var revs=$('auto').checked?[false,true]:[$('rev').checked];
+for(var size of sizes)for(var rev of revs){var toks=tokens.every(function(t){return t.length===size})?tokens:(stream.length%size===0?stream.match(new RegExp('.{'+size+'}','g')):null);if(!toks)continue;tries++;var r=decodeWith(toks,size,rev),sc=score(r);if(!best||sc>best.sc)best={r:r,sc:sc,size:size,rev:rev}}
+$('tries').textContent='Detection tries: '+tries+(best?' | '+best.size+' bit'+(best.rev?', reversed':''):'');return best?best.r:'No valid binary found.'}
+function scramble(el,txt){var glyphs='01'+A.glyphs,f=0,arr=Array.from(txt),n=arr.length,steps=Math.min(24,6+n);clearInterval(el._t);if(n>600){el.textContent=txt;return}el._t=setInterval(function(){f++;var k=Math.floor(n*f/steps);el.textContent=arr.slice(0,k).join('')+arr.slice(k).map(function(c){return c===' '||c==='\n'?c:glyphs[Math.floor(Math.random()*glyphs.length)]}).join('');if(f>=steps){clearInterval(el._t);el.textContent=txt}},30)}
+function run(){var v=$('binIn').value,r;$('tries').textContent='';
+if(mode==='t2b')r=toBin(v);else if(mode==='b2t')r=fromBin(v);else if(mode==='t2g')r=toGlyph(v);else if(mode==='g2t')r=fromGlyph(v);else r=toGlyph(fromBin(v));
+$('output').dataset.v=r;scramble($('output'),r||'Output appears here.');return r}
+window.AURUM={toGlyph:toGlyph,fromGlyph:fromGlyph,toBin:toBin,fromBin:fromBin,run:run,setMode:function(m){document.querySelector('[data-m='+m+']').click()}};
+document.querySelectorAll('#modes button').forEach(function(b){b.onclick=function(){document.querySelectorAll('#modes button').forEach(function(x){x.classList.remove('on')});b.classList.add('on');mode=b.dataset.m}});
+$('decodeBtn').onclick=run;$('clearBtn').onclick=function(){$('binIn').value='';$('output').textContent='Output appears here.';$('output').dataset.v='';$('tries').textContent=''};
+$('copyBtn').onclick=function(){var t=$('output').dataset.v||'';if(navigator.clipboard)navigator.clipboard.writeText(t).catch(function(){});};
+function dl(name,text,type){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+$('downloadBtn').onclick=function(){dl('output.txt',$('output').dataset.v||'','text/plain')};
+var W='the a gold signal code binary future market data build learn student founder secure system light night city river fast quiet bright vector cipher alpha delta orbit pixel node stream token value hello world rise grow trust smart plan research invest network model logic signal'.split(' ');
+function phrase(){var n=2+Math.floor(Math.random()*5),w=[];for(var i=0;i<n;i++)w.push(W[Math.floor(Math.random()*W.length)]);var s=w.join(' ');if(Math.random()<.5)s=s[0].toUpperCase()+s.slice(1);if(Math.random()<.3)s+='.!?'[Math.floor(Math.random()*3)];if(Math.random()<.2)s+=' '+Math.floor(Math.random()*100);return s}
+function gen(n){var L=[];for(var i=0;i<n;i++){var p=phrase(),g=toGlyph(p),b=toBin(p);L.push({input:p,output:g,task:'en2glyph'},{input:g,output:p,task:'glyph2en'},{input:p,output:b,task:'text2bin'},{input:b,output:p,task:'bin2text'})}return L.map(function(o){return JSON.stringify(o)}).join('\n')+'\n'}
+window.AURUM.gen=gen;
+$('genBtn').onclick=function(){var n=Math.max(1,Math.min(100000,parseInt($('nPairs').value)||1000));dl('aurum_training_data.jsonl',gen(n),'application/jsonl')};
+var lg=$('legend');Array.from(C).forEach(function(c,k){var d=document.createElement('div');d.innerHTML='<b>'+G[k]+'</b>'+(c===' '?'space':c);lg.appendChild(d)});
+})();
+</script><footer style="text-align:center;padding:14px;font-size:13px;opacity:.8"><a href="https://malachi-batiste.netlify.app" style="color:inherit">Made by Malachi Batiste</a></footer>
+</body></html>
