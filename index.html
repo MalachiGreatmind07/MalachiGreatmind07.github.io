@@ -236,6 +236,18 @@ body.light .btn.ghostbtn{color:var(--ink);border-color:#b9c7dd}
 .chip{display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;color:var(--brand2);background:var(--soft);border-radius:999px;padding:4px 10px;white-space:nowrap}
 /* sections */
 section.block{margin:34px auto}
+.tabs{position:sticky;top:0;z-index:40;background:var(--surface,#fff);border-bottom:1px solid var(--line,#e5e7eb);box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.tabrow{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabrow::-webkit-scrollbar{display:none}
+.tabs a{flex:0 0 auto;padding:14px 16px;font-weight:600;font-size:15px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs a:hover{color:var(--ink,#0f172a)}
+.tabs a.on{color:var(--ink,#0f172a);border-bottom-color:var(--brand,#2563eb)}
+main.wrap{max-width:1120px;padding:0 28px 80px}
+main section.block{display:none;margin:44px auto;opacity:0;transition:opacity .25s ease}
+main section.block.show{display:block}main section.block.vis{opacity:1}
+#roomBody #srPanel{position:static;display:flex;width:auto;max-width:none;height:min(620px,70vh);max-height:none;box-shadow:none}
+#roomBody #srJoin{position:static;display:inline-block}
+@media (max-width:700px){main.wrap{padding:0 16px 80px}main section.block{margin:28px auto}.tabs a{padding:12px 13px;font-size:14px}}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .sec-head h2{margin:0;font-size:22px;color:#fff;letter-spacing:-.01em}
 .sec-head p{margin:2px 0 0;color:#b4c4e2;font-size:14px}
@@ -245,8 +257,8 @@ section.block{margin:34px auto}
 .card-head h3{margin:0;font-size:16px}
 .card-body{padding:16px 18px}
 /* atlas */
-.atlas-grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
-.stage{position:relative;overflow:hidden;background:radial-gradient(600px 300px at 50% 40%,#ffffff 0,#eef2f8 100%);min-height:440px;display:grid;place-items:center;cursor:grab}
+.atlas-grid{display:grid;grid-template-columns:1fr 360px;gap:24px}
+.stage{position:relative;overflow:hidden;background:radial-gradient(600px 300px at 50% 40%,#ffffff 0,#eef2f8 100%);min-height:520px;display:grid;place-items:center;cursor:grab}
 .stage:active{cursor:grabbing}
 #brainSVG{position:relative;z-index:0;overflow:visible;width:100%;max-width:640px;height:auto;user-select:none;touch-action:none}
 #brainTilt{transition:transform .08s linear;transform-origin:300px 220px;transform-box:view-box}
@@ -347,6 +359,17 @@ body.light footer{color:var(--muted)}
 #neural{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;z-index:1}
 #zoomReset{position:absolute;top:12px;right:12px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:2}
 #zoomReset.show{opacity:1;pointer-events:auto}
+#goDeep{position:absolute;top:12px;right:132px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:2}
+#goDeep.show{opacity:1;pointer-events:auto}
+#deep{position:absolute;inset:0;z-index:6;background:radial-gradient(circle at 35% 50%,#10264d 0,#060d1c 80%);opacity:0;transform:scale(.9);transition:opacity .45s ease,transform .6s cubic-bezier(.2,.7,.2,1);pointer-events:none;cursor:default}
+#deep.on{opacity:1;transform:none;pointer-events:auto}
+#deepCv{position:absolute;inset:0;width:100%;height:100%}
+.deepbar{position:absolute;top:12px;left:12px;display:flex;gap:8px;z-index:2}
+#dzToggle[aria-pressed=true]{background:#e11d48;color:#fff;border-color:#e11d48}
+.dmark{position:absolute;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:#e11d48;box-shadow:0 0 0 5px rgba(225,29,72,.28);cursor:pointer;padding:0;display:none}
+.dmark.sel{background:#f59e0b;box-shadow:0 0 0 6px rgba(245,158,11,.35)}
+#deep.dz .dmark{display:block}
+.dmark span{position:absolute;left:50%;top:24px;transform:translateX(-50%);white-space:nowrap;font:600 12px system-ui,sans-serif;color:#fff;background:rgba(15,23,42,.85);padding:2px 7px;border-radius:6px}
 .panel-in{animation:slidein .35s ease both}
 @keyframes slidein{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:70}
@@ -370,7 +393,7 @@ body.light footer{color:var(--muted)}
 &lt;header class=&quot;hero&quot;&gt;
   &lt;div class=&quot;eyebrow&quot;&gt;Final Presentation&lt;/div&gt;
   &lt;h1&gt;Brainapedia&lt;/h1&gt;
-  &lt;p&gt;Where neurology meets design. A brain atlas, condition dictionary, study plan, and self test in one page.&lt;/p&gt;
+  &lt;p&gt;Where neurology meets design. A brain atlas, condition dictionary, study plan, and self test.&lt;/p&gt;
   &lt;div class=&quot;toolbar&quot;&gt;
     &lt;button class=&quot;btn primary&quot; id=&quot;presentBtn&quot;&gt;Presentation Mode&lt;/button&gt;
     &lt;button class=&quot;btn ghostbtn&quot; id=&quot;confettiBtn&quot;&gt;Celebrate&lt;/button&gt;
@@ -378,6 +401,9 @@ body.light footer{color:var(--muted)}
   &lt;/div&gt;
 &lt;/header&gt;
 
+&lt;nav class=&quot;tabs&quot; id=&quot;tabs&quot; aria-label=&quot;Sections&quot;&gt;&lt;div class=&quot;wrap tabrow&quot;&gt;
+&lt;a href=&quot;#atlas&quot; data-t=&quot;atlas&quot;&gt;Atlas&lt;/a&gt;&lt;a href=&quot;#dictionary&quot; data-t=&quot;dictionary&quot;&gt;Dictionary&lt;/a&gt;&lt;a href=&quot;#study&quot; data-t=&quot;study&quot;&gt;Study Plan&lt;/a&gt;&lt;a href=&quot;#quiz&quot; data-t=&quot;quiz&quot;&gt;Quiz&lt;/a&gt;&lt;a href=&quot;#game&quot; data-t=&quot;game&quot;&gt;Flashcards&lt;/a&gt;&lt;a href=&quot;#room&quot; data-t=&quot;room&quot;&gt;Study Room&lt;/a&gt;
+&lt;/div&gt;&lt;/nav&gt;
 &lt;main class=&quot;wrap&quot;&gt;
 
 &lt;section class=&quot;block&quot; id=&quot;atlas&quot;&gt;
@@ -472,6 +498,8 @@ body.light footer{color:var(--muted)}
       &lt;/svg&gt;
       &lt;canvas id=&quot;neural&quot; aria-hidden=&quot;true&quot;&gt;&lt;/canvas&gt;
       &lt;button class=&quot;btn&quot; id=&quot;zoomReset&quot;&gt;Reset view&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;goDeep&quot; title=&quot;Or scroll up, or click the region again&quot;&gt;Go deeper&lt;/button&gt;
+      &lt;div id=&quot;deep&quot; aria-hidden=&quot;true&quot;&gt;&lt;canvas id=&quot;deepCv&quot;&gt;&lt;/canvas&gt;&lt;div id=&quot;deepMarks&quot;&gt;&lt;/div&gt;&lt;div class=&quot;deepbar&quot;&gt;&lt;button class=&quot;btn&quot; id=&quot;deepBack&quot;&gt;Back&lt;/button&gt;&lt;button class=&quot;btn&quot; id=&quot;dzToggle&quot; aria-pressed=&quot;false&quot;&gt;Disease view&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
       &lt;div class=&quot;legend&quot; id=&quot;legend&quot;&gt;&lt;/div&gt;
     &lt;/div&gt;
     &lt;div class=&quot;card&quot;&gt;
@@ -532,6 +560,10 @@ body.light footer{color:var(--muted)}
       &lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;
+&lt;section class=&quot;block&quot; id=&quot;room&quot;&gt;
+  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Study Room&lt;/h2&gt;&lt;p&gt;Talk through topics with other students in real time.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&quot;roomBody&quot;&gt;&lt;/div&gt;
 &lt;/section&gt;
 &lt;/main&gt;
 
@@ -630,14 +662,14 @@ function animateVB(to,ms=600,done){cancelAnimationFrame(raf);const from=vb.slice
   const ease=t=&gt;t&lt;.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   (function f(now){const t=Math.min(1,(now-t0)/ms),e=ease(t);vb=from.map((a,i)=&gt;a+(to[i]-a)*e);setVB(vb);if(t&lt;1)raf=requestAnimationFrame(f);else{vbAnimating=false;done&amp;&amp;done();}})(t0);}
 function zoomTo(el){rx=ry=0;applyTilt();const b=el.getBBox();const pad=Math.max(b.width,b.height)*.12+18;let w=b.width+pad*2,h=b.height+pad*2;const ar=600/440;if(w/h&gt;ar)h=w/ar;else w=h*ar;
-  w=Math.min(w,600);h=Math.min(h,440);Neural.stop(true);animateVB([b.x+b.width/2-w/2,b.y+b.height/2-h/2,w,h],600,()=&gt;Neural.start(el,(REGIONS[el.dataset.r]||{}).color||&quot;#3b82f6&quot;));zoomed=true;$(&quot;zoomReset&quot;).classList.add(&quot;show&quot;);}
-function resetZoom(){Neural.stop();animateVB(FULL);zoomed=false;rx=ry=0;applyTilt();$(&quot;zoomReset&quot;).classList.remove(&quot;show&quot;);svg.classList.remove(&quot;focus&quot;);
+  w=Math.min(w,600);h=Math.min(h,440);Neural.stop(true);animateVB([b.x+b.width/2-w/2,b.y+b.height/2-h/2,w,h],600,()=&gt;Neural.start(el,(REGIONS[el.dataset.r]||{}).color||&quot;#3b82f6&quot;));zoomed=true;$(&quot;zoomReset&quot;).classList.add(&quot;show&quot;);$(&quot;goDeep&quot;).classList.add(&quot;show&quot;);}
+function resetZoom(){$(&quot;goDeep&quot;).classList.remove(&quot;show&quot;);Neural.stop();animateVB(FULL);zoomed=false;rx=ry=0;applyTilt();$(&quot;zoomReset&quot;).classList.remove(&quot;show&quot;);svg.classList.remove(&quot;focus&quot;);
   document.querySelectorAll(&quot;.lobe&quot;).forEach(l=&gt;l.classList.remove(&quot;active&quot;));document.querySelectorAll(&quot;.lobe-tint&quot;).forEach(t=&gt;t.classList.remove(&quot;on&quot;));document.querySelectorAll(&quot;#legend button&quot;).forEach(b=&gt;b.classList.remove(&quot;active&quot;));
   $(&quot;atlasTitle&quot;).textContent=&quot;Region details&quot;;const ab=$(&quot;atlasBody&quot;);ab.classList.remove(&quot;panel-in&quot;);void ab.offsetWidth;ab.classList.add(&quot;panel-in&quot;);ab.innerHTML=&#x27;&lt;p class=&quot;hint&quot;&gt;Pick a region on the brain to see its role and related conditions.&lt;/p&gt;&#x27;;}
 svg.addEventListener(&quot;pointerdown&quot;,e=&gt;{drag=true;moved=0;lx=e.clientX;ly=e.clientY;});
 addEventListener(&quot;pointerup&quot;,()=&gt;{if(drag&amp;&amp;moved&gt;=6&amp;&amp;zoomed){rx=ry=0;applyTilt();Neural.refresh();}drag=false;});
 addEventListener(&quot;pointermove&quot;,e=&gt;{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;moved+=Math.abs(dx)+Math.abs(dy);if(moved&lt;6)return;if(zoomed)Neural.hide();rx=Math.max(-25,Math.min(25,rx+dx*.3));ry=Math.max(-20,Math.min(20,ry-dy*.3));lx=e.clientX;ly=e.clientY;applyTilt();});
-function showRegion(name,fromChat){const r=REGIONS[name];if(!r)return;
+function showRegion(name,fromChat){const r=REGIONS[name];if(!r)return;if(typeof Deep!==&quot;undefined&quot;&amp;&amp;Deep.isOpen())Deep.close(true);
   const el=document.querySelector(&#x27;.lobe[data-r=&quot;&#x27;+name+&#x27;&quot;]&#x27;);
   svg.classList.add(&quot;focus&quot;);document.querySelectorAll(&quot;.lobe&quot;).forEach(l=&gt;l.classList.toggle(&quot;active&quot;,l===el));
   document.querySelectorAll(&quot;.lobe-tint&quot;).forEach(t=&gt;t.classList.toggle(&quot;on&quot;,t.dataset.r===name));
@@ -646,9 +678,9 @@ function showRegion(name,fromChat){const r=REGIONS[name];if(!r)return;
   $(&quot;atlasTitle&quot;).textContent=name;const body=$(&quot;atlasBody&quot;);body.classList.remove(&quot;panel-in&quot;);void body.offsetWidth;body.classList.add(&quot;panel-in&quot;);
   body.innerHTML=&#x27;&lt;p class=&quot;region-summary&quot;&gt;&#x27;+esc(r.info)+&#x27;&lt;/p&gt;&lt;div class=&quot;hint&quot; style=&quot;margin-bottom:8px&quot;&gt;Related conditions&lt;/div&gt;&lt;div class=&quot;region-list&quot;&gt;&lt;/div&gt;&#x27;;
   const list=body.querySelector(&quot;.region-list&quot;);
-  r.list.forEach(t=&gt;{const b=document.createElement(&quot;button&quot;);b.className=&quot;item&quot;;b.innerHTML=&quot;&lt;b&gt;&quot;+esc(t)+&quot;&lt;/b&gt;&quot;+(DB[t]?&#x27;&lt;div class=&quot;hint&quot;&gt;&#x27;+esc(DB[t])+&#x27;&lt;/div&gt;&#x27;:&#x27;&lt;div class=&quot;hint&quot;&gt;No entry yet.&lt;/div&gt;&#x27;);b.onclick=()=&gt;showTerm(t);list.appendChild(b);});}
-document.querySelectorAll(&quot;.lobe&quot;).forEach(el=&gt;el.addEventListener(&quot;click&quot;,e=&gt;{e.stopPropagation();if(moved&gt;=6)return;showRegion(el.dataset.r);}));
-stage.addEventListener(&quot;click&quot;,e=&gt;{if(moved&gt;=6||e.target.closest(&quot;.lobe,#legend,#zoomReset&quot;))return;if(zoomed)resetZoom();});
+  r.list.forEach(t=&gt;{const b=document.createElement(&quot;button&quot;);b.className=&quot;item&quot;;b.innerHTML=&quot;&lt;b&gt;&quot;+esc(t)+&quot;&lt;/b&gt;&quot;+(DB[t]?&#x27;&lt;div class=&quot;hint&quot;&gt;&#x27;+esc(DB[t])+&#x27;&lt;/div&gt;&#x27;:&#x27;&lt;div class=&quot;hint&quot;&gt;No entry yet.&lt;/div&gt;&#x27;);b.onclick=()=&gt;{showTerm(t);go(&quot;dictionary&quot;);};list.appendChild(b);});}
+document.querySelectorAll(&quot;.lobe&quot;).forEach(el=&gt;el.addEventListener(&quot;click&quot;,e=&gt;{e.stopPropagation();if(moved&gt;=6)return;if(zoomed&amp;&amp;!vbAnimating&amp;&amp;el.classList.contains(&quot;active&quot;)){Deep.open();return;}showRegion(el.dataset.r);}));
+stage.addEventListener(&quot;click&quot;,e=&gt;{if(moved&gt;=6||e.target.closest(&quot;.lobe,#legend,#zoomReset,#goDeep,#deep&quot;))return;if(zoomed)resetZoom();});
 $(&quot;zoomReset&quot;).onclick=e=&gt;{e.stopPropagation();resetZoom();};
 addEventListener(&quot;keydown&quot;,e=&gt;{if(e.key===&quot;Escape&quot;&amp;&amp;zoomed)resetZoom();});
 Object.keys(REGIONS).forEach(n=&gt;{const b=document.createElement(&quot;button&quot;);b.dataset.r=n;b.innerHTML=&#x27;&lt;i style=&quot;background:&#x27;+REGIONS[n].color+&#x27;&quot;&gt;&lt;/i&gt;&#x27;+n;b.onclick=e=&gt;{e.stopPropagation();showRegion(n);};$(&quot;legend&quot;).appendChild(b);});
@@ -704,11 +736,105 @@ function frame(ts){if(!on)return;raf=requestAnimationFrame(frame);const dt=Math.
 var fr=0,fo=0;function fade(t){cancelAnimationFrame(fr);if(RM){fo=t;cv.style.opacity=t;return;}var s0=fo,t0=performance.now();(function st(n){var k=Math.min(1,(n-t0)/600);fo=s0+(t-s0)*k*(2-k);cv.style.opacity=fo.toFixed(3);if(k&lt;1)fr=requestAnimationFrame(st);})(t0);}
 function start(e,c){stop(true);el=e;col=c;setup();on=true;cv.classList.add(&quot;on&quot;);fade(1);if(!RM){last=0;raf=requestAnimationFrame(frame);}}
 function stop(now){on=false;cancelAnimationFrame(raf);cv.classList.remove(&quot;on&quot;);if(now){cancelAnimationFrame(fr);fo=0;cv.style.opacity=0;}else fade(0);if(now){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);}}
+function pause(){cancelAnimationFrame(raf);}
 function hide(){if(on){cv.classList.remove(&quot;on&quot;);fade(0);}}
-function refresh(){if(el&amp;&amp;zoomed&amp;&amp;!vbAnimating){start(el,col);}}
+function refresh(){if(el&amp;&amp;zoomed&amp;&amp;!vbAnimating&amp;&amp;!Deep.isOpen()){start(el,col);}}
 addEventListener(&quot;resize&quot;,()=&gt;{if(zoomed)refresh();});
-document.addEventListener(&quot;visibilitychange&quot;,()=&gt;{if(document.hidden)cancelAnimationFrame(raf);else if(on&amp;&amp;!RM){last=0;raf=requestAnimationFrame(frame);}});
-return {start,stop,hide,refresh};})();
+document.addEventListener(&quot;visibilitychange&quot;,()=&gt;{if(document.hidden)cancelAnimationFrame(raf);else if(on&amp;&amp;!RM&amp;&amp;curTab===&quot;atlas&quot;){last=0;raf=requestAnimationFrame(frame);}});
+return {start,stop,hide,refresh,pause};})();
+
+/* Deep neuron view */
+const Deep=(()=&gt;{const box=$(&quot;deep&quot;),cv=$(&quot;deepCv&quot;),ctx=cv.getContext(&quot;2d&quot;),marks=$(&quot;deepMarks&quot;);
+const RM=matchMedia(&quot;(prefers-reduced-motion: reduce)&quot;).matches,MOB=matchMedia(&quot;(max-width:700px)&quot;).matches||(navigator.hardwareConcurrency||8)&lt;=4;
+const LW=1000,LH=560;let isOpen=false,raf=0,W=0,H=0,dpr=1,S=1,OX=0,OY=0,stat=null,parts=[],dz=false,lastP=0,region=null,sel=null;
+let seed=7;const rnd=(a,b)=&gt;{seed=(seed*16807)%2147483647;return a+(seed/2147483647)*(b-a);};
+const ay=x=&gt;300+12*Math.sin((x-300)/90);
+const SOMA={x:230,y:300,r:50},SEG=[[332,412],[426,506],[520,600],[614,694],[708,788]],NODES=[326,419,513,607,701,795];
+const BOUT=[[905,190],[945,265],[945,345],[905,420]];
+const DIS=[
+ {k:&quot;Multiple sclerosis (MS)&quot;,short:&quot;MS&quot;,x:466,y:ay(466),cell:&quot;The immune system strips myelin in the brain and spinal cord, so signals slow down or stop at the damaged stretch.&quot;},
+ {k:&quot;Guillain Barré syndrome (GBS)&quot;,short:&quot;GBS&quot;,x:748,y:ay(748),cell:&quot;The immune system attacks the myelin of peripheral nerves, outside the brain and spinal cord.&quot;},
+ {k:&quot;Alzheimer disease&quot;,short:&quot;Alzheimer&quot;,x:340,y:168,cell:&quot;Amyloid plaques collect between neurons, and tau tangles build up inside them.&quot;},
+ {k:&quot;ALS (amyotrophic lateral sclerosis)&quot;,short:&quot;ALS&quot;,x:230,y:352,cell:&quot;Upper and lower motor neurons degenerate, so muscles lose their nerve supply.&quot;},
+ {k:&quot;Parkinson disease&quot;,short:&quot;Parkinson&quot;,x:905,y:190,cell:&quot;Dopamine neurons in the substantia nigra are lost, so less dopamine reaches the synapse.&quot;},
+ {k:&quot;Myasthenia gravis&quot;,short:&quot;Myasthenia&quot;,x:990,y:345,cell:&quot;Antibodies block acetylcholine receptors on the muscle side of the synapse, so the signal to the muscle weakens.&quot;}
+].filter(d=&gt;DB[d.k]);
+const P=(x,y)=&gt;[OX+x*S,OY+y*S];
+const bez=(i,t)=&gt;{const [bx,by]=BOUT[i],x0=800,y0=ay(800),cx=850,cy=y0+(by-y0)*.2,u=1-t;return [u*u*x0+2*u*t*cx+t*t*(bx-13),u*u*y0+2*u*t*cy+t*t*by];};
+let glow=null;function mkGlow(){glow=document.createElement(&quot;canvas&quot;);glow.width=glow.height=64;const g=glow.getContext(&quot;2d&quot;),r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,&quot;rgba(255,250,220,1)&quot;);r.addColorStop(.25,&quot;rgba(253,224,71,.8)&quot;);r.addColorStop(1,&quot;rgba(253,186,116,0)&quot;);g.fillStyle=r;g.fillRect(0,0,64,64);}
+let spinePt=null;
+function build(){seed=7;stat=document.createElement(&quot;canvas&quot;);stat.width=W*dpr;stat.height=H*dpr;const c=stat.getContext(&quot;2d&quot;);c.scale(dpr,dpr);
+ c.save();c.translate(OX,OY);c.scale(S,S);c.lineCap=&quot;round&quot;;c.lineJoin=&quot;round&quot;;
+ // dendrites
+ c.strokeStyle=&quot;#7dd3fc&quot;;c.shadowColor=&quot;rgba(56,189,248,.6)&quot;;c.shadowBlur=MOB?0:8*S;spinePt=null;
+ const br=(x,y,a,len,d,w)=&gt;{const ex=x+Math.cos(a)*len,ey=y+Math.sin(a)*len,mx=(x+ex)/2+rnd(-12,12),my=(y+ey)/2+rnd(-12,12);
+  c.lineWidth=w;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(mx,my,ex,ey);c.stroke();
+  if(d&lt;=2){const n=Math.floor(len/(MOB?16:10));c.lineWidth=1.4;for(let i=1;i&lt;n;i++){const t=i/n,u=1-t,px=u*u*x+2*u*t*mx+t*t*ex,py=u*u*y+2*u*t*my+t*t*ey,s=(i%2?1:-1),pa=a+s*1.4;
+   const sx=px+Math.cos(pa)*6,sy=py+Math.sin(pa)*6;c.beginPath();c.moveTo(px,py);c.lineTo(sx,sy);c.stroke();c.beginPath();c.arc(sx,sy,2,0,7);c.fillStyle=&quot;#bae6fd&quot;;c.fill();
+   if(!spinePt&amp;&amp;px&lt;170&amp;&amp;py&gt;340)spinePt=[sx,sy];}}
+  if(d&gt;0){br(ex,ey,a-rnd(.3,.6),len*.72,d-1,w*.7);br(ex,ey,a+rnd(.3,.6),len*.72,d-1,w*.7);}};
+ [1.75,2.3,2.8,3.2,3.6,4.1,4.6,5.1].forEach(a=&gt;br(SOMA.x+Math.cos(a)*44,SOMA.y+Math.sin(a)*44,a,rnd(60,80),MOB?2:3,7));
+ c.shadowBlur=0;
+ // axon core
+ c.strokeStyle=&quot;#7dd3fc&quot;;c.lineWidth=4;c.beginPath();for(let x=300;x&lt;=800;x+=5)x===300?c.moveTo(x,ay(x)):c.lineTo(x,ay(x));c.stroke();
+ // hillock
+ c.fillStyle=&quot;#3b82f6&quot;;c.beginPath();c.moveTo(272,280);c.quadraticCurveTo(300,296,326,ay(326)-3);c.lineTo(326,ay(326)+3);c.quadraticCurveTo(300,304,272,320);c.fill();
+ // soma
+ let g=c.createRadialGradient(215,285,6,230,300,54);g.addColorStop(0,&quot;#93c5fd&quot;);g.addColorStop(.6,&quot;#2563eb&quot;);g.addColorStop(1,&quot;#1e3a8a&quot;);c.fillStyle=g;c.shadowColor=&quot;rgba(59,130,246,.7)&quot;;c.shadowBlur=MOB?0:18*S;
+ c.beginPath();c.arc(SOMA.x,SOMA.y,SOMA.r,0,7);c.fill();c.shadowBlur=0;
+ g=c.createRadialGradient(220,290,2,225,295,20);g.addColorStop(0,&quot;#e9d5ff&quot;);g.addColorStop(1,&quot;#7c3aed&quot;);c.fillStyle=g;c.beginPath();c.ellipse(225,295,20,17,.3,0,7);c.fill();
+ c.fillStyle=&quot;#3b0764&quot;;c.beginPath();c.arc(229,291,5,0,7);c.fill();
+ // myelin
+ SEG.forEach(([a,b],i)=&gt;{const y=ay((a+b)/2),gg=c.createLinearGradient(0,y-10,0,y+10);gg.addColorStop(0,&quot;#f8fafc&quot;);gg.addColorStop(.5,&quot;#cbd5e1&quot;);gg.addColorStop(1,&quot;#64748b&quot;);c.fillStyle=gg;
+  c.beginPath();for(let x=a;x&lt;=b;x+=4)c.lineTo(x,ay(x)-10);for(let x=b;x&gt;=a;x-=4)c.lineTo(x,ay(x)+10);c.closePath();c.fill();
+  c.strokeStyle=&quot;rgba(100,116,139,.6)&quot;;c.lineWidth=1;for(let x=a+8;x&lt;b-4;x+=8){c.beginPath();c.moveTo(x,ay(x)-9);c.lineTo(x+3,ay(x)+9);c.stroke();}
+  if(dz&amp;&amp;(i===1||i===4)){c.fillStyle=&quot;rgba(225,29,72,.55)&quot;;for(let k=0;k&lt;5;k++){const x=a+10+k*14+rnd(-3,3);c.beginPath();c.ellipse(x,ay(x)+rnd(-4,4),rnd(4,7),rnd(3,6),0,0,7);c.fill();}}});
+ // terminals
+ c.strokeStyle=&quot;#7dd3fc&quot;;c.lineWidth=3;BOUT.forEach((b,i)=&gt;{c.beginPath();for(let t=0;t&lt;=1.001;t+=.05){const [x,y]=bez(i,t);t?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();});
+ BOUT.forEach(([x,y],i)=&gt;{const gg=c.createRadialGradient(x-4,y-4,2,x,y,14);gg.addColorStop(0,&quot;#bfdbfe&quot;);gg.addColorStop(1,dz&amp;&amp;i===0?&quot;#475569&quot;:&quot;#2563eb&quot;);c.fillStyle=gg;c.beginPath();c.arc(x,y,14,0,7);c.fill();
+  c.fillStyle=&quot;rgba(254,240,138,.85)&quot;;for(let k=0;k&lt;5;k++){c.beginPath();c.arc(x+rnd(-7,5),y+rnd(-7,7),2.2,0,7);c.fill();}
+  c.strokeStyle=&quot;#a78bfa&quot;;c.lineWidth=3;c.beginPath();c.arc(x+44,y,24,Math.PI*.72,Math.PI*1.28);c.stroke();
+  c.strokeStyle=dz&amp;&amp;i===2?&quot;#e11d48&quot;:&quot;#c4b5fd&quot;;c.lineWidth=2;for(let k=-2;k&lt;=2;k++){const an=Math.PI+k*.11,rx=x+44+Math.cos(an)*24,ry=y+Math.sin(an)*24;c.beginPath();c.moveTo(rx,ry);c.lineTo(rx+4,ry);c.stroke();}});
+ if(dz){c.fillStyle=&quot;rgba(245,158,11,.55)&quot;;[[340,168,16],[372,190,9],[110,470,13]].forEach(([x,y,r])=&gt;{c.beginPath();for(let k=0;k&lt;10;k++){const an=k/10*6.283,rr=r*rnd(.75,1.15);c.lineTo(x+Math.cos(an)*rr,y+Math.sin(an)*rr);}c.closePath();c.fill();});
+  c.strokeStyle=&quot;rgba(244,114,182,.9)&quot;;c.lineWidth=1.6;for(let k=0;k&lt;3;k++){c.beginPath();let x=200+k*12,y=318;c.moveTo(x,y);for(let j=0;j&lt;6;j++){x+=4;y+=(j%2?5:-5);c.lineTo(x,y);}c.stroke();}
+  c.strokeStyle=&quot;rgba(225,29,72,.6)&quot;;c.setLineDash([4,4]);c.lineWidth=2;c.beginPath();c.arc(SOMA.x,SOMA.y,SOMA.r+6,0,7);c.stroke();c.setLineDash([]);}
+ c.restore();
+ // labels in screen space
+ const L=[[&quot;Dendrites&quot;,150,226,70,70],[&quot;Dendritic spine&quot;,...(spinePt||[120,380]),60,520],[&quot;Cell body (soma)&quot;,262,265,330,95],[&quot;Nucleus&quot;,222,292,170,145],[&quot;Axon hillock&quot;,300,ay(300)+4,330,440],[&quot;Myelin sheath&quot;,460,ay(460)-10,470,120],[&quot;Node of Ranvier&quot;,513,ay(513)+3,580,440],[&quot;Axon&quot;,650,ay(650),690,175],[&quot;Axon terminal&quot;,905,175,850,95],[&quot;Synapse&quot;,968,345,860,530],[&quot;Neurotransmitter&quot;,968,300,985,475]];
+ const fs=MOB?10:12;c.font=&quot;500 &quot;+fs+&quot;px system-ui,sans-serif&quot;;c.textBaseline=&quot;middle&quot;;
+ if(!dz)L.forEach(([t,px,py,lx,ly])=&gt;{const [a,b]=P(px,py),[x,y]=P(lx,ly);c.strokeStyle=&quot;rgba(203,213,225,.55)&quot;;c.lineWidth=1;c.beginPath();c.moveTo(a,b);c.lineTo(x,y);c.stroke();
+  c.fillStyle=&quot;#e2e8f0&quot;;c.beginPath();c.arc(a,b,2,0,7);c.fill();const w=c.measureText(t).width+12;let bx=Math.min(Math.max(x-w/2,4),W-w-4);
+  c.fillStyle=&quot;rgba(15,23,42,.82)&quot;;c.beginPath();c.roundRect?c.roundRect(bx,y-fs*.9,w,fs*1.8,6):c.rect(bx,y-fs*.9,w,fs*1.8);c.fill();c.fillStyle=&quot;#e2e8f0&quot;;c.fillText(t,bx+6,y+.5);});}
+function place(){marks.innerHTML=&quot;&quot;;DIS.forEach(d=&gt;{const b=document.createElement(&quot;button&quot;);b.className=&quot;dmark&quot;+(sel===d.k?&quot; sel&quot;:&quot;&quot;);const [x,y]=P(d.x,d.y);b.style.left=x+&quot;px&quot;;b.style.top=y+&quot;px&quot;;b.setAttribute(&quot;aria-label&quot;,d.k);b.innerHTML=&quot;&lt;span&gt;&quot;+esc(d.short)+&quot;&lt;/span&gt;&quot;;
+ b.onclick=e=&gt;{e.stopPropagation();pick(d);};marks.appendChild(b);});}
+function pick(d){sel=d.k;place();showTerm(d.k);$(&quot;atlasTitle&quot;).textContent=d.k;const ab=$(&quot;atlasBody&quot;);ab.innerHTML=&#x27;&lt;p class=&quot;region-summary&quot;&gt;&#x27;+esc(d.cell)+&#x27;&lt;/p&gt;&lt;p class=&quot;hint&quot; style=&quot;margin:10px 0 14px&quot;&gt;&#x27;+esc(DB[d.k])+&#x27;&lt;/p&gt;&lt;button class=&quot;btn&quot; id=&quot;openDict&quot;&gt;Open in dictionary&lt;/button&gt;&#x27;;$(&quot;openDict&quot;).onclick=()=&gt;go(&quot;dictionary&quot;);}
+function resize(){const r=box.getBoundingClientRect();W=r.width;H=r.height;if(!W||!H)return;dpr=Math.min(devicePixelRatio||1,MOB?1.5:2);cv.width=W*dpr;cv.height=H*dpr;
+ const pad=MOB?8:40;S=Math.min((W-pad*2)/LW,(H-pad*2-30)/LH);OX=(W-LW*S)/2;OY=(H-LH*S)/2+14;build();place();draw(performance.now());}
+function draw(now){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(stat,0,0);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalCompositeOperation=&quot;lighter&quot;;
+ const p=RM?.4:(now%2000)/2000,gs=46*S+10;const G=(x,y,s=1,a=1)=&gt;{const [X,Y]=P(x,y);ctx.globalAlpha=a;ctx.drawImage(glow,X-gs*s/2,Y-gs*s/2,gs*s,gs*s);};
+ if(p&lt;.1){const x=280+(p/.1)*46;G(x,ay(x),.9);}
+ else if(p&lt;.62){const f=(p-.1)/.52*NODES.length,i=Math.min(NODES.length-1,Math.floor(f)),fr=f-i;G(NODES[i],ay(NODES[i]),1.2,1-fr*.6);if(i&gt;0)G(NODES[i-1],ay(NODES[i-1]),.8,.35*(1-fr));
+  if(i&lt;NODES.length-1){const x=NODES[i]+(NODES[i+1]-NODES[i])*fr;G(x,ay(x),.5,.35);}}
+ else if(p&lt;.8){const t=(p-.62)/.18;BOUT.forEach((b,i)=&gt;{const [x,y]=bez(i,t);G(x,y,.7);});}
+ if(!RM&amp;&amp;lastP&lt;.8&amp;&amp;p&gt;=.8)BOUT.forEach(([x,y],i)=&gt;{if(dz&amp;&amp;i===0)return;for(let k=0;k&lt;(MOB?5:10);k++)parts.push({x:x+10,y:y+rnd(-8,8),vx:rnd(.6,1.4),vy:rnd(-.35,.35),l:1});});
+ lastP=p;ctx.globalAlpha=1;ctx.fillStyle=&quot;#fde047&quot;;parts=parts.filter(q=&gt;(q.l-=.022)&gt;0);parts.forEach(q=&gt;{q.x+=q.vx;q.y+=q.vy;if(q.x&gt;BOUT[0][0]+60)q.vx=0;const [X,Y]=P(q.x,q.y);ctx.globalAlpha=q.l;ctx.beginPath();ctx.arc(X,Y,Math.max(1.5,2.6*S*2),0,7);ctx.fill();});
+ ctx.globalAlpha=1;ctx.globalCompositeOperation=&quot;source-over&quot;;}
+function loop(now){if(!isOpen)return;draw(now);raf=requestAnimationFrame(loop);}
+function open(){if(isOpen||!zoomed)return;const a=document.querySelector(&quot;.lobe.active&quot;);region=a?a.dataset.r:null;isOpen=true;sel=null;if(!glow)mkGlow();Neural.pause();
+ box.classList.add(&quot;on&quot;);box.setAttribute(&quot;aria-hidden&quot;,&quot;false&quot;);$(&quot;goDeep&quot;).classList.remove(&quot;show&quot;);$(&quot;zoomReset&quot;).classList.remove(&quot;show&quot;);resize();if(!RM){cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);}
+ $(&quot;atlasTitle&quot;).textContent=&quot;Inside a neuron&quot;;$(&quot;atlasBody&quot;).innerHTML=&#x27;&lt;p class=&quot;region-summary&quot;&gt;A single neuron from the &#x27;+esc((region||&quot;&quot;).toLowerCase())+&#x27;. Signals start at the axon hillock and jump between nodes of Ranvier on the way to the synapse.&lt;/p&gt;&#x27;+(DIS.length?&#x27;&lt;p class=&quot;hint&quot; style=&quot;margin-top:10px&quot;&gt;Turn on Disease view to see where some conditions act.&lt;/p&gt;&#x27;:&#x27;&#x27;);}
+function close(silent){if(!isOpen)return;isOpen=false;cancelAnimationFrame(raf);parts=[];box.classList.remove(&quot;on&quot;);box.setAttribute(&quot;aria-hidden&quot;,&quot;true&quot;);setDz(false,true);
+ if(!silent&amp;&amp;region)showRegion(region);}
+function setDz(v,quiet){dz=v;box.classList.toggle(&quot;dz&quot;,v);$(&quot;dzToggle&quot;).setAttribute(&quot;aria-pressed&quot;,v);if(!quiet&amp;&amp;isOpen){build();place();draw(performance.now());}}
+$(&quot;deepBack&quot;).onclick=e=&gt;{e.stopPropagation();close();};$(&quot;dzToggle&quot;).onclick=e=&gt;{e.stopPropagation();setDz(!dz);};
+$(&quot;goDeep&quot;).onclick=e=&gt;{e.stopPropagation();open();};
+box.addEventListener(&quot;click&quot;,e=&gt;e.stopPropagation());
+let wt=0;$(&quot;stage&quot;).addEventListener(&quot;wheel&quot;,e=&gt;{if(!zoomed||vbAnimating)return;const now=performance.now();if(now-wt&lt;700){e.preventDefault();return;}
+ if(!isOpen&amp;&amp;e.deltaY&lt;0){e.preventDefault();wt=now;open();}else if(isOpen&amp;&amp;e.deltaY&gt;0){e.preventDefault();wt=now;close();}},{passive:false});
+addEventListener(&quot;keydown&quot;,e=&gt;{if(e.key===&quot;Escape&quot;&amp;&amp;isOpen){e.stopImmediatePropagation();close();}},true);
+addEventListener(&quot;resize&quot;,()=&gt;{if(isOpen)resize();});
+document.addEventListener(&quot;visibilitychange&quot;,()=&gt;{if(document.hidden)cancelAnimationFrame(raf);else if(isOpen&amp;&amp;!RM&amp;&amp;curTab===&quot;atlas&quot;)raf=requestAnimationFrame(loop);});
+return {open,close,isOpen:()=&gt;isOpen,pause:()=&gt;cancelAnimationFrame(raf),resume:()=&gt;{if(isOpen){resize();if(!RM){cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);}}}};})();
 
 /* Quiz */
 const BANK=[
@@ -799,13 +925,28 @@ function smartReply(raw){const q=norm(raw);if(!q)return {h:&quot;Ask me about a 
 let busy=false;
 function send(text){text=(text||&quot;&quot;).trim();if(!text||busy)return;busy=true;bubble(esc(text),true);userInput.value=&quot;&quot;;
   const t=bubble(&#x27;&lt;div class=&quot;typing&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;/div&gt;&#x27;);t.style.padding=&quot;0&quot;;
-  setTimeout(()=&gt;{const r=smartReply(text);t.remove();bubble(r.h);if(r.region)showRegion(r.region,true);busy=false;},650);}
+  setTimeout(()=&gt;{const r=smartReply(text);t.remove();bubble(r.h);if(r.region){go(&quot;atlas&quot;);showRegion(r.region,true);}busy=false;},650);}
 userInput.addEventListener(&quot;keydown&quot;,e=&gt;{if(e.key===&quot;Enter&quot;){e.preventDefault();send(userInput.value);}});
 $(&quot;sendBtn&quot;).onclick=()=&gt;send(userInput.value);
 chatLog.addEventListener(&quot;click&quot;,e=&gt;{const b=e.target.closest(&quot;.sug&quot;);if(b)send(b.dataset.q);});
 [&quot;What is MS?&quot;,&quot;Where is Broca area lesion?&quot;,&quot;Symptoms of Parkinson&quot;,&quot;Temporal lobe&quot;,&quot;What is GBS?&quot;].forEach(x=&gt;{const b=document.createElement(&quot;button&quot;);b.textContent=x;b.onclick=()=&gt;send(x);$(&quot;chips&quot;).appendChild(b);});
 bubble(&quot;Ask me about a condition or a part of the brain.&quot;);
 addEventListener(&quot;keydown&quot;,e=&gt;{if(e.key===&quot;Escape&quot;&amp;&amp;aiPanel.classList.contains(&quot;open&quot;)&amp;&amp;!vbAnimating&amp;&amp;!zoomed)setChat(false);});
+
+/* Tabs */
+const TABS=[&quot;atlas&quot;,&quot;dictionary&quot;,&quot;study&quot;,&quot;quiz&quot;,&quot;game&quot;,&quot;room&quot;];let curTab=null;
+function go(t){if(location.hash!==&quot;#&quot;+t)location.hash=t;showTab(t);}
+function showTab(t){if(!TABS.includes(t))t=&quot;atlas&quot;;if(t===curTab)return;const prev=curTab;curTab=t;
+  document.querySelectorAll(&quot;#tabs a&quot;).forEach(a=&gt;{const on=a.dataset.t===t;a.classList.toggle(&quot;on&quot;,on);if(on)a.setAttribute(&quot;aria-current&quot;,&quot;page&quot;);else a.removeAttribute(&quot;aria-current&quot;);});
+  TABS.forEach(id=&gt;{const s=$(id);if(id!==t)s.classList.remove(&quot;show&quot;,&quot;vis&quot;);});
+  const s=$(t);s.classList.add(&quot;show&quot;);requestAnimationFrame(()=&gt;requestAnimationFrame(()=&gt;s.classList.add(&quot;vis&quot;)));
+  if(prev===&quot;atlas&quot;){Neural.pause();Deep.pause();}if(t===&quot;atlas&quot;&amp;&amp;prev)requestAnimationFrame(()=&gt;Deep.resume());if(t===&quot;atlas&quot;&amp;&amp;prev)requestAnimationFrame(()=&gt;{if(!Deep.isOpen())Neural.refresh();});
+  const on=document.querySelector(&quot;#tabs a.on&quot;);if(on)on.scrollIntoView({block:&quot;nearest&quot;,inline:&quot;nearest&quot;});
+  const cb=document.querySelector(&quot;.countbar&quot;),h=cb?cb.offsetHeight:0,tb=$(&quot;tabs&quot;);tb.style.top=h+&quot;px&quot;;const y=tb.offsetTop-h;
+  if((prev||location.hash)&amp;&amp;window.scrollY&gt;y-1)requestAnimationFrame(()=&gt;window.scrollTo({top:y,behavior:&quot;instant&quot;}));}
+addEventListener(&quot;resize&quot;,()=&gt;{const cb=document.querySelector(&quot;.countbar&quot;);$(&quot;tabs&quot;).style.top=(cb?cb.offsetHeight:0)+&quot;px&quot;;});
+addEventListener(&quot;hashchange&quot;,()=&gt;showTab(location.hash.slice(1)));
+showTab(location.hash.slice(1));
 &lt;/script&gt;
 &lt;!-- Brainapedia Study Room live chat --&gt;
 &lt;style&gt;
@@ -882,6 +1023,10 @@ if(framed||!store){
 &lt;/script&gt;
 &lt;!-- end Study Room --&gt;
 
+&lt;script type=&quot;module&quot;&gt;
+const rb=document.getElementById(&quot;roomBody&quot;),p=document.getElementById(&quot;srPanel&quot;),j=document.getElementById(&quot;srJoin&quot;),tg=document.getElementById(&quot;srToggle&quot;),c=document.getElementById(&quot;srClose&quot;);
+if(p){rb.append(p);p.classList.add(&quot;open&quot;);if(tg)tg.remove();if(c)c.remove();}else if(j){rb.append(j);}
+&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe></div>
