@@ -45,7 +45,7 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid #2a
 @media(max-width:760px){.hero-grid{grid-template-columns:1fr}.photo{max-width:320px;order:-1}nav a{margin-left:12px;font-size:13px}nav a:nth-child(n+4){display:none}.list li{flex-direction:column;gap:4px}.hero{padding:40px 0}}
 </style><style>
 .project{display:grid;gap:18px}.project p{color:var(--muted);margin:0}
-.demo{width:100%;height:640px;border:2px solid var(--gold);border-radius:12px;background:#041827;display:block}
+.demo{width:100%;height:900px;border:2px solid var(--gold);border-radius:12px;background:#041827;display:block}
 .tags{display:flex;gap:8px;flex-wrap:wrap}.tags span{border:1px solid var(--gold);color:var(--gold2);border-radius:999px;padding:3px 12px;font-size:13px}
 .form{display:grid;gap:14px;max-width:620px;margin-top:24px}
 .form label{font-size:14px;font-weight:700;color:var(--gold2);display:grid;gap:6px}
@@ -105,285 +105,636 @@ footer{padding:28px 0;color:var(--muted);font-size:14px;border-top:1px solid #2a
 
 <section id="projects" class="alt"><div class="wrap project"><h2>Projects</h2>
 <h3 style="margin:0;font-family:Georgia,serif;color:var(--gold2)">Binary Decoder</h3>
-<p>A browser based tool I built that decodes binary into readable text. It accepts 8 bit bytes separated by spaces, dashes or line breaks, as well as continuous bit streams, and also tries 7 bit ASCII and reversed bit order to find the most readable result. Decoding runs entirely in the browser, and the output can be downloaded as a text file. Try it below.</p>
-<div class="tags"><span>JavaScript</span><span>HTML/CSS</span><span>Runs locally</span></div>
-<iframe class="demo" title="Binary Decoder interactive demo" sandbox="allow-scripts allow-downloads allow-modals" srcdoc="&lt;!doctype html&gt;
+<p>A browser based tool I built that converts between text and binary and includes Aurum Script, a custom cipher language I designed. It decodes 8 bit and 7 bit binary, continuous bit streams and reversed bit order, and translates text to and from Aurum glyphs using a shifting key. It can also generate translation pairs as training data for AI models. Everything runs in the browser, and output can be copied or downloaded as a text file. Try it below.</p>
+<div class="tags"><span>JavaScript</span><span>HTML/CSS</span><span>Runs locally</span><span>Custom language</span></div>
+<iframe class="demo" title="Binary Decoder interactive demo" sandbox="allow-scripts allow-downloads allow-modals" srcdoc="&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;
+&lt;title&gt;Binary Decoder and Aurum Script&lt;/title&gt;&lt;style&gt;
+:root{--g:#d4af37;--g2:#f5d77a;--bg:#050505;--p:#0d0d0d;--t:#e9e4d4;--m:#8a8470}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#1a1405 0,#050505 60%);color:var(--t);font-family:ui-monospace,Menlo,Consolas,monospace;min-height:100vh;overflow-x:hidden}
+body:before{content:&quot;&quot;;position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(212,175,55,.04) 0 1px,transparent 1px 3px);animation:scan 8s linear infinite}
+@keyframes scan{to{background-position:0 300px}}
+.wrap{max-width:980px;margin:0 auto;padding:14px}
+h1{margin:4px 0;font-size:clamp(20px,4vw,30px);color:var(--g2);letter-spacing:2px;text-shadow:0 0 12px rgba(212,175,55,.6)}
+h1 .cur{animation:bl 1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
+.sub{color:var(--m);font-size:13px;margin-bottom:12px}
+.card{background:rgba(13,13,13,.9);border:1px solid rgba(212,175,55,.45);border-radius:12px;padding:14px;box-shadow:0 0 24px rgba(212,175,55,.12),inset 0 0 30px rgba(212,175,55,.04);margin-bottom:12px}
+.modes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.modes button{background:#111;color:var(--m);border:1px solid #333}
+.modes button.on{color:#000;background:linear-gradient(90deg,var(--g),var(--g2));border-color:var(--g);box-shadow:0 0 12px rgba(212,175,55,.5)}
+button{font:inherit;font-size:13px;padding:8px 12px;border-radius:8px;cursor:pointer;background:linear-gradient(90deg,var(--g),var(--g2));color:#000;border:1px solid var(--g);font-weight:700;transition:.2s}
+button:hover{box-shadow:0 0 14px rgba(245,215,122,.7);transform:translateY(-1px)}
+button.ghost{background:transparent;color:var(--g2)}
+textarea{width:100%;min-height:110px;background:#000;color:var(--g2);border:1px solid #333;border-radius:8px;padding:10px;font:inherit;font-size:14px;resize:vertical}
+textarea:focus{outline:none;border-color:var(--g);box-shadow:0 0 10px rgba(212,175,55,.4)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+label.opt{font-size:12px;color:var(--m);display:flex;gap:5px;align-items:center}
+input[type=number]{width:96px;background:#000;color:var(--g2);border:1px solid #333;border-radius:6px;padding:6px;font:inherit}
+pre#output{white-space:pre-wrap;word-break:break-word;background:#000;border:1px solid #222;border-radius:8px;padding:12px;min-height:60px;margin:0;color:var(--g2);font-size:15px;text-shadow:0 0 6px rgba(245,215,122,.45)}
+.info{font-size:12px;color:var(--m)}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}
+.legend div{border:1px solid #2a2a2a;border-radius:6px;text-align:center;padding:4px;font-size:11px;color:var(--m)}
+.legend b{display:block;font-size:20px;color:var(--g2);text-shadow:0 0 8px rgba(212,175,55,.6)}
+h2{font-size:14px;color:var(--g);margin:0 0 8px;letter-spacing:1px}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=&quot;wrap&quot;&gt;
+&lt;h1&gt;&amp;gt; BINARY DECODER // AURUM SCRIPT&lt;span class=&quot;cur&quot;&gt;_&lt;/span&gt;&lt;/h1&gt;
+&lt;div class=&quot;sub&quot;&gt;Runs entirely in your browser. No data leaves your computer.&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;modes&quot; id=&quot;modes&quot;&gt;
+&lt;button data-m=&quot;t2b&quot; class=&quot;on&quot;&gt;Text to Binary&lt;/button&gt;&lt;button data-m=&quot;b2t&quot;&gt;Binary to Text&lt;/button&gt;&lt;button data-m=&quot;t2g&quot;&gt;Text to Glyph&lt;/button&gt;&lt;button data-m=&quot;g2t&quot;&gt;Glyph to Text&lt;/button&gt;&lt;button data-m=&quot;b2g&quot;&gt;Binary to Glyph&lt;/button&gt;&lt;/div&gt;
+&lt;textarea id=&quot;binIn&quot; placeholder=&quot;Type or paste input here&quot;&gt;&lt;/textarea&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;button id=&quot;decodeBtn&quot;&gt;Run&lt;/button&gt;&lt;button id=&quot;clearBtn&quot; class=&quot;ghost&quot;&gt;Clear&lt;/button&gt;
+&lt;label class=&quot;opt&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;seven&quot;&gt; 7 bit&lt;/label&gt;
+&lt;label class=&quot;opt&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;rev&quot;&gt; Reversed bit order&lt;/label&gt;
+&lt;label class=&quot;opt&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;auto&quot; checked&gt; Auto detect when decoding&lt;/label&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;h2&gt;OUTPUT&lt;/h2&gt;&lt;pre id=&quot;output&quot;&gt;Output appears here.&lt;/pre&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;button id=&quot;copyBtn&quot; class=&quot;ghost&quot;&gt;Copy&lt;/button&gt;&lt;button id=&quot;downloadBtn&quot;&gt;Download .txt&lt;/button&gt;&lt;span class=&quot;info&quot; id=&quot;tries&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;h2&gt;AURUM SCRIPT KEY&lt;/h2&gt;&lt;div class=&quot;info&quot; style=&quot;margin-bottom:8px&quot;&gt;Each character maps to one glyph. The key drifts: the glyph for the character at position i is taken 3 &amp;times; i steps further along the alphabet, so repeated letters look different. A &amp;#8963; marks a capital letter. Table shows position 0.&lt;/div&gt;&lt;div class=&quot;legend&quot; id=&quot;legend&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;card&quot;&gt;&lt;h2&gt;TRAINING DATA&lt;/h2&gt;&lt;div class=&quot;info&quot;&gt;Generate random phrase pairs (English to glyph, glyph to English, text to binary, binary to text) as JSONL for training AI models.&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;label class=&quot;opt&quot;&gt;Pairs &lt;input type=&quot;number&quot; id=&quot;nPairs&quot; value=&quot;1000&quot; min=&quot;1&quot;&gt;&lt;/label&gt;&lt;button id=&quot;genBtn&quot;&gt;Generate training data&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;script&gt;
+(function(){
+var A={&quot;name&quot;: &quot;Aurum Script&quot;, &quot;caps_marker&quot;: &quot;⌃&quot;, &quot;rule&quot;: &quot;Position i (0 based, counting only mapped characters) shifts the glyph index forward by 3*i mod N. Uppercase letters are preceded by the caps marker.&quot;, &quot;shift_step&quot;: 3, &quot;chars&quot;: &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?&#x27;:;&quot;, &quot;glyphs&quot;: &quot;◇◆○●□■△▲▽▼◁▷◈◉◎⊕⊗⊙⊚⊛⊞⊟⊠⊡⌬★⟁☆✚⧫✪❖✦✧✶✷✸✹⋈⋇⌘⍟⍜⁘&quot;};var C=A.chars,G=Array.from(A.glyphs),N=C.length,K=A.caps_marker,S=A.shift_step;
+var $=function(i){return document.getElementById(i)};var mode=&#x27;t2b&#x27;;
+function toGlyph(t){var o=&#x27;&#x27;,i=0;for(var ch of t){var u=ch.toUpperCase(),k=C.indexOf(u);if(k&lt;0){o+=ch;continue}if(ch!==u||/[A-Z]/.test(ch)&amp;&amp;ch===u&amp;&amp;ch!==ch.toLowerCase())o+=(ch!==ch.toLowerCase()?K:&#x27;&#x27;);o+=G[(k+S*i)%N];i++}return o}
+function fromGlyph(g){var o=&#x27;&#x27;,i=0,cap=false;for(var ch of g){if(ch===K){cap=true;continue}var k=G.indexOf(ch);if(k&lt;0){o+=ch;continue}var c=C[((k-S*i)%N+N*S*1000)%N];o+=cap?c:c.toLowerCase();cap=false;i++}return o}
+function toBin(t){var bits=$(&#x27;seven&#x27;).checked?7:8;return Array.from(new TextEncoder().encode(t)).map(function(b){var s=b.toString(2).padStart(bits,&#x27;0&#x27;);return $(&#x27;rev&#x27;).checked?s.split(&#x27;&#x27;).reverse().join(&#x27;&#x27;):s}).join(&#x27; &#x27;)}
+function decodeWith(tokens,size,rev){var bytes=[];for(var t of tokens){if(rev)t=t.split(&#x27;&#x27;).reverse().join(&#x27;&#x27;);bytes.push(parseInt(t,2))}try{return new TextDecoder(&#x27;utf-8&#x27;,{fatal:true}).decode(new Uint8Array(bytes))}catch(e){return String.fromCharCode.apply(null,bytes)}}
+function score(t){if(!t)return -1;var p=0;for(var c of t){var x=c.charCodeAt(0);if(x&gt;=32&amp;&amp;x&lt;127)p++;if(/[a-zA-Z ]/.test(c))p+=.5}return p/t.length}
+function fromBin(s){var tries=0,best=null;var clean=s.replace(/[^01\s,;|\/-]/g,&#x27;&#x27;);var tokens=clean.split(/[\s,;|\/-]+/).filter(Boolean);var stream=tokens.join(&#x27;&#x27;);
+var sizes=$(&#x27;auto&#x27;).checked?[8,7]:[$(&#x27;seven&#x27;).checked?7:8];var revs=$(&#x27;auto&#x27;).checked?[false,true]:[$(&#x27;rev&#x27;).checked];
+for(var size of sizes)for(var rev of revs){var toks=tokens.every(function(t){return t.length===size})?tokens:(stream.length%size===0?stream.match(new RegExp(&#x27;.{&#x27;+size+&#x27;}&#x27;,&#x27;g&#x27;)):null);if(!toks)continue;tries++;var r=decodeWith(toks,size,rev),sc=score(r);if(!best||sc&gt;best.sc)best={r:r,sc:sc,size:size,rev:rev}}
+$(&#x27;tries&#x27;).textContent=&#x27;Detection tries: &#x27;+tries+(best?&#x27; | &#x27;+best.size+&#x27; bit&#x27;+(best.rev?&#x27;, reversed&#x27;:&#x27;&#x27;):&#x27;&#x27;);return best?best.r:&#x27;No valid binary found.&#x27;}
+function scramble(el,txt){var glyphs=&#x27;01&#x27;+A.glyphs,f=0,arr=Array.from(txt),n=arr.length,steps=Math.min(24,6+n);clearInterval(el._t);if(n&gt;600){el.textContent=txt;return}el._t=setInterval(function(){f++;var k=Math.floor(n*f/steps);el.textContent=arr.slice(0,k).join(&#x27;&#x27;)+arr.slice(k).map(function(c){return c===&#x27; &#x27;||c===&#x27;\n&#x27;?c:glyphs[Math.floor(Math.random()*glyphs.length)]}).join(&#x27;&#x27;);if(f&gt;=steps){clearInterval(el._t);el.textContent=txt}},30)}
+function run(){var v=$(&#x27;binIn&#x27;).value,r;$(&#x27;tries&#x27;).textContent=&#x27;&#x27;;
+if(mode===&#x27;t2b&#x27;)r=toBin(v);else if(mode===&#x27;b2t&#x27;)r=fromBin(v);else if(mode===&#x27;t2g&#x27;)r=toGlyph(v);else if(mode===&#x27;g2t&#x27;)r=fromGlyph(v);else r=toGlyph(fromBin(v));
+$(&#x27;output&#x27;).dataset.v=r;scramble($(&#x27;output&#x27;),r||&#x27;Output appears here.&#x27;);return r}
+window.AURUM={toGlyph:toGlyph,fromGlyph:fromGlyph,toBin:toBin,fromBin:fromBin,run:run,setMode:function(m){document.querySelector(&#x27;[data-m=&#x27;+m+&#x27;]&#x27;).click()}};
+document.querySelectorAll(&#x27;#modes button&#x27;).forEach(function(b){b.onclick=function(){document.querySelectorAll(&#x27;#modes button&#x27;).forEach(function(x){x.classList.remove(&#x27;on&#x27;)});b.classList.add(&#x27;on&#x27;);mode=b.dataset.m}});
+$(&#x27;decodeBtn&#x27;).onclick=run;$(&#x27;clearBtn&#x27;).onclick=function(){$(&#x27;binIn&#x27;).value=&#x27;&#x27;;$(&#x27;output&#x27;).textContent=&#x27;Output appears here.&#x27;;$(&#x27;output&#x27;).dataset.v=&#x27;&#x27;;$(&#x27;tries&#x27;).textContent=&#x27;&#x27;};
+$(&#x27;copyBtn&#x27;).onclick=function(){var t=$(&#x27;output&#x27;).dataset.v||&#x27;&#x27;;if(navigator.clipboard)navigator.clipboard.writeText(t).catch(function(){});};
+function dl(name,text,type){var a=document.createElement(&#x27;a&#x27;);a.href=URL.createObjectURL(new Blob([text],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+$(&#x27;downloadBtn&#x27;).onclick=function(){dl(&#x27;output.txt&#x27;,$(&#x27;output&#x27;).dataset.v||&#x27;&#x27;,&#x27;text/plain&#x27;)};
+var W=&#x27;the a gold signal code binary future market data build learn student founder secure system light night city river fast quiet bright vector cipher alpha delta orbit pixel node stream token value hello world rise grow trust smart plan research invest network model logic signal&#x27;.split(&#x27; &#x27;);
+function phrase(){var n=2+Math.floor(Math.random()*5),w=[];for(var i=0;i&lt;n;i++)w.push(W[Math.floor(Math.random()*W.length)]);var s=w.join(&#x27; &#x27;);if(Math.random()&lt;.5)s=s[0].toUpperCase()+s.slice(1);if(Math.random()&lt;.3)s+=&#x27;.!?&#x27;[Math.floor(Math.random()*3)];if(Math.random()&lt;.2)s+=&#x27; &#x27;+Math.floor(Math.random()*100);return s}
+function gen(n){var L=[];for(var i=0;i&lt;n;i++){var p=phrase(),g=toGlyph(p),b=toBin(p);L.push({input:p,output:g,task:&#x27;en2glyph&#x27;},{input:g,output:p,task:&#x27;glyph2en&#x27;},{input:p,output:b,task:&#x27;text2bin&#x27;},{input:b,output:p,task:&#x27;bin2text&#x27;})}return L.map(function(o){return JSON.stringify(o)}).join(&#x27;\n&#x27;)+&#x27;\n&#x27;}
+window.AURUM.gen=gen;
+$(&#x27;genBtn&#x27;).onclick=function(){var n=Math.max(1,Math.min(100000,parseInt($(&#x27;nPairs&#x27;).value)||1000));dl(&#x27;aurum_training_data.jsonl&#x27;,gen(n),&#x27;application/jsonl&#x27;)};
+var lg=$(&#x27;legend&#x27;);Array.from(C).forEach(function(c,k){var d=document.createElement(&#x27;div&#x27;);d.innerHTML=&#x27;&lt;b&gt;&#x27;+G[k]+&#x27;&lt;/b&gt;&#x27;+(c===&#x27; &#x27;?&#x27;space&#x27;:c);lg.appendChild(d)});
+})();
+&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+<h3 style="margin:24px 0 0;font-family:Georgia,serif;color:var(--gold2)">Brainapedia</h3>
+<p>An interactive neurology study tool I built. It has a clickable brain atlas that zooms into each region, a searchable dictionary of 31 conditions, a quiz, flashcards and a study assistant that works offline. Try it below or open the full site.</p>
+<div class="tags"><span>JavaScript</span><span>HTML/CSS</span><span>Neuroscience</span><span>Study tool</span></div>
+<iframe class="demo" title="Brainapedia interactive demo" sandbox="allow-scripts allow-modals" srcdoc="&lt;!DOCTYPE html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
-&lt;meta charset=&quot;utf-8&quot; /&gt;
-&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot; /&gt;
-&lt;title&gt;Binary to Text Decoder&lt;/title&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;Brainapedia | Final Presentation (© Malachi Batiste)&lt;/title&gt;
+&lt;meta name=&quot;author&quot; content=&quot;Malachi Batiste&quot;&gt;
+&lt;meta name=&quot;copyright&quot; content=&quot;© 2025 Malachi Batiste. All Rights Reserved.&quot;&gt;
 &lt;style&gt;
-  :root{
-    --bg1:#041827; --card:#07263a; --accent:#2b8cff; --text:#e6f0ff;
-  }
-  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text);background:linear-gradient(180deg,#02121a,#041827);-webkit-font-smoothing:antialiased}
-  .wrap{max-width:980px;margin:0 auto;padding:12px}
-  header{display:flex;align-items:flex-start;gap:16px;margin-bottom:12px}
-  h1{margin:0;font-size:20px}
-  .card{background:linear-gradient(180deg,#06263a,#071827);border-radius:12px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.03)}
-  label{font-weight:700;display:block;margin-bottom:6px}
-  textarea{width:100%;min-height:160px;background:#021820;color:var(--text);border:1px solid rgba(255,255,255,.04);padding:12px;border-radius:8px;font-family:monospace;resize:vertical}
-  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-  button{background:var(--accent);border:none;padding:10px 14px;border-radius:8px;color:white;font-weight:700;cursor:pointer}
-  button.ghost{background:transparent;border:1px solid rgba(255,255,255,.06)}
-  pre{background:#021420;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.03);white-space:pre-wrap;word-break:break-word;min-height:80px}
-  .info{font-size:13px;color:#9fb3cc;margin-top:8px}
-  .found{background:#08311a;color:#c9f7d3;padding:10px;border-radius:8px;margin-top:8px;word-break:break-word}
-  .warn{background:#3c1f1f;color:#ffdede;padding:10px;border-radius:8px;margin-top:8px}
-  footer{margin-top:12px;font-size:13px;color:#9fb3cc}
-  .small{font-size:12px;color:#9fb3cc}
+:root{--bg:#0b1a33;--bg2:#10264a;--surface:#ffffff;--surface2:#f5f7fb;--ink:#0f1b2d;--muted:#5b6b82;--line:#e3e8f0;--brand:#2563eb;--brand2:#1d4ed8;--soft:#e8effd;--ok:#15803d;--bad:#b91c1c;--radius:14px;--shadow:0 1px 2px rgba(15,27,45,.06),0 8px 24px rgba(15,27,45,.10)}
+body.light{--bg:#eef2f8;--bg2:#e3e9f3}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:&quot;Inter&quot;,system-ui,-apple-system,&quot;Segoe UI&quot;,Roboto,Arial,sans-serif;font-size:15px;line-height:1.55;color:var(--ink);background:linear-gradient(180deg,var(--bg) 0,var(--bg2) 520px,var(--bg2) 100%);min-height:100vh}
+body.light .hero,body.light .sec-head h2,body.light .sec-head p{color:var(--ink)}
+button{font:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+/* countdown bar */
+.countbar{position:sticky;top:0;z-index:50;background:rgba(9,20,40,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);color:#dbe6ff}
+.countbar .wrap{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 20px;flex-wrap:wrap}
+.units{display:flex;gap:8px}
+.unit{display:flex;align-items:baseline;gap:4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px}
+.unit b{font-variant-numeric:tabular-nums;font-size:18px;color:#fff;min-width:24px;text-align:center}
+.unit span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.7}
+.countMsg{font-size:14px}
+/* hero */
+.hero{color:#fff;text-align:center;padding:56px 20px 28px}
+.eyebrow{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#93b4ff;margin-bottom:10px}
+.hero h1{margin:0;font-size:clamp(34px,5vw,52px);letter-spacing:-.02em;font-weight:750}
+.hero p{margin:10px auto 0;max-width:620px;color:#c4d3ef;font-size:17px}
+.toolbar{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:550;font-size:14px;transition:background .15s,border-color .15s,transform .15s}
+.btn:hover{border-color:#b9c7dd;background:var(--surface2)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand2)}
+.btn.ghostbtn{background:transparent;color:#dbe6ff;border-color:rgba(255,255,255,.25)}
+.btn.ghostbtn:hover{background:rgba(255,255,255,.08)}
+body.light .btn.ghostbtn{color:var(--ink);border-color:#b9c7dd}
+.chip{display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;color:var(--brand2);background:var(--soft);border-radius:999px;padding:4px 10px;white-space:nowrap}
+/* sections */
+section.block{margin:34px auto}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sec-head h2{margin:0;font-size:22px;color:#fff;letter-spacing:-.01em}
+.sec-head p{margin:2px 0 0;color:#b4c4e2;font-size:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);animation:rise .5s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card-head h3{margin:0;font-size:16px}
+.card-body{padding:16px 18px}
+/* atlas */
+.atlas-grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+.stage{position:relative;overflow:hidden;background:radial-gradient(600px 300px at 50% 40%,#ffffff 0,#eef2f8 100%);min-height:440px;display:grid;place-items:center;cursor:grab}
+.stage:active{cursor:grabbing}
+#brainSVG{overflow:visible;width:100%;max-width:640px;height:auto;user-select:none;touch-action:none}
+#brainTilt{transition:transform .08s linear;transform-origin:300px 220px;transform-box:view-box}
+.lobe{cursor:pointer;transition:filter .35s,opacity .35s}
+.lobe:hover{opacity:.88}
+.lobe-tint{pointer-events:none;opacity:0;transition:opacity .25s}
+.lobe-tint.on{opacity:.38}
+.legend{position:absolute;left:14px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 28px)}
+.legend button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px 4px 8px;font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--ink)}
+.legend button i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.legend button.active{border-color:var(--brand);color:var(--brand2)}
+.region-list{display:grid;gap:8px}
+.item{display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s}
+.item:hover{border-color:#9db6e8;background:#f7f9fd}
+.muted{color:var(--muted)}
+.hint{font-size:14px;color:var(--muted)}
+.region-summary{font-size:14px;margin:0 0 12px;padding:10px 12px;background:var(--surface2);border-radius:10px;border:1px solid var(--line)}
+/* dictionary */
+.dict-grid{display:grid;grid-template-columns:380px 1fr;gap:18px}
+#q{width:100%;padding:11px 14px;border:1px solid #cfd8e6;border-radius:10px;font-size:15px;outline:none;color:var(--ink)}
+#q:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+.alpha{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.alpha button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer;font-size:13px;font-weight:600}
+.alpha button:hover{border-color:var(--brand);color:var(--brand2)}
+.results{display:grid;gap:8px;max-height:340px;overflow:auto;margin-top:14px;padding-right:2px}
+.viewer h3{font-size:22px;margin:0 0 8px}
+.def{font-size:16px}
+/* study */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card ul,.card ol{margin:0;padding-left:20px}
+.card li{margin:6px 0}
+/* quiz */
+.quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.qcard{padding:16px 18px}
+.qtext{font-weight:600;margin-bottom:10px}
+.choice{display:block;width:100%;margin:6px 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;color:var(--ink);transition:border-color .15s,background .15s}
+.choice:hover{border-color:#9db6e8}
+.choice.correct{border-color:var(--ok);background:#f0fdf4;color:#14532d}
+.choice.wrong{border-color:var(--bad);background:#fef2f2;color:#7f1d1d}
+.answer{margin-top:10px;font-size:14px;padding:10px 12px;border-radius:10px;background:var(--surface2);display:none}
+/* game */
+.stats{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.bar{height:8px;width:160px;background:var(--soft);border-radius:999px;overflow:hidden}
+.bar&gt;span{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.flashWrap{display:grid;place-items:center;padding:8px 0}
+.card3d{width:720px;max-width:100%;height:220px;perspective:1000px;cursor:pointer}
+.face{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s}
+.face.flip{transform:rotateY(180deg)}
+.front,.back{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:22px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#f6f8fc);backface-visibility:hidden;-webkit-backface-visibility:hidden;font-size:18px}
+.front{font-size:22px}
+.back{transform:rotateY(180deg)}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.divider{border:none;border-top:1px solid var(--line);margin:22px 0}
+.hidden{display:none!important}
+/* footer */
+footer{color:#b4c4e2;text-align:center;padding:30px 20px 110px;font-size:14px}
+body.light footer{color:var(--muted)}
+/* chat */
+#aiToggle{position:fixed;right:20px;bottom:20px;z-index:60;width:58px;height:58px;border-radius:50%;border:none;background:linear-gradient(135deg,#2563eb,#1e40af);color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 28px rgba(37,99,235,.45);display:grid;place-items:center;transition:transform .2s}
+#aiToggle:hover{transform:scale(1.06)}
+#aiToggle .x{display:none;font-size:26px;line-height:1}
+#aiToggle.open .x{display:block}#aiToggle.open .ic{display:none}
+#aiPanel{position:fixed;right:20px;bottom:90px;z-index:60;width:380px;max-width:calc(100vw - 32px);height:560px;max-height:calc(100vh - 120px);display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.32);overflow:hidden;opacity:0;visibility:hidden;transform:translateY(14px) scale(.97);transform-origin:bottom right;transition:opacity .22s ease,transform .22s ease,visibility 0s linear .22s}
+#aiPanel.open{opacity:1;visibility:visible;transform:none;transition:opacity .22s ease,transform .22s ease}
+.ph{padding:14px 16px;background:linear-gradient(135deg,#0b1a33,#1e3a8a);color:#fff;display:flex;gap:10px;align-items:center}
+.ph .av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:18px}
+.ph .t{flex:1;line-height:1.25}.ph .t b{display:block;font-size:15px}.ph .t span{font-size:12px;color:#bcd0f5}
+.ph .t span:before{content:&quot;&quot;;display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:6px}
+.ph button{background:transparent;border:none;color:#fff;font-size:22px;cursor:pointer;opacity:.8;padding:4px 8px}
+#chatLog{flex:1;overflow-y:auto;padding:14px;font-size:14px;background:var(--surface2);display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.bub{max-width:86%;padding:9px 13px;border-radius:14px;line-height:1.5;animation:pop .2s ease both;word-wrap:break-word}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.bub.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px;color:var(--ink)}
+.bub.me{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+.bub .tag{display:inline-block;font-size:11.5px;font-weight:600;color:var(--brand2);background:var(--soft);border-radius:999px;padding:2px 8px;margin:6px 4px 0 0}
+.bub .sug{display:inline-block;margin:6px 6px 0 0;font-size:12.5px;border:1px solid #c7d6f3;background:#f5f8ff;color:var(--brand2);border-radius:999px;padding:3px 10px;cursor:pointer}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#94a3b8;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;border-top:1px solid var(--line);background:#fff;scrollbar-width:none}
+.chips button{flex:none;font-size:12.5px;border:1px solid #c7d6f3;background:#f5f8ff;color:var(--brand2);border-radius:999px;padding:5px 11px;cursor:pointer}
+.chips button:hover{background:var(--soft)}
+.composer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:#fff}
+#userInput{flex:1;min-width:0;border:1px solid #cfd8e6;border-radius:999px;padding:10px 14px;font-size:16px;outline:none;color:var(--ink)}
+#userInput:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+#sendBtn{border:none;background:var(--brand);color:#fff;border-radius:999px;padding:0 16px;font-weight:600;cursor:pointer}
+.note{padding:0 14px 10px;background:#fff;color:var(--muted);font-size:11.5px;text-align:center}
+@media (max-width:560px){#aiPanel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:82vh;max-height:82vh;border-radius:18px 18px 0 0;transform:translateY(100%);transform-origin:bottom center}#aiPanel.open{transform:none}#aiToggle.open{bottom:auto;top:calc(18vh - 70px);opacity:0;pointer-events:none}}
+/* zoom */
+#brainSVG.focus .lobe:not(.active){opacity:.5}
+#brainSVG.focus .fold-layer{opacity:.6}
+#brainSVG.focus #brainTilt{filter:none}
+.lobe-tint.on{animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.22}50%{opacity:.48}}
+.glow{filter:drop-shadow(0 0 6px rgba(59,130,246,.9))}
+#zoomReset{position:absolute;top:12px;right:12px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:2}
+#zoomReset.show{opacity:1;pointer-events:auto}
+.panel-in{animation:slidein .35s ease both}
+@keyframes slidein{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+@media (max-width:980px){.atlas-grid,.dict-grid{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.stage{min-height:340px}}
+@media (max-width:560px){.hero{padding:36px 16px 18px}.unit b{font-size:15px}.countMsg{font-size:12.5px;text-align:center}.legend{position:static;margin:8px}.stage{display:block;padding-top:8px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
-  &lt;div class=&quot;wrap&quot;&gt;
-    &lt;header&gt;
-      &lt;div&gt;
-        &lt;h1&gt;Binary to Text Decoder&lt;/h1&gt;
-        &lt;div class=&quot;small&quot;&gt;Paste binary (8-bit bytes separated by spaces/dashes or a continuous stream). Decodes locally in your browser.&lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/header&gt;
 
-    &lt;div class=&quot;card&quot;&gt;
-      &lt;p class=&quot;warn&quot;&gt;&lt;strong&gt;Reminder:&lt;/strong&gt; Only paste binary/text you own or have permission to analyze. Do NOT use this to access other people&#x27;s accounts or data.&lt;/p&gt;
-
-      &lt;label for=&quot;binIn&quot;&gt;Paste binary input here&lt;/label&gt;
-      &lt;textarea id=&quot;binIn&quot; placeholder=&quot;Examples:
-01001000 01100101 01101100 01101100 01101111
-0100100001100101011011000110110001101111
-01001000-01100101-01101100-01101100-01101111
-You can include spaces, dashes or newlines.&quot;&gt;&lt;/textarea&gt;
-
-      &lt;div class=&quot;controls&quot;&gt;
-        &lt;button id=&quot;decodeBtn&quot;&gt;Decode Binary&lt;/button&gt;
-        &lt;button id=&quot;clearBtn&quot; class=&quot;ghost&quot;&gt;Clear&lt;/button&gt;
-        &lt;button id=&quot;downloadBtn&quot;&gt;Download Decoded File&lt;/button&gt;
-        &lt;div class=&quot;info&quot; id=&quot;tries&quot;&gt;Detection tries: 0&lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;div style=&quot;margin-top:12px;&quot;&gt;
-        &lt;label&gt;Decoded output:&lt;/label&gt;
-        &lt;pre id=&quot;output&quot;&gt;Output appears here.&lt;/pre&gt;
-        &lt;div id=&quot;highlights&quot;&gt;&lt;/div&gt;
-      &lt;/div&gt;
-
-      &lt;details style=&quot;margin-top:12px&quot;&gt;
-        &lt;summary class=&quot;small&quot;&gt;How it works / supported formats&lt;/summary&gt;
-        &lt;div class=&quot;small&quot; style=&quot;margin-top:8px&quot;&gt;
-          This tool:
-          &lt;ul&gt;
-            &lt;li&gt;Parses binary provided as 8-bit bytes (space/dash separated) or as a continuous bitstream (it will chunk into 8 or 7-bit groups).&lt;/li&gt;
-            &lt;li&gt;Tolerates spaces, newlines, commas, dashes, and other non-binary separators.&lt;/li&gt;
-            &lt;li&gt;Also tries 7-bit ASCII as a fallback and reverses bit-order per-byte as another guess.&lt;/li&gt;
-            &lt;li&gt;Highlights email-like patterns and literal password labels (e.g., &lt;code&gt;password:&lt;/code&gt;, &lt;code&gt;pwd=&lt;/code&gt;) found in the decoded text.&lt;/li&gt;
-          &lt;/ul&gt;
-        &lt;/div&gt;
-      &lt;/details&gt;
-
-      &lt;p class=&quot;info&quot; style=&quot;margin-top:10px&quot;&gt;Output file will be plain UTF-8 text. If decoded bytes are not valid UTF-8 you&#x27;ll get best-effort character replacement.&lt;/p&gt;
-    &lt;/div&gt;
-
-    &lt;footer&gt;Runs entirely in your browser. No data leaves your computer.&lt;/footer&gt;
+&lt;div class=&quot;countbar&quot;&gt;&lt;div class=&quot;wrap&quot;&gt;
+  &lt;div class=&quot;units&quot;&gt;
+    &lt;div class=&quot;unit&quot;&gt;&lt;b id=&quot;d&quot;&gt;00&lt;/b&gt;&lt;span&gt;days&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;unit&quot;&gt;&lt;b id=&quot;h&quot;&gt;00&lt;/b&gt;&lt;span&gt;hrs&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;unit&quot;&gt;&lt;b id=&quot;m&quot;&gt;00&lt;/b&gt;&lt;span&gt;min&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;unit&quot;&gt;&lt;b id=&quot;s&quot;&gt;00&lt;/b&gt;&lt;span&gt;sec&lt;/span&gt;&lt;/div&gt;
   &lt;/div&gt;
+  &lt;div class=&quot;countMsg&quot; id=&quot;countMsg&quot;&gt;Counting down to Monday, October 6, 2025 at 10:30 AM ET&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;header class=&quot;hero&quot;&gt;
+  &lt;div class=&quot;eyebrow&quot;&gt;Final Presentation&lt;/div&gt;
+  &lt;h1&gt;Brainapedia&lt;/h1&gt;
+  &lt;p&gt;Where neurology meets design. A brain atlas, condition dictionary, study plan, and self test in one page.&lt;/p&gt;
+  &lt;div class=&quot;toolbar&quot;&gt;
+    &lt;button class=&quot;btn primary&quot; id=&quot;presentBtn&quot;&gt;Presentation Mode&lt;/button&gt;
+    &lt;button class=&quot;btn ghostbtn&quot; id=&quot;confettiBtn&quot;&gt;Celebrate&lt;/button&gt;
+    &lt;button class=&quot;btn ghostbtn&quot; id=&quot;themeBtn&quot;&gt;Toggle Theme&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/header&gt;
+
+&lt;main class=&quot;wrap&quot;&gt;
+
+&lt;section class=&quot;block&quot; id=&quot;atlas&quot;&gt;
+  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Interactive Brain Atlas&lt;/h2&gt;&lt;p&gt;Select a region to see its function and related conditions.&lt;/p&gt;&lt;/div&gt;&lt;span class=&quot;chip&quot;&gt;Drag to tilt · Click a region&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;atlas-grid&quot;&gt;
+    &lt;div class=&quot;card stage&quot; id=&quot;stage&quot;&gt;
+      &lt;svg id=&quot;brainSVG&quot; viewBox=&quot;0 0 600 440&quot; role=&quot;img&quot; aria-label=&quot;Lateral view of the human brain&quot;&gt;
+        &lt;defs&gt;
+          &lt;radialGradient id=&quot;tissue&quot; cx=&quot;38%&quot; cy=&quot;30%&quot; r=&quot;80%&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#f6d7cf&quot;/&gt;&lt;stop offset=&quot;.55&quot; stop-color=&quot;#e3aea3&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#b9786d&quot;/&gt;&lt;/radialGradient&gt;
+          &lt;radialGradient id=&quot;cbTissue&quot; cx=&quot;45%&quot; cy=&quot;30%&quot; r=&quot;80%&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#eec3b8&quot;/&gt;&lt;stop offset=&quot;.6&quot; stop-color=&quot;#cf8f83&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#9c5d53&quot;/&gt;&lt;/radialGradient&gt;
+          &lt;linearGradient id=&quot;stemTissue&quot; x1=&quot;0&quot; x2=&quot;1&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#c98a7e&quot;/&gt;&lt;stop offset=&quot;.45&quot; stop-color=&quot;#e9b9ae&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#a7685d&quot;/&gt;&lt;/linearGradient&gt;
+          &lt;radialGradient id=&quot;shade&quot; cx=&quot;35%&quot; cy=&quot;25%&quot; r=&quot;85%&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#fff&quot; stop-opacity=&quot;.35&quot;/&gt;&lt;stop offset=&quot;.5&quot; stop-color=&quot;#fff&quot; stop-opacity=&quot;0&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#3a1410&quot; stop-opacity=&quot;.35&quot;/&gt;&lt;/radialGradient&gt;
+          &lt;filter id=&quot;bumps&quot; x=&quot;0&quot; y=&quot;0&quot; width=&quot;100%&quot; height=&quot;100%&quot;&gt;
+            &lt;feTurbulence type=&quot;fractalNoise&quot; baseFrequency=&quot;0.028 0.04&quot; numOctaves=&quot;3&quot; seed=&quot;7&quot; result=&quot;n&quot;/&gt;
+            &lt;feDiffuseLighting in=&quot;n&quot; surfaceScale=&quot;6&quot; lighting-color=&quot;#ffffff&quot; result=&quot;l&quot;&gt;&lt;feDistantLight azimuth=&quot;225&quot; elevation=&quot;55&quot;/&gt;&lt;/feDiffuseLighting&gt;
+            &lt;feComposite in=&quot;l&quot; in2=&quot;SourceGraphic&quot; operator=&quot;in&quot;/&gt;
+          &lt;/filter&gt;
+          &lt;filter id=&quot;hi&quot;&gt;&lt;feColorMatrix type=&quot;matrix&quot; values=&quot;1.08 0 0 0 .04  0 1.08 0 0 .04  0 0 1.08 0 .06  0 0 0 1 0&quot;/&gt;&lt;/filter&gt;
+          &lt;filter id=&quot;drop&quot; x=&quot;-20%&quot; y=&quot;-20%&quot; width=&quot;140%&quot; height=&quot;150%&quot;&gt;&lt;feDropShadow dx=&quot;0&quot; dy=&quot;10&quot; stdDeviation=&quot;10&quot; flood-color=&quot;#2a0c08&quot; flood-opacity=&quot;.25&quot;/&gt;&lt;/filter&gt;
+          &lt;clipPath id=&quot;cerebrumClip&quot;&gt;&lt;path d=&quot;M92,262 C52,190 92,82 220,52 C300,34 410,40 478,92 C530,132 552,196 530,248 C512,282 478,292 455,286 C425,300 372,316 312,316 C250,318 196,304 168,280 C140,282 110,280 92,262 Z&quot;/&gt;&lt;/clipPath&gt;
+          &lt;clipPath id=&quot;cbClip&quot;&gt;&lt;path d=&quot;M372,300 C392,268 462,258 510,268 C546,278 556,312 532,334 C500,360 420,360 388,338 C370,326 364,312 372,300 Z&quot;/&gt;&lt;/clipPath&gt;
+        &lt;/defs&gt;
+        &lt;g id=&quot;brainTilt&quot; filter=&quot;url(#drop)&quot;&gt;
+          &lt;!-- brainstem --&gt;
+          &lt;path class=&quot;lobe&quot; id=&quot;l_brainstem&quot; data-r=&quot;Brainstem&quot; fill=&quot;url(#stemTissue)&quot; stroke=&quot;#8a4c43&quot; stroke-width=&quot;1.2&quot; d=&quot;M318,300 C340,306 368,306 384,300 C392,320 390,346 382,372 C376,392 372,410 370,428 L338,428 C340,404 338,380 332,356 C326,336 320,318 318,300 Z&quot;/&gt;
+          &lt;path d=&quot;M336,330 C350,334 366,334 384,328 M338,356 C352,360 366,360 380,354&quot; stroke=&quot;#8a4c43&quot; stroke-opacity=&quot;.45&quot; fill=&quot;none&quot; stroke-width=&quot;1.2&quot;/&gt;
+          &lt;!-- cerebellum --&gt;
+          &lt;g class=&quot;lobe&quot; id=&quot;l_cerebellum&quot; data-r=&quot;Cerebellum&quot;&gt;
+            &lt;path fill=&quot;url(#cbTissue)&quot; stroke=&quot;#7d3f37&quot; stroke-width=&quot;1.4&quot; d=&quot;M372,300 C392,268 462,258 510,268 C546,278 556,312 532,334 C500,360 420,360 388,338 C370,326 364,312 372,300 Z&quot;/&gt;
+            &lt;g clip-path=&quot;url(#cbClip)&quot; fill=&quot;none&quot; stroke=&quot;#7d3f37&quot; stroke-opacity=&quot;.55&quot; stroke-width=&quot;1.3&quot;&gt;
+              &lt;path d=&quot;M370,292 C430,280 500,278 552,292&quot;/&gt;&lt;path d=&quot;M366,302 C430,290 505,290 556,304&quot;/&gt;&lt;path d=&quot;M366,312 C432,302 505,302 556,316&quot;/&gt;&lt;path d=&quot;M368,322 C434,314 505,314 552,328&quot;/&gt;&lt;path d=&quot;M372,332 C436,326 500,326 546,340&quot;/&gt;&lt;path d=&quot;M380,342 C440,338 495,338 536,350&quot;/&gt;&lt;path d=&quot;M392,352 C440,350 490,350 520,358&quot;/&gt;
+            &lt;/g&gt;
+            &lt;path fill=&quot;url(#shade)&quot; d=&quot;M372,300 C392,268 462,258 510,268 C546,278 556,312 532,334 C500,360 420,360 388,338 C370,326 364,312 372,300 Z&quot; pointer-events=&quot;none&quot;/&gt;
+          &lt;/g&gt;
+          &lt;path class=&quot;lobe-tint&quot; data-r=&quot;Cerebellum&quot; fill=&quot;#3b82f6&quot; d=&quot;M372,300 C392,268 462,258 510,268 C546,278 556,312 532,334 C500,360 420,360 388,338 C370,326 364,312 372,300 Z&quot;/&gt;
+          &lt;path class=&quot;lobe-tint&quot; data-r=&quot;Brainstem&quot; fill=&quot;#3b82f6&quot; d=&quot;M318,300 C340,306 368,306 384,300 C392,320 390,346 382,372 C376,392 372,410 370,428 L338,428 C340,404 338,380 332,356 C326,336 320,318 318,300 Z&quot;/&gt;
+          &lt;!-- cerebrum lobes --&gt;
+          &lt;g id=&quot;cerebrum&quot;&gt;
+            &lt;path class=&quot;lobe&quot; id=&quot;l_frontal&quot; data-r=&quot;Frontal lobe&quot; fill=&quot;url(#tissue)&quot; d=&quot;M92,262 C52,190 92,82 220,52 C252,45 280,42 300,42 C296,90 286,150 276,206 C240,208 205,218 180,236 C165,248 160,262 168,280 C140,282 110,280 92,262 Z&quot;/&gt;
+            &lt;path class=&quot;lobe&quot; id=&quot;l_parietal&quot; data-r=&quot;Parietal lobe&quot; fill=&quot;url(#tissue)&quot; d=&quot;M300,42 C370,40 430,56 470,86 C462,120 452,160 448,196 C410,196 360,198 330,202 C310,204 290,205 276,206 C286,150 296,90 300,42 Z&quot;/&gt;
+            &lt;path class=&quot;lobe&quot; id=&quot;l_occipital&quot; data-r=&quot;Occipital lobe&quot; fill=&quot;url(#tissue)&quot; d=&quot;M470,86 C526,128 552,196 530,248 C514,280 480,292 455,286 C452,256 450,226 448,196 C452,160 462,120 470,86 Z&quot;/&gt;
+            &lt;path class=&quot;lobe&quot; id=&quot;l_temporal&quot; data-r=&quot;Temporal lobe&quot; fill=&quot;url(#tissue)&quot; d=&quot;M180,236 C205,218 240,208 276,206 C320,203 390,196 448,196 C450,226 452,256 455,286 C425,300 372,316 312,316 C250,318 196,304 168,280 C160,262 166,246 180,236 Z&quot;/&gt;
+            &lt;!-- tints for selection --&gt;
+            &lt;path class=&quot;lobe-tint&quot; data-r=&quot;Frontal lobe&quot; id=&quot;t_frontal&quot; fill=&quot;#3b82f6&quot; d=&quot;M92,262 C52,190 92,82 220,52 C252,45 280,42 300,42 C296,90 286,150 276,206 C240,208 205,218 180,236 C165,248 160,262 168,280 C140,282 110,280 92,262 Z&quot;/&gt;
+            &lt;path class=&quot;lobe-tint&quot; data-r=&quot;Parietal lobe&quot; id=&quot;t_parietal&quot; fill=&quot;#3b82f6&quot; d=&quot;M300,42 C370,40 430,56 470,86 C462,120 452,160 448,196 C410,196 360,198 330,202 C310,204 290,205 276,206 C286,150 296,90 300,42 Z&quot;/&gt;
+            &lt;path class=&quot;lobe-tint&quot; data-r=&quot;Occipital lobe&quot; id=&quot;t_occipital&quot; fill=&quot;#3b82f6&quot; d=&quot;M470,86 C526,128 552,196 530,248 C514,280 480,292 455,286 C452,256 450,226 448,196 C452,160 462,120 470,86 Z&quot;/&gt;
+            &lt;path class=&quot;lobe-tint&quot; data-r=&quot;Temporal lobe&quot; id=&quot;t_temporal&quot; fill=&quot;#3b82f6&quot; d=&quot;M180,236 C205,218 240,208 276,206 C320,203 390,196 448,196 C450,226 452,256 455,286 C425,300 372,316 312,316 C250,318 196,304 168,280 C160,262 166,246 180,236 Z&quot;/&gt;
+            &lt;g class=&quot;fold-layer&quot; clip-path=&quot;url(#cerebrumClip)&quot; pointer-events=&quot;none&quot;&gt;
+              &lt;rect x=&quot;40&quot; y=&quot;30&quot; width=&quot;530&quot; height=&quot;300&quot; filter=&quot;url(#bumps)&quot; opacity=&quot;.28&quot; style=&quot;mix-blend-mode:multiply&quot;/&gt;
+              &lt;g fill=&quot;none&quot; stroke=&quot;#7a3a31&quot; stroke-linecap=&quot;round&quot; stroke-opacity=&quot;.62&quot; stroke-width=&quot;2.2&quot;&gt;
+                &lt;!-- central sulcus &amp; lateral sulcus (heavier) --&gt;
+                &lt;path stroke-width=&quot;3.2&quot; d=&quot;M302,44 C296,70 304,90 292,112 C284,130 296,150 286,170 C280,186 284,198 278,206&quot;/&gt;
+                &lt;path stroke-width=&quot;3.6&quot; d=&quot;M168,246 C200,224 244,212 280,208 C330,203 390,198 446,198&quot;/&gt;
+                &lt;!-- parieto occipital / preoccipital --&gt;
+                &lt;path stroke-width=&quot;2.6&quot; d=&quot;M470,88 C462,124 456,160 449,196 C451,232 454,262 456,284&quot;/&gt;
+                &lt;!-- frontal gyri --&gt;
+                &lt;path d=&quot;M272,52 C266,86 272,120 262,150 C256,170 260,186 252,204&quot;/&gt;
+                &lt;path d=&quot;M110,140 C150,120 190,112 236,110 C252,110 262,104 268,96&quot;/&gt;
+                &lt;path d=&quot;M96,190 C140,176 180,170 222,168 C240,168 252,162 260,154&quot;/&gt;
+                &lt;path d=&quot;M150,72 C170,90 168,108 190,116&quot;/&gt;&lt;path d=&quot;M118,108 C138,122 142,138 160,150&quot;/&gt;
+                &lt;path d=&quot;M200,64 C214,80 210,98 226,110&quot;/&gt;&lt;path d=&quot;M104,230 C130,214 150,214 170,200&quot;/&gt;
+                &lt;path d=&quot;M200,170 C210,188 196,200 212,214&quot;/&gt;&lt;path d=&quot;M140,176 C150,194 144,206 156,224&quot;/&gt;
+                &lt;!-- parietal gyri --&gt;
+                &lt;path d=&quot;M316,46 C310,80 318,110 306,140 C300,160 306,180 300,204&quot;/&gt;
+                &lt;path d=&quot;M326,120 C360,108 380,124 410,112 C430,104 446,112 460,104&quot;/&gt;
+                &lt;path d=&quot;M340,60 C350,80 340,96 356,108&quot;/&gt;&lt;path d=&quot;M390,56 C396,80 386,96 402,110&quot;/&gt;
+                &lt;path d=&quot;M330,160 C352,150 372,170 398,156 C416,148 430,160 452,150&quot;/&gt;
+                &lt;path d=&quot;M360,170 C368,182 360,192 370,198&quot;/&gt;&lt;path d=&quot;M420,64 C428,84 420,96 436,104&quot;/&gt;
+                &lt;!-- occipital --&gt;
+                &lt;path d=&quot;M484,120 C496,150 488,176 504,200&quot;/&gt;&lt;path d=&quot;M470,214 C492,220 506,236 526,232&quot;/&gt;&lt;path d=&quot;M466,250 C484,256 498,268 516,262&quot;/&gt;
+                &lt;!-- temporal gyri --&gt;
+                &lt;path d=&quot;M196,262 C250,246 320,240 380,236 C410,234 430,230 452,232&quot;/&gt;
+                &lt;path d=&quot;M200,290 C260,280 330,276 390,270 C416,268 436,262 454,262&quot;/&gt;
+                &lt;path d=&quot;M240,222 C246,236 238,244 246,256&quot;/&gt;&lt;path d=&quot;M330,212 C336,226 326,236 336,246&quot;/&gt;&lt;path d=&quot;M400,206 C406,220 398,228 406,240&quot;/&gt;
+                &lt;path d=&quot;M290,252 C296,266 288,274 296,286&quot;/&gt;&lt;path d=&quot;M370,248 C378,262 368,270 378,282&quot;/&gt;
+              &lt;/g&gt;
+              &lt;g fill=&quot;none&quot; stroke=&quot;#7a3a31&quot; stroke-opacity=&quot;.38&quot; stroke-width=&quot;1.5&quot; stroke-linecap=&quot;round&quot;&gt;&lt;path d=&quot;M192,85 Q188,91 191,96 Q189,102 194,116 Q184,121 183,132&quot;/&gt;&lt;path d=&quot;M489,259 Q499,251 500,253 Q506,248 510,239 Q519,231 528,231&quot;/&gt;&lt;path d=&quot;M294,81 Q305,85 308,89 Q318,90 329,89 Q339,86 350,92&quot;/&gt;&lt;path d=&quot;M221,255 Q233,245 233,242 Q234,231 237,226 Q240,217 239,212&quot;/&gt;&lt;path d=&quot;M243,239 Q239,245 232,257 Q231,258 235,267 Q243,266 252,277&quot;/&gt;&lt;path d=&quot;M390,275 Q399,283 411,281 Q416,280 419,271 Q426,269 438,275&quot;/&gt;&lt;path d=&quot;M281,93 Q273,88 268,88 Q259,97 261,95 Q260,102 261,115&quot;/&gt;&lt;path d=&quot;M116,73 Q111,79 117,85 Q127,87 131,91 Q148,88 153,86&quot;/&gt;&lt;path d=&quot;M194,159 Q198,156 207,159 Q209,164 218,176 Q226,176 224,184&quot;/&gt;&lt;path d=&quot;M112,283 Q112,270 112,268 Q116,267 127,258 Q141,264 146,260&quot;/&gt;&lt;path d=&quot;M235,218 Q246,215 247,202 Q247,201 258,188 Q270,188 271,183&quot;/&gt;&lt;path d=&quot;M109,276 Q109,289 103,293 Q103,291 111,302 Q119,304 117,317&quot;/&gt;&lt;path d=&quot;M467,88 Q474,87 485,78 Q497,73 504,70 Q508,56 512,54&quot;/&gt;&lt;path d=&quot;M105,203 Q93,201 93,190 Q89,186 78,191 Q72,185 65,182&quot;/&gt;&lt;path d=&quot;M429,135 Q430,145 431,156 Q441,162 442,161 Q444,173 457,175&quot;/&gt;&lt;path d=&quot;M174,133 Q178,121 181,114 Q177,110 172,96 Q169,88 161,92&quot;/&gt;&lt;path d=&quot;M224,191 Q220,193 210,184 Q206,190 199,191 Q193,187 185,188&quot;/&gt;&lt;path d=&quot;M482,172 Q491,162 493,155 Q503,147 509,149 Q510,142 520,144&quot;/&gt;&lt;path d=&quot;M438,103 Q448,92 448,89 Q452,79 453,72 Q446,61 444,61&quot;/&gt;&lt;path d=&quot;M99,288 Q109,290 117,281 Q125,291 126,289 Q126,297 135,302&quot;/&gt;&lt;path d=&quot;M380,239 Q383,230 380,225 Q383,219 392,217 Q404,220 412,210&quot;/&gt;&lt;path d=&quot;M477,156 Q472,157 463,154 Q457,160 453,155 Q449,157 442,167&quot;/&gt;&lt;path d=&quot;M119,294 Q129,305 129,308 Q138,306 139,313 Q142,310 152,311&quot;/&gt;&lt;path d=&quot;M498,99 Q498,87 508,86 Q512,83 521,89 Q521,97 532,92&quot;/&gt;&lt;path d=&quot;M214,274 Q219,268 219,256 Q229,254 239,252 Q243,258 255,256&quot;/&gt;&lt;path d=&quot;M298,76 Q294,81 293,88 Q287,102 291,106 Q279,116 279,114&quot;/&gt;&lt;path d=&quot;M156,98 Q166,102 168,95 Q178,100 184,95 Q195,96 195,100&quot;/&gt;&lt;path d=&quot;M454,260 Q448,258 438,267 Q434,260 427,259 Q425,253 415,242&quot;/&gt;&lt;path d=&quot;M222,275 Q215,272 204,267 Q202,263 199,247 Q203,235 210,233&quot;/&gt;&lt;path d=&quot;M397,180 Q394,172 386,173 Q386,178 375,175 Q366,164 356,166&quot;/&gt;&lt;path d=&quot;M453,210 Q449,216 435,217 Q439,222 434,232 Q438,239 445,243&quot;/&gt;&lt;path d=&quot;M105,159 Q113,159 123,168 Q126,172 141,167 Q154,170 156,178&quot;/&gt;&lt;path d=&quot;M415,158 Q412,148 416,144 Q423,133 420,132 Q425,122 424,122&quot;/&gt;&lt;path d=&quot;M514,100 Q523,98 535,97 Q551,96 555,103 Q557,109 566,107&quot;/&gt;&lt;path d=&quot;M139,293 Q138,296 131,309 Q129,306 120,311 Q112,301 111,303&quot;/&gt;&lt;path d=&quot;M229,139 Q242,142 244,141 Q251,141 247,153 Q260,161 264,165&quot;/&gt;&lt;path d=&quot;M377,262 Q386,266 389,262 Q400,255 405,260 Q408,256 420,259&quot;/&gt;&lt;path d=&quot;M192,198 Q191,211 193,212 Q193,215 200,229 Q192,238 192,239&quot;/&gt;&lt;path d=&quot;M404,285 Q401,290 398,298 Q392,297 386,306 Q380,316 385,320&quot;/&gt;&lt;path d=&quot;M405,160 Q409,164 421,164 Q425,173 427,179 Q424,179 416,191&quot;/&gt;&lt;path d=&quot;M278,252 Q280,249 290,249 Q297,245 301,239 Q310,236 308,223&quot;/&gt;&lt;path d=&quot;M201,140 Q199,139 187,136 Q191,126 183,124 Q183,120 178,114&quot;/&gt;&lt;path d=&quot;M112,257 Q104,246 107,236 Q115,225 115,221 Q118,212 122,209&quot;/&gt;&lt;path d=&quot;M387,290 Q385,282 392,276 Q381,270 380,265 Q385,253 380,245&quot;/&gt;&lt;path d=&quot;M454,289 Q448,279 448,269 Q454,256 462,253 Q462,250 458,244&quot;/&gt;&lt;path d=&quot;M361,183 Q355,177 353,175 Q346,173 344,168 Q330,173 326,175&quot;/&gt;&lt;path d=&quot;M120,289 Q120,298 119,306 Q117,314 121,319 Q121,328 129,336&quot;/&gt;&lt;path d=&quot;M370,191 Q365,185 360,183 Q360,172 364,165 Q369,155 379,149&quot;/&gt;&lt;path d=&quot;M180,176 Q184,181 181,194 Q181,209 191,212 Q183,213 188,226&quot;/&gt;&lt;path d=&quot;M463,61 Q459,58 457,49 Q445,39 438,39 Q435,33 426,36&quot;/&gt;&lt;path d=&quot;M114,61 Q125,53 132,57 Q141,60 154,56 Q161,53 167,50&quot;/&gt;&lt;path d=&quot;M493,164 Q486,158 489,154 Q488,152 481,144 Q479,143 468,147&quot;/&gt;&lt;path d=&quot;M378,273 Q375,271 367,270 Q368,264 363,250 Q372,245 379,238&quot;/&gt;&lt;path d=&quot;M487,128 Q493,141 499,145 Q499,153 504,163 Q507,171 513,171&quot;/&gt;&lt;path d=&quot;M143,268 Q150,270 160,278 Q171,283 176,286 Q184,292 188,286&quot;/&gt;&lt;path d=&quot;M422,250 Q434,260 435,264 Q444,265 449,271 Q455,276 459,289&quot;/&gt;&lt;path d=&quot;M368,102 Q368,116 376,121 Q384,126 383,128 Q381,133 385,148&quot;/&gt;&lt;path d=&quot;M117,166 Q112,156 119,153 Q127,146 127,146 Q127,144 138,141&quot;/&gt;&lt;path d=&quot;M240,198 Q229,193 228,180 Q219,178 214,170 Q212,171 201,175&quot;/&gt;&lt;path d=&quot;M179,120 Q177,125 169,123 Q163,118 153,115 Q155,110 150,95&quot;/&gt;&lt;/g&gt;
+              &lt;g fill=&quot;none&quot; stroke=&quot;#fff&quot; stroke-opacity=&quot;.28&quot; stroke-width=&quot;1.4&quot; stroke-linecap=&quot;round&quot;&gt;
+                &lt;path d=&quot;M286,52 C280,86 288,118 276,150&quot;/&gt;&lt;path d=&quot;M110,160 C150,146 190,140 236,138&quot;/&gt;&lt;path d=&quot;M320,90 C350,86 380,92 420,84&quot;/&gt;&lt;path d=&quot;M210,276 C270,262 330,258 400,252&quot;/&gt;
+              &lt;/g&gt;
+              &lt;path fill=&quot;url(#shade)&quot; d=&quot;M40,30 H570 V330 H40 Z&quot;/&gt;
+            &lt;/g&gt;
+            &lt;path fill=&quot;none&quot; stroke=&quot;#7a3a31&quot; stroke-width=&quot;1.6&quot; stroke-opacity=&quot;.8&quot; pointer-events=&quot;none&quot; d=&quot;M92,262 C52,190 92,82 220,52 C300,34 410,40 478,92 C530,132 552,196 530,248 C512,282 478,292 455,286 C425,300 372,316 312,316 C250,318 196,304 168,280 C140,282 110,280 92,262 Z&quot;/&gt;
+          &lt;/g&gt;
+        &lt;/g&gt;
+      &lt;/svg&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;zoomReset&quot;&gt;Reset view&lt;/button&gt;
+      &lt;div class=&quot;legend&quot; id=&quot;legend&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;div class=&quot;card-head&quot;&gt;&lt;h3 id=&quot;atlasTitle&quot;&gt;Region details&lt;/h3&gt;&lt;/div&gt;
+      &lt;div class=&quot;card-body&quot; id=&quot;atlasBody&quot;&gt;&lt;p class=&quot;hint&quot;&gt;Click a region of the brain to zoom in and see its main functions and related conditions, then open any condition for its definition.&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section class=&quot;block&quot; id=&quot;dictionary&quot;&gt;
+  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Dictionary&lt;/h2&gt;&lt;p&gt;Concise, exam style definitions of key neurological conditions.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;dict-grid&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-body&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px&quot;&gt;&lt;strong&gt;Search&lt;/strong&gt;&lt;span class=&quot;chip&quot; id=&quot;count&quot;&gt;0 matches&lt;/span&gt;&lt;/div&gt;
+      &lt;input id=&quot;q&quot; type=&quot;search&quot; placeholder=&quot;Search (e.g., stroke, PCA, Broca, ALS, MS)&quot; aria-label=&quot;Search the dictionary&quot;&gt;
+      &lt;div class=&quot;alpha&quot; id=&quot;alpha&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;results&quot; id=&quot;results&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;card viewer&quot;&gt;&lt;div class=&quot;card-body&quot;&gt;
+      &lt;h3 id=&quot;termTitle&quot;&gt;Welcome&lt;/h3&gt;
+      &lt;div class=&quot;def&quot; id=&quot;termBody&quot;&gt;Use the search bar or the A to Z index to find an entry, then select it to view its definition here.&lt;/div&gt;
+      &lt;p class=&quot;hint&quot; id=&quot;termTip&quot; style=&quot;margin-top:12px&quot;&gt;Tip: click any region in the atlas to jump to its related conditions.&lt;/p&gt;
+    &lt;/div&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section class=&quot;block&quot; id=&quot;study&quot;&gt;
+  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Medical Student Study Plan&lt;/h2&gt;&lt;p&gt;A structured routine for mastering neurology.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;grid3&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-head&quot;&gt;&lt;h3&gt;Daily (3 hours or less)&lt;/h3&gt;&lt;/div&gt;&lt;div class=&quot;card-body&quot;&gt;&lt;ul&gt;
+      &lt;li&gt;25 new Anki cards and 150 reviews&lt;/li&gt;&lt;li&gt;40 to 60 minutes of active reading&lt;/li&gt;&lt;li&gt;20 to 40 timed, mixed Qbank questions&lt;/li&gt;&lt;li&gt;10 minutes updating an error log&lt;/li&gt;&lt;li&gt;15 to 20 minutes of teach back&lt;/li&gt;&lt;li&gt;7 to 9 hours of sleep, a 30 minute workout, and steady hydration&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-head&quot;&gt;&lt;h3&gt;Weekly&lt;/h3&gt;&lt;/div&gt;&lt;div class=&quot;card-body&quot;&gt;&lt;ul&gt;
+      &lt;li&gt;&lt;b&gt;Mon:&lt;/b&gt; Foundations and 40 questions&lt;/li&gt;&lt;li&gt;&lt;b&gt;Tue:&lt;/b&gt; Tracts and lesions and 40 questions&lt;/li&gt;&lt;li&gt;&lt;b&gt;Wed:&lt;/b&gt; Neuropharmacology and 40 questions&lt;/li&gt;&lt;li&gt;&lt;b&gt;Thu:&lt;/b&gt; Infection, tumor, and trauma and 40 questions&lt;/li&gt;&lt;li&gt;&lt;b&gt;Fri:&lt;/b&gt; Vascular neurology and 40 questions&lt;/li&gt;&lt;li&gt;&lt;b&gt;Sat:&lt;/b&gt; 80 to 120 mixed questions&lt;/li&gt;&lt;li&gt;&lt;b&gt;Sun:&lt;/b&gt; Light review and rest&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-head&quot;&gt;&lt;h3&gt;30 Day Boost&lt;/h3&gt;&lt;/div&gt;&lt;div class=&quot;card-body&quot;&gt;&lt;ol&gt;
+      &lt;li&gt;&lt;b&gt;Days 1 to 7:&lt;/b&gt; Overview and daily questions&lt;/li&gt;&lt;li&gt;&lt;b&gt;Days 8 to 14:&lt;/b&gt; Focus on weak areas&lt;/li&gt;&lt;li&gt;&lt;b&gt;Days 15 to 21:&lt;/b&gt; Full question blocks&lt;/li&gt;&lt;li&gt;&lt;b&gt;Days 22 to 27:&lt;/b&gt; High yield facts&lt;/li&gt;&lt;li&gt;&lt;b&gt;Days 28 to 30:&lt;/b&gt; Two simulated exams and plenty of sleep&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section class=&quot;block&quot; id=&quot;quiz&quot;&gt;
+  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Neuro Self Test&lt;/h2&gt;&lt;p&gt;Select an answer, then reveal the explanation.&lt;/p&gt;&lt;/div&gt;&lt;button class=&quot;btn&quot; id=&quot;newQuiz&quot;&gt;Shuffle Questions&lt;/button&gt;&lt;/div&gt;
+  &lt;div class=&quot;quiz-grid&quot; id=&quot;quizWrap&quot;&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section class=&quot;block&quot; id=&quot;game&quot;&gt;
+  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Neuro Game Mode&lt;/h2&gt;&lt;p&gt;Review with flashcards, then test yourself in the ranking challenge.&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;stats&quot;&gt;&lt;span class=&quot;chip&quot; id=&quot;rankBadge&quot;&gt;Rank: none yet&lt;/span&gt;&lt;div class=&quot;bar&quot;&gt;&lt;span id=&quot;rankProgress&quot;&gt;&lt;/span&gt;&lt;/div&gt;&lt;span class=&quot;chip&quot; id=&quot;streak&quot;&gt;Streak: 0&lt;/span&gt;&lt;span class=&quot;chip&quot; id=&quot;score&quot;&gt;Score: 0&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-body&quot;&gt;
+    &lt;button class=&quot;btn primary&quot; id=&quot;startFlash&quot;&gt;Start Flashcards&lt;/button&gt;
+    &lt;div id=&quot;flashPanel&quot; class=&quot;hidden&quot;&gt;
+      &lt;div class=&quot;flashWrap&quot;&gt;&lt;div class=&quot;card3d&quot; id=&quot;card3d&quot; aria-label=&quot;Flashcard. Click to flip.&quot;&gt;&lt;div class=&quot;face&quot; id=&quot;face&quot;&gt;&lt;div class=&quot;front&quot; id=&quot;front&quot;&gt;Front&lt;/div&gt;&lt;div class=&quot;back&quot; id=&quot;back&quot;&gt;Back&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;row&quot;&gt;&lt;button class=&quot;btn&quot; id=&quot;prevCard&quot;&gt;‹ Previous&lt;/button&gt;&lt;button class=&quot;btn primary&quot; id=&quot;flipCard&quot;&gt;Flip&lt;/button&gt;&lt;button class=&quot;btn&quot; id=&quot;nextCard&quot;&gt;Next ›&lt;/button&gt;&lt;button class=&quot;btn&quot; id=&quot;shuffleCards&quot;&gt;Shuffle&lt;/button&gt;&lt;/div&gt;
+      &lt;hr class=&quot;divider&quot;&gt;
+      &lt;div style=&quot;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap&quot;&gt;&lt;h3 style=&quot;margin:0;font-size:16px&quot;&gt;Ranking Test&lt;/h3&gt;&lt;button class=&quot;btn primary&quot; id=&quot;startRank&quot;&gt;Start Ranking Test&lt;/button&gt;&lt;/div&gt;
+      &lt;div id=&quot;rankPanel&quot; class=&quot;hidden&quot; style=&quot;margin-top:12px&quot;&gt;
+        &lt;div id=&quot;rankQuestion&quot; class=&quot;qtext&quot; style=&quot;font-size:18px&quot;&gt;Press Start to begin.&lt;/div&gt;
+        &lt;div id=&quot;rankChoices&quot;&gt;&lt;/div&gt;
+        &lt;div style=&quot;margin-top:10px&quot; class=&quot;hint&quot; id=&quot;rankStatus&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;
+&lt;/main&gt;
+
+&lt;footer&gt;© 2025 Malachi Batiste · All Rights Reserved&lt;br&gt;Created and developed by Malachi Batiste&lt;/footer&gt;
+
+&lt;button id=&quot;aiToggle&quot; aria-label=&quot;Open Nova, the Brainapedia study guide&quot; aria-expanded=&quot;false&quot;&gt;&lt;span class=&quot;ic&quot;&gt;&lt;svg width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;&lt;path d=&quot;M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z&quot;/&gt;&lt;/svg&gt;&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;×&lt;/span&gt;&lt;/button&gt;
+&lt;div id=&quot;aiPanel&quot; role=&quot;dialog&quot; aria-label=&quot;Nova, Brainapedia study guide&quot;&gt;
+  &lt;div class=&quot;ph&quot;&gt;&lt;div class=&quot;av&quot;&gt;N&lt;/div&gt;&lt;div class=&quot;t&quot;&gt;&lt;b&gt;Nova&lt;/b&gt;&lt;span&gt;Brainapedia study guide&lt;/span&gt;&lt;/div&gt;&lt;button id=&quot;aiClose&quot; aria-label=&quot;Close&quot;&gt;×&lt;/button&gt;&lt;/div&gt;
+  &lt;div id=&quot;chatLog&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;chips&quot; id=&quot;chips&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;composer&quot;&gt;&lt;input id=&quot;userInput&quot; type=&quot;text&quot; placeholder=&quot;Ask about a condition or brain region&quot; autocomplete=&quot;off&quot;&gt;&lt;button id=&quot;sendBtn&quot;&gt;Send&lt;/button&gt;&lt;/div&gt;
+  &lt;div class=&quot;note&quot;&gt;For study only. Not medical advice.&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 
 &lt;script&gt;
-(function(){
-  const binIn = document.getElementById(&#x27;binIn&#x27;);
-  const out = document.getElementById(&#x27;output&#x27;);
-  const highlights = document.getElementById(&#x27;highlights&#x27;);
-  const decodeBtn = document.getElementById(&#x27;decodeBtn&#x27;);
-  const clearBtn = document.getElementById(&#x27;clearBtn&#x27;);
-  const downloadBtn = document.getElementById(&#x27;downloadBtn&#x27;);
-  const triesEl = document.getElementById(&#x27;tries&#x27;);
+const $=id=&gt;document.getElementById(id);
+function esc(s){return String(s).replace(/[&amp;&lt;&gt;&quot;]/g,c=&gt;({&quot;&amp;&quot;:&quot;&amp;amp;&quot;,&quot;&lt;&quot;:&quot;&amp;lt;&quot;,&quot;&gt;&quot;:&quot;&amp;gt;&quot;,&#x27;&quot;&#x27;:&quot;&amp;quot;&quot;}[c]));}
 
-  function sanitizeBits(s){
-    return s.replace(/[^01\s\-,._:;|]/g,&#x27;&#x27;).trim();
-  }
+/* Theme and buttons */
+$(&quot;themeBtn&quot;).onclick=()=&gt;document.body.classList.toggle(&quot;light&quot;);
+$(&quot;presentBtn&quot;).onclick=()=&gt;{const el=document.documentElement;if(el.requestFullscreen){el.requestFullscreen().catch(()=&gt;{});}confetti(200);};
+$(&quot;confettiBtn&quot;).onclick=()=&gt;confetti(240);
 
-  function splitCandidates(s){
-    if(/[ \t\n,;\-|._:|]/.test(s)){
-      const tokens = s.split(/[^01]+/).filter(Boolean);
-      return tokens;
-    } else {
-      return [s];
-    }
-  }
+/* Countdown */
+const T=new Date(&quot;2025-10-06T10:30:00-04:00&quot;).getTime();
+const pad=n=&gt;String(n).padStart(2,&quot;0&quot;);
+let wasLive=Date.now()&lt;T;
+function tickCount(){let diff=T-Date.now();
+  if(diff&lt;=0){[&quot;d&quot;,&quot;h&quot;,&quot;m&quot;,&quot;s&quot;].forEach(k=&gt;$(k).textContent=&quot;00&quot;);
+    $(&quot;countMsg&quot;).innerHTML=wasLive?&quot;&lt;b&gt;Presentation time&lt;/b&gt;&quot;:&quot;Presented Monday, October 6, 2025 at 10:30 AM ET&quot;;
+    if(wasLive){confetti(360);wasLive=false;$(&quot;countMsg&quot;).innerHTML=&quot;&lt;b&gt;Presentation time&lt;/b&gt;&quot;;}return false;}
+  const D=Math.floor(diff/864e5);diff%=864e5;const H=Math.floor(diff/36e5);diff%=36e5;const M=Math.floor(diff/6e4);diff%=6e4;
+  $(&quot;d&quot;).textContent=pad(D);$(&quot;h&quot;).textContent=pad(H);$(&quot;m&quot;).textContent=pad(M);$(&quot;s&quot;).textContent=pad(Math.floor(diff/1000));return true;}
+if(tickCount()){const iv=setInterval(()=&gt;{if(!tickCount())clearInterval(iv);},250);}
 
-  function chunkBits(bitstr, size){
-    const out = [];
-    for(let i=0;i&lt;bitstr.length;i+=size){
-      out.push(bitstr.slice(i,i+size));
-    }
-    return out;
-  }
+/* Dictionary data */
+const DB={
+  &quot;Alzheimer disease&quot;:&quot;The most common dementia. Early episodic memory loss progresses to language and executive decline; associated with amyloid and tau.&quot;,
+  &quot;Frontotemporal dementia (FTD)&quot;:&quot;Personality and language change; associated with tau or TDP 43.&quot;,
+  &quot;Dementia with Lewy bodies (DLB)&quot;:&quot;Fluctuating cognition, visual hallucinations, parkinsonism, and REM sleep behavior disorder.&quot;,
+  &quot;Parkinson disease&quot;:&quot;Rest tremor, rigidity, and bradykinesia; responsive to levodopa.&quot;,
+  &quot;ALS (amyotrophic lateral sclerosis)&quot;:&quot;Combined upper and lower motor neuron signs; riluzole and edaravone slow the course.&quot;,
+  &quot;Multiple sclerosis (MS)&quot;:&quot;CNS demyelination with lesions disseminated in time and space; optic neuritis and internuclear ophthalmoplegia (INO).&quot;,
+  &quot;Neuromyelitis optica (NMOSD)&quot;:&quot;AQP4 IgG antibodies; optic neuritis with longitudinally extensive myelitis.&quot;,
+  &quot;MOGAD&quot;:&quot;Optic neuritis and myelitis; responsive to steroids.&quot;,
+  &quot;ADEM&quot;:&quot;Postinfectious demyelination; treated with high dose steroids.&quot;,
+  &quot;Guillain Barré syndrome (GBS)&quot;:&quot;Ascending weakness; treated with IVIG or plasma exchange.&quot;,
+  &quot;Ischemic stroke (MCA)&quot;:&quot;Face and arm weakness, with or without aphasia or neglect.&quot;,
+  &quot;Ischemic stroke (PCA)&quot;:&quot;Contralateral homonymous hemianopia, with or without alexia.&quot;,
+  &quot;Wallenberg (lateral medullary)&quot;:&quot;Hoarseness and dysphagia, loss of pain and temperature in the ipsilateral face and contralateral body, ataxia, and Horner syndrome.&quot;,
+  &quot;Gerstmann (dominant parietal)&quot;:&quot;Agraphia, acalculia, finger agnosia, and left right disorientation.&quot;,
+  &quot;Hemispatial neglect (nondominant parietal)&quot;:&quot;Inattention to contralateral space and the contralateral body.&quot;,
+  &quot;Broca area lesion&quot;:&quot;Nonfluent aphasia with impaired repetition and good comprehension.&quot;,
+  &quot;Wernicke area lesion&quot;:&quot;Fluent but meaningless speech, poor comprehension, and impaired repetition.&quot;,
+  &quot;Conduction aphasia&quot;:&quot;Impaired repetition with fluent speech and intact comprehension.&quot;,
+  &quot;Migraine&quot;:&quot;Throbbing headache with or without aura; treated with triptans or NSAIDs, plus preventive therapy.&quot;,
+  &quot;Cluster headache&quot;:&quot;Severe orbital pain; aborted with oxygen or sumatriptan and prevented with verapamil.&quot;,
+  &quot;Trigeminal neuralgia&quot;:&quot;Paroxysmal facial pain; treated with carbamazepine.&quot;,
+  &quot;Epilepsy (focal impaired awareness)&quot;:&quot;Automatisms and postictal confusion.&quot;,
+  &quot;Absence seizures&quot;:&quot;3 Hz spike and wave discharges; treated with ethosuximide.&quot;,
+  &quot;Glioblastoma (GBM)&quot;:&quot;Ring enhancing necrotic mass; treated with resection, temozolomide, and radiation therapy.&quot;,
+  &quot;Meningioma&quot;:&quot;Dural tail on imaging; often benign.&quot;,
+  &quot;Acoustic neuroma&quot;:&quot;Unilateral sensorineural hearing loss, tinnitus, and imbalance.&quot;,
+  &quot;Brain metastases&quot;:&quot;Multiple lesions at the gray white junction (from lung, breast, melanoma, and others).&quot;,
+  &quot;Epidural hematoma&quot;:&quot;Lens shaped collection; lucid interval.&quot;,
+  &quot;Subdural hematoma&quot;:&quot;Crescent shaped collection; slower onset.&quot;,
+  &quot;NPH (normal pressure hydrocephalus)&quot;:&quot;Gait disturbance, incontinence, and cognitive decline; responsive to shunting.&quot;,
+  &quot;Myasthenia gravis&quot;:&quot;Fluctuating, fatigable weakness; acetylcholine receptor (AChR) antibodies.&quot;
+};
+const REGIONS={
+  &quot;Frontal lobe&quot;:{t:&quot;frontal&quot;,color:&quot;#3b82f6&quot;,info:&quot;Executive function, motor initiation, and speech production (Broca area). Lesions can cause personality change, abulia, and hemiparesis.&quot;,list:[&quot;Broca area lesion&quot;,&quot;Frontotemporal dementia (FTD)&quot;,&quot;Meningioma&quot;]},
+  &quot;Parietal lobe&quot;:{t:&quot;parietal&quot;,color:&quot;#0ea5e9&quot;,info:&quot;Somatosensation and spatial processing. Lesions can cause neglect (nondominant side) or Gerstmann syndrome (dominant side).&quot;,list:[&quot;Gerstmann (dominant parietal)&quot;,&quot;Hemispatial neglect (nondominant parietal)&quot;,&quot;Ischemic stroke (MCA)&quot;]},
+  &quot;Temporal lobe&quot;:{t:&quot;temporal&quot;,color:&quot;#f59e0b&quot;,info:&quot;Memory (hippocampus) and language comprehension (Wernicke area). Lesions can cause focal impaired awareness seizures and memory loss.&quot;,list:[&quot;Epilepsy (focal impaired awareness)&quot;,&quot;Wernicke area lesion&quot;,&quot;MOGAD&quot;]},
+  &quot;Occipital lobe&quot;:{t:&quot;occipital&quot;,color:&quot;#22c55e&quot;,info:&quot;Primary vision. Lesions cause homonymous visual field loss, with or without alexia (PCA territory).&quot;,list:[&quot;Ischemic stroke (PCA)&quot;,&quot;Migraine&quot;,&quot;Brain metastases&quot;]},
+  &quot;Cerebellum&quot;:{color:&quot;#a855f7&quot;,info:&quot;Coordination and balance. Lesions cause ataxia, dysmetria, and intention tremor.&quot;,list:[&quot;Tumor (posterior fossa)&quot;,&quot;Ataxia (cerebellar)&quot;,&quot;Acoustic neuroma&quot;]},
+  &quot;Brainstem&quot;:{color:&quot;#e11d48&quot;,info:&quot;Cranial nerves, respiration, and long tracts. Lesions cause crossed signs (face versus body) and instability of vital functions.&quot;,list:[&quot;Wallenberg (lateral medullary)&quot;]}
+};
 
-  function bitsToBytes(tokens, bitSize){
-    const bytes = [];
-    for(const t of tokens){
-      if(t.length === bitSize){
-        bytes.push(parseInt(t,2));
-      } else if(t.length % bitSize === 0 &amp;&amp; t.length&gt;bitSize){
-        const chunks = chunkBits(t, bitSize);
-        for(const c of chunks) bytes.push(parseInt(c,2));
-      } else {
-        return null;
-      }
-    }
-    return bytes;
-  }
+/* Dictionary UI */
+const results=$(&quot;results&quot;),count=$(&quot;count&quot;),q=$(&quot;q&quot;);
+function showTerm(t){$(&quot;termTitle&quot;).textContent=t;$(&quot;termBody&quot;).textContent=DB[t]||&quot;This condition does not have a dictionary entry yet.&quot;;}
+function render(items){results.innerHTML=&quot;&quot;;count.textContent=items.length+(items.length===1?&quot; match&quot;:&quot; matches&quot;);
+  if(!items.length){results.innerHTML=&#x27;&lt;p class=&quot;hint&quot;&gt;No entries found.&lt;/p&gt;&#x27;;return;}
+  items.forEach(term=&gt;{const b=document.createElement(&quot;button&quot;);b.className=&quot;item&quot;;b.innerHTML=&quot;&lt;b&gt;&quot;+esc(term)+&quot;&lt;/b&gt;&quot;;b.title=DB[term];b.onclick=()=&gt;showTerm(term);results.appendChild(b);});}
+&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;.split(&quot;&quot;).forEach(L=&gt;{const b=document.createElement(&quot;button&quot;);b.textContent=L;b.onclick=()=&gt;{q.value=&quot;&quot;;render(Object.keys(DB).filter(t=&gt;t[0].toUpperCase()===L).sort());};$(&quot;alpha&quot;).appendChild(b);});
+q.addEventListener(&quot;input&quot;,()=&gt;{const s=q.value.trim().toLowerCase();if(!s){results.innerHTML=&quot;&quot;;count.textContent=&quot;0 matches&quot;;return;}
+  render(Object.keys(DB).filter(t=&gt;t.toLowerCase().includes(s)||DB[t].toLowerCase().includes(s)).sort());});
 
-  function decodeBytesToString(bytes){
-    try {
-      const u = new Uint8Array(bytes);
-      const dec = new TextDecoder(&#x27;utf-8&#x27;, {fatal:false});
-      return dec.decode(u);
-    } catch(e){
-      return bytes.map(b =&gt; String.fromCharCode(b)).join(&#x27;&#x27;);
-    }
-  }
+/* Atlas: tilt, zoom, focus */
+const svg=$(&quot;brainSVG&quot;),tilt=$(&quot;brainTilt&quot;),stage=$(&quot;stage&quot;);let drag=false,moved=0,lx=0,ly=0,rx=0,ry=0;
+const FULL=[0,0,600,440];let vb=FULL.slice(),zoomed=false,vbAnimating=false,raf=0;
+function applyTilt(){tilt.style.transform=(rx||ry)?`rotateX(${ry}deg) rotateY(${rx}deg)`:&quot;&quot;;}
+function setVB(v){svg.setAttribute(&quot;viewBox&quot;,v.map(n=&gt;n.toFixed(2)).join(&quot; &quot;));}
+function animateVB(to,ms=600){cancelAnimationFrame(raf);const from=vb.slice(),t0=performance.now();vbAnimating=true;
+  const ease=t=&gt;t&lt;.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  (function f(now){const t=Math.min(1,(now-t0)/ms),e=ease(t);vb=from.map((a,i)=&gt;a+(to[i]-a)*e);setVB(vb);if(t&lt;1)raf=requestAnimationFrame(f);else vbAnimating=false;})(t0);}
+function zoomTo(el){rx=ry=0;applyTilt();const b=el.getBBox();const pad=Math.max(b.width,b.height)*.12+18;let w=b.width+pad*2,h=b.height+pad*2;const ar=600/440;if(w/h&gt;ar)h=w/ar;else w=h*ar;
+  w=Math.min(w,600);h=Math.min(h,440);animateVB([b.x+b.width/2-w/2,b.y+b.height/2-h/2,w,h]);zoomed=true;$(&quot;zoomReset&quot;).classList.add(&quot;show&quot;);}
+function resetZoom(){animateVB(FULL);zoomed=false;rx=ry=0;applyTilt();$(&quot;zoomReset&quot;).classList.remove(&quot;show&quot;);svg.classList.remove(&quot;focus&quot;);
+  document.querySelectorAll(&quot;.lobe&quot;).forEach(l=&gt;l.classList.remove(&quot;active&quot;));document.querySelectorAll(&quot;.lobe-tint&quot;).forEach(t=&gt;t.classList.remove(&quot;on&quot;));document.querySelectorAll(&quot;#legend button&quot;).forEach(b=&gt;b.classList.remove(&quot;active&quot;));
+  $(&quot;atlasTitle&quot;).textContent=&quot;Region details&quot;;const ab=$(&quot;atlasBody&quot;);ab.classList.remove(&quot;panel-in&quot;);void ab.offsetWidth;ab.classList.add(&quot;panel-in&quot;);ab.innerHTML=&#x27;&lt;p class=&quot;hint&quot;&gt;Click a region of the brain to zoom in and see its main functions and related conditions.&lt;/p&gt;&#x27;;}
+svg.addEventListener(&quot;pointerdown&quot;,e=&gt;{drag=true;moved=0;lx=e.clientX;ly=e.clientY;});
+addEventListener(&quot;pointerup&quot;,()=&gt;drag=false);
+addEventListener(&quot;pointermove&quot;,e=&gt;{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;moved+=Math.abs(dx)+Math.abs(dy);if(moved&lt;6)return;rx=Math.max(-25,Math.min(25,rx+dx*.3));ry=Math.max(-20,Math.min(20,ry-dy*.3));lx=e.clientX;ly=e.clientY;applyTilt();});
+function showRegion(name,fromChat){const r=REGIONS[name];if(!r)return;
+  const el=document.querySelector(&#x27;.lobe[data-r=&quot;&#x27;+name+&#x27;&quot;]&#x27;);
+  svg.classList.add(&quot;focus&quot;);document.querySelectorAll(&quot;.lobe&quot;).forEach(l=&gt;l.classList.toggle(&quot;active&quot;,l===el));
+  document.querySelectorAll(&quot;.lobe-tint&quot;).forEach(t=&gt;t.classList.toggle(&quot;on&quot;,t.dataset.r===name));
+  document.querySelectorAll(&quot;#legend button&quot;).forEach(b=&gt;b.classList.toggle(&quot;active&quot;,b.dataset.r===name));
+  zoomTo(el);
+  $(&quot;atlasTitle&quot;).textContent=name;const body=$(&quot;atlasBody&quot;);body.classList.remove(&quot;panel-in&quot;);void body.offsetWidth;body.classList.add(&quot;panel-in&quot;);
+  body.innerHTML=&#x27;&lt;p class=&quot;region-summary&quot;&gt;&#x27;+esc(r.info)+&#x27;&lt;/p&gt;&lt;div class=&quot;hint&quot; style=&quot;margin-bottom:8px&quot;&gt;Related conditions&lt;/div&gt;&lt;div class=&quot;region-list&quot;&gt;&lt;/div&gt;&#x27;;
+  const list=body.querySelector(&quot;.region-list&quot;);
+  r.list.forEach(t=&gt;{const b=document.createElement(&quot;button&quot;);b.className=&quot;item&quot;;b.innerHTML=&quot;&lt;b&gt;&quot;+esc(t)+&quot;&lt;/b&gt;&quot;+(DB[t]?&#x27;&lt;div class=&quot;hint&quot;&gt;&#x27;+esc(DB[t])+&#x27;&lt;/div&gt;&#x27;:&#x27;&lt;div class=&quot;hint&quot;&gt;Not yet in the dictionary.&lt;/div&gt;&#x27;);b.onclick=()=&gt;showTerm(t);list.appendChild(b);});}
+document.querySelectorAll(&quot;.lobe&quot;).forEach(el=&gt;el.addEventListener(&quot;click&quot;,e=&gt;{e.stopPropagation();if(moved&gt;=6)return;showRegion(el.dataset.r);}));
+stage.addEventListener(&quot;click&quot;,e=&gt;{if(moved&gt;=6||e.target.closest(&quot;.lobe,#legend,#zoomReset&quot;))return;if(zoomed)resetZoom();});
+$(&quot;zoomReset&quot;).onclick=e=&gt;{e.stopPropagation();resetZoom();};
+addEventListener(&quot;keydown&quot;,e=&gt;{if(e.key===&quot;Escape&quot;&amp;&amp;zoomed)resetZoom();});
+Object.keys(REGIONS).forEach(n=&gt;{const b=document.createElement(&quot;button&quot;);b.dataset.r=n;b.innerHTML=&#x27;&lt;i style=&quot;background:&#x27;+REGIONS[n].color+&#x27;&quot;&gt;&lt;/i&gt;&#x27;+n;b.onclick=e=&gt;{e.stopPropagation();showRegion(n);};$(&quot;legend&quot;).appendChild(b);});
 
-  function findHighlights(text){
-    const items = [];
-    const emailRegex = /[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/g;
-    const emails = text.match(emailRegex) || [];
-    for(const e of [...new Set(emails)]) items.push({type:&#x27;email&#x27;, value:e});
+/* Quiz */
+const BANK=[
+ {q:&quot;Which arterial territory commonly causes contralateral homonymous hemianopia?&quot;,c:[&quot;ACA&quot;,&quot;MCA&quot;,&quot;PCA&quot;,&quot;AICA&quot;],a:2,ex:&quot;The PCA supplies the occipital visual cortex.&quot;},
+ {q:&quot;Which findings make up Gerstmann syndrome?&quot;,c:[&quot;Agraphia, acalculia, finger agnosia, and left right disorientation&quot;,&quot;Ataxia and tremor&quot;,&quot;Pure motor hemiparesis&quot;,&quot;Horner syndrome with facial pain loss&quot;],a:0,ex:&quot;It localizes to the dominant inferior parietal lobule.&quot;},
+ {q:&quot;What is the best acute treatment for a cluster headache attack?&quot;,c:[&quot;Acetaminophen&quot;,&quot;High flow oxygen or subcutaneous sumatriptan&quot;,&quot;Topiramate&quot;,&quot;Propranolol&quot;],a:1,ex:&quot;Oxygen or a subcutaneous triptan aborts the attack; verapamil is used for prevention.&quot;},
+ {q:&quot;What is the first line treatment for absence seizures?&quot;,c:[&quot;Valproate&quot;,&quot;Ethosuximide&quot;,&quot;Levetiracetam&quot;,&quot;Lamotrigine&quot;],a:1,ex:&quot;Ethosuximide is first line for typical absence seizures.&quot;},
+ {q:&quot;Which pattern describes Brown Séquard syndrome?&quot;,c:[&quot;Bilateral loss of pain and temperature only&quot;,&quot;Ipsilateral loss of motor function and proprioception with contralateral loss of pain and temperature&quot;,&quot;Contralateral motor loss only&quot;,&quot;No sensory change&quot;],a:1,ex:&quot;This is the spinal cord hemisection pattern.&quot;}
+];
+function shuffle(a){for(let i=a.length-1;i&gt;0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildQuiz(){const w=$(&quot;quizWrap&quot;);w.innerHTML=&quot;&quot;;shuffle(BANK.slice()).forEach((it,n)=&gt;{const card=document.createElement(&quot;div&quot;);card.className=&quot;card qcard&quot;;
+  card.innerHTML=&#x27;&lt;div class=&quot;qtext&quot;&gt;Q&#x27;+(n+1)+&#x27;. &#x27;+esc(it.q)+&#x27;&lt;/div&gt;&#x27;;let done=false;
+  it.c.forEach((opt,i)=&gt;{const b=document.createElement(&quot;button&quot;);b.className=&quot;choice&quot;;b.textContent=opt;b.onclick=()=&gt;{if(done)return;done=true;if(i===it.a){b.classList.add(&quot;correct&quot;);sfx(&quot;good&quot;);}else{b.classList.add(&quot;wrong&quot;);card.querySelectorAll(&quot;.choice&quot;)[it.a].classList.add(&quot;correct&quot;);sfx(&quot;bad&quot;);}};card.appendChild(b);});
+  const ex=document.createElement(&quot;div&quot;);ex.className=&quot;answer&quot;;ex.innerHTML=&quot;&lt;b&gt;Answer:&lt;/b&gt; &quot;+esc(it.c[it.a])+&quot;. &quot;+esc(it.ex);
+  const show=document.createElement(&quot;button&quot;);show.className=&quot;btn&quot;;show.style.marginTop=&quot;8px&quot;;show.textContent=&quot;Show answer&quot;;show.onclick=()=&gt;{const o=ex.style.display===&quot;block&quot;;ex.style.display=o?&quot;none&quot;:&quot;block&quot;;show.textContent=o?&quot;Show answer&quot;:&quot;Hide answer&quot;;};
+  card.appendChild(show);card.appendChild(ex);w.appendChild(card);});}
+$(&quot;newQuiz&quot;).onclick=buildQuiz;buildQuiz();
 
-    const pwdRegex = /\b(password|passwd|pwd|pass)\s*[:=]\s*([^\s,;&#x27;&quot;&lt;&gt;]+)/ig;
-    let m;
-    while((m = pwdRegex.exec(text)) !== null){
-      items.push({type:&#x27;password_label&#x27;, value:m[0]});
-    }
-    return items;
-  }
+/* Flashcards */
+const TERMS=Object.keys(DB).map(k=&gt;({term:k,def:DB[k]}));let idx=0;const face=$(&quot;face&quot;);
+function loadCard(i){$(&quot;front&quot;).innerHTML=&quot;&lt;b&gt;&quot;+esc(TERMS[i].term)+&quot;&lt;/b&gt;&quot;;$(&quot;back&quot;).textContent=TERMS[i].def;face.classList.remove(&quot;flip&quot;);}
+function flip(){face.classList.toggle(&quot;flip&quot;);sfx(&quot;flip&quot;);}
+$(&quot;flipCard&quot;).onclick=flip;$(&quot;card3d&quot;).onclick=flip;
+$(&quot;nextCard&quot;).onclick=()=&gt;{idx=(idx+1)%TERMS.length;loadCard(idx);sfx(&quot;next&quot;);};
+$(&quot;prevCard&quot;).onclick=()=&gt;{idx=(idx-1+TERMS.length)%TERMS.length;loadCard(idx);sfx(&quot;next&quot;);};
+$(&quot;shuffleCards&quot;).onclick=()=&gt;{shuffle(TERMS);idx=0;loadCard(0);sfx(&quot;shuffle&quot;);};
+$(&quot;startFlash&quot;).onclick=()=&gt;{$(&quot;flashPanel&quot;).classList.remove(&quot;hidden&quot;);$(&quot;startFlash&quot;).classList.add(&quot;hidden&quot;);loadCard(0);sfx(&quot;start&quot;);};
 
-  function tryDecodeAll(input){
-    let tries = 0;
-    const results = [];
-    const s = sanitizeBits(input);
-    if(!s) return results;
+/* Ranking test */
+let score=0,streak=0,timerStart=0,qPool=[],total=10;
+function tier(s){if(s&gt;=71)return&quot;Neuro Genius&quot;;if(s&gt;=31)return&quot;Intermediate Cortex&quot;;return&quot;Beginner Neuro&quot;;}
+function updStats(){$(&quot;score&quot;).textContent=&quot;Score: &quot;+score;$(&quot;streak&quot;).textContent=&quot;Streak: &quot;+streak;$(&quot;rankBadge&quot;).textContent=&quot;Rank: &quot;+tier(score);$(&quot;rankProgress&quot;).style.width=Math.min(100,score)+&quot;%&quot;;}
+function startGame(){score=0;streak=0;updStats();$(&quot;rankBadge&quot;).textContent=&quot;Rank: none yet&quot;;qPool=shuffle(TERMS.slice()).slice(0,total);$(&quot;rankPanel&quot;).classList.remove(&quot;hidden&quot;);ask();}
+function ask(){const rq=$(&quot;rankQuestion&quot;),rc=$(&quot;rankChoices&quot;),rs=$(&quot;rankStatus&quot;);
+  if(!qPool.length){rq.innerHTML=&quot;Done. Your tier: &quot;+tier(score);rc.innerHTML=&quot;&quot;;rs.textContent=&quot;Final score: &quot;+score;sfx(&quot;start&quot;);return;}
+  const item=qPool.pop();rq.innerHTML=&quot;Question &quot;+(total-qPool.length)+&quot; of &quot;+total+&quot;: &lt;b&gt;&quot;+esc(item.term)+&quot;&lt;/b&gt;&quot;;
+  const choices=shuffle([item.def,...shuffle(TERMS.filter(x=&gt;x.term!==item.term)).slice(0,3).map(x=&gt;x.def)]);
+  rc.innerHTML=&quot;&quot;;let done=false;
+  choices.forEach(ch=&gt;{const b=document.createElement(&quot;button&quot;);b.className=&quot;choice&quot;;b.textContent=ch;b.onclick=()=&gt;{if(done)return;done=true;const dt=(performance.now()-timerStart)/1000;
+    if(ch===item.def){b.classList.add(&quot;correct&quot;);score+=10+(dt&lt;5?3:0);streak++;sfx(&quot;good&quot;);}else{b.classList.add(&quot;wrong&quot;);[...rc.children].find(x=&gt;x.textContent===item.def).classList.add(&quot;correct&quot;);streak=0;sfx(&quot;bad&quot;);}
+    updStats();setTimeout(ask,900);};rc.appendChild(b);});
+  timerStart=performance.now();rs.textContent=&quot;Pick the matching definition. Answers under 5 seconds earn a bonus.&quot;;}
+$(&quot;startRank&quot;).onclick=()=&gt;{startGame();sfx(&quot;start&quot;);};
 
-    const tokens = splitCandidates(s);
+/* Sounds */
+let audioCtx;function sfx(type){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);const now=audioCtx.currentTime;
+  const P={good:[880,1320,.18],bad:[200,120,.22],flip:[520,580,.08],shuffle:[720,640,.1],start:[660,990,.2],next:[740,880,.08]}[type]||[600,400,.12];
+  o.type=&quot;sine&quot;;o.frequency.setValueAtTime(P[0],now);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.15,now+.01);o.frequency.exponentialRampToValueAtTime(P[1],now+P[2]*.7);g.gain.exponentialRampToValueAtTime(.0001,now+P[2]);o.start(now);o.stop(now+P[2]+.02);}catch(e){}}
 
-    tries++; triesEl.textContent = &#x27;Detection tries: &#x27; + tries;
-    const bytes8 = bitsToBytes(tokens, 8);
-    if(bytes8){
-      results.push({method:&#x27;8-bit&#x27;, text:decodeBytesToString(bytes8), bytes:bytes8});
-    }
+/* Confetti */
+const cnv=document.createElement(&quot;canvas&quot;);cnv.id=&quot;fx&quot;;document.body.appendChild(cnv);const ctx=cnv.getContext(&quot;2d&quot;);
+function resize(){cnv.width=innerWidth;cnv.height=innerHeight;}addEventListener(&quot;resize&quot;,resize);resize();
+let pieces=[],running=false;const COLORS=[&quot;#2563eb&quot;,&quot;#60a5fa&quot;,&quot;#93c5fd&quot;,&quot;#f59e0b&quot;,&quot;#ffffff&quot;];
+function confetti(n){pieces=Array.from({length:n},()=&gt;({x:Math.random()*cnv.width,y:-20-Math.random()*cnv.height*.5,r:2+Math.random()*4,vx:-1+Math.random()*2,vy:1.5+Math.random()*2,a:Math.random()*6.3,c:COLORS[Math.floor(Math.random()*COLORS.length)]}));if(!running){running=true;requestAnimationFrame(draw);}}
+function draw(){ctx.clearRect(0,0,cnv.width,cnv.height);pieces.forEach(p=&gt;{p.x+=p.vx;p.y+=p.vy;p.a+=.1;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r,-p.r,p.r*2,p.r*2+Math.sin(p.a)*2);ctx.restore();});
+  pieces=pieces.filter(p=&gt;p.y&lt;cnv.height+20);if(pieces.length)requestAnimationFrame(draw);else{running=false;ctx.clearRect(0,0,cnv.width,cnv.height);}}
 
-    if(tokens.length===1 &amp;&amp; tokens[0].length&gt;=7){
-      if(tokens[0].length % 8 ===0){
-        tries++; triesEl.textContent = &#x27;Detection tries: &#x27; + tries;
-        const chunks8 = chunkBits(tokens[0],8);
-        const b8 = chunks8.map(c=&gt;parseInt(c,2));
-        results.push({method:&#x27;continuous-8bit-chunk&#x27;, text:decodeBytesToString(b8), bytes:b8});
-      }
-      if(tokens[0].length % 7 === 0){
-        tries++; triesEl.textContent = &#x27;Detection tries: &#x27; + tries;
-        const chunks7 = chunkBits(tokens[0],7);
-        const b7 = chunks7.map(c=&gt;parseInt(c,2));
-        results.push({method:&#x27;continuous-7bit-chunk&#x27;, text:decodeBytesToString(b7), bytes:b7});
-      }
-    }
-
-    tries++; triesEl.textContent = &#x27;Detection tries: &#x27; + tries;
-    const bytes7 = bitsToBytes(tokens, 7);
-    if(bytes7) results.push({method:&#x27;7-bit&#x27;, text:decodeBytesToString(bytes7), bytes:bytes7});
-
-    if(bytes8){
-      tries++; triesEl.textContent = &#x27;Detection tries: &#x27; + tries;
-      const revBytes = bytes8.map((b,idx)=&gt;{
-        const token = (tokens[idx] &amp;&amp; tokens[idx].length===8) ? tokens[idx] : null;
-        if(token){
-          const rev = token.split(&#x27;&#x27;).reverse().join(&#x27;&#x27;);
-          return parseInt(rev,2);
-        } else {
-          let rb=0;
-          for(let i=0;i&lt;8;i++){ rb=(rb&lt;&lt;1)|((b&gt;&gt;i)&amp;1); }
-          return rb;
-        }
-      });
-      results.push({method:&#x27;8-bit-reversed-bits&#x27;, text:decodeBytesToString(revBytes), bytes:revBytes});
-    }
-
-    return results;
-  }
-
-  function renderResults(results){
-    highlights.innerHTML = &#x27;&#x27;;
-    if(!results.length){
-      out.textContent = &#x27;No valid binary detected or input empty.&#x27;;
-      return;
-    }
-
-    function scoreText(t){
-      if(!t) return 0;
-      const printable = t.replace(/[ -~\r\n\t]/g,&#x27;&#x27;).length;
-      const ratio = 1 - (printable / Math.max(1,t.length));
-      const alphaNum = (t.match(/[A-Za-z0-9]/g)||[]).length;
-      return ratio + alphaNum/1000;
-    }
-    let best = results[0];
-    let bestScore = -Infinity;
-    for(const r of results){
-      const sc = scoreText(r.text);
-      if(sc&gt;bestScore){ bestScore=sc; best=r; }
-    }
-
-    out.textContent = best.text || &#x27;(decoded to empty string)&#x27;;
-    const items = findHighlights(best.text || &#x27;&#x27;);
-    if(items.length){
-      for(const it of items){
-        const div = document.createElement(&#x27;div&#x27;);
-        div.className = &#x27;found&#x27;;
-        if(it.type===&#x27;email&#x27;){
-          div.innerHTML = &#x27;&lt;strong&gt;Email found:&lt;/strong&gt; &#x27; + escapeHtml(it.value);
-        } else {
-          div.innerHTML = &#x27;&lt;strong&gt;Password label found:&lt;/strong&gt; &#x27; + escapeHtml(it.value) + &#x27;&lt;br&gt;&lt;span class=&quot;small&quot;&gt;(This tool only highlights labels present in pasted text.)&lt;/span&gt;&#x27;;
-        }
-        highlights.appendChild(div);
-      }
-    } else {
-      const p = document.createElement(&#x27;div&#x27;);
-      p.className = &#x27;info&#x27;;
-      p.textContent = &#x27;No email-like strings or explicit &quot;password:&quot;/&quot;pwd=&quot; labels found in decoded text.&#x27;;
-      highlights.appendChild(p);
-    }
-  }
-
-  function escapeHtml(s){
-    return s.replace(/[&amp;&lt;&gt;&quot;&#x27;]/g, c=&gt;({ &#x27;&amp;&#x27;:&#x27;&amp;amp;&#x27;,&#x27;&lt;&#x27;:&#x27;&amp;lt;&#x27;,&#x27;&gt;&#x27;:&#x27;&amp;gt;&#x27;,&#x27;&quot;&#x27;:&#x27;&amp;quot;&#x27;,&quot;&#x27;&quot;:&#x27;&amp;#39;&#x27; }[c]));
-  }
-
-  decodeBtn.addEventListener(&#x27;click&#x27;, ()=&gt;{
-    triesEl.textContent = &#x27;Detection tries: 0&#x27;;
-    const val = binIn.value || &#x27;&#x27;;
-    const results = tryDecodeAll(val);
-    renderResults(results);
-  });
-
-  clearBtn.addEventListener(&#x27;click&#x27;, ()=&gt;{
-    binIn.value=&#x27;&#x27;; out.textContent=&#x27;Output appears here.&#x27;; highlights.innerHTML=&#x27;&#x27;; triesEl.textContent=&#x27;Detection tries: 0&#x27;;
-  });
-
-  downloadBtn.addEventListener(&#x27;click&#x27;, ()=&gt;{
-    const text = out.textContent || &#x27;&#x27;;
-    const filename = prompt(&#x27;Filename to save as (include .txt if you want):&#x27;,&#x27;decoded.txt&#x27;) || &#x27;decoded.txt&#x27;;
-    const blob = new Blob([text], {type:&#x27;text/plain;charset=utf-8&#x27;});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement(&#x27;a&#x27;);
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    setTimeout(()=&gt;{ URL.revokeObjectURL(url); a.remove(); }, 500);
-  });
-
-  binIn.addEventListener(&#x27;keydown&#x27;, (e)=&gt;{
-    if(e.key===&#x27;Enter&#x27; &amp;&amp; (e.ctrlKey||e.metaKey)){ decodeBtn.click(); }
-  });
-})();
+/* Nova study guide (offline, uses DB and REGIONS only) */
+const chatLog=$(&quot;chatLog&quot;),userInput=$(&quot;userInput&quot;),aiPanel=$(&quot;aiPanel&quot;),aiToggle=$(&quot;aiToggle&quot;);
+function setChat(open){aiPanel.classList.toggle(&quot;open&quot;,open);aiToggle.classList.toggle(&quot;open&quot;,open);aiToggle.setAttribute(&quot;aria-expanded&quot;,open);if(open&amp;&amp;matchMedia(&quot;(min-width:561px)&quot;).matches)setTimeout(()=&gt;userInput.focus(),200);}
+aiToggle.onclick=()=&gt;setChat(!aiPanel.classList.contains(&quot;open&quot;));$(&quot;aiClose&quot;).onclick=()=&gt;setChat(false);
+function bubble(html,me){const d=document.createElement(&quot;div&quot;);d.className=&quot;bub &quot;+(me?&quot;me&quot;:&quot;bot&quot;);d.innerHTML=html;chatLog.appendChild(d);chatLog.scrollTop=chatLog.scrollHeight;return d;}
+function norm(s){return (s||&quot;&quot;).toLowerCase().normalize(&quot;NFD&quot;).replace(/[\u0300-\u036f]/g,&quot;&quot;).replace(/&#x27;s\b/g,&quot;&quot;).replace(/[^a-z0-9\s]/g,&quot; &quot;).replace(/\s+/g,&quot; &quot;).trim();}
+const EXTRA={&quot;Alzheimer disease&quot;:[&quot;alzheimer&quot;,&quot;alzheimers&quot;],&quot;Parkinson disease&quot;:[&quot;parkinson&quot;,&quot;parkinsons&quot;],&quot;ALS (amyotrophic lateral sclerosis)&quot;:[&quot;lou gehrig&quot;,&quot;motor neuron disease&quot;],&quot;Multiple sclerosis (MS)&quot;:[&quot;ms&quot;],&quot;Guillain Barré syndrome (GBS)&quot;:[&quot;guillain barre&quot;,&quot;guillain&quot;],&quot;Wallenberg (lateral medullary)&quot;:[&quot;wallenberg&quot;,&quot;lateral medullary&quot;],&quot;Gerstmann (dominant parietal)&quot;:[&quot;gerstmann&quot;],&quot;Hemispatial neglect (nondominant parietal)&quot;:[&quot;neglect&quot;,&quot;hemineglect&quot;],&quot;Broca area lesion&quot;:[&quot;broca&quot;,&quot;broca aphasia&quot;,&quot;expressive aphasia&quot;],&quot;Wernicke area lesion&quot;:[&quot;wernicke&quot;,&quot;wernicke aphasia&quot;,&quot;receptive aphasia&quot;],&quot;Epilepsy (focal impaired awareness)&quot;:[&quot;epilepsy&quot;,&quot;focal seizure&quot;,&quot;temporal lobe epilepsy&quot;],&quot;Absence seizures&quot;:[&quot;absence&quot;,&quot;absence seizure&quot;],&quot;Glioblastoma (GBM)&quot;:[&quot;glioblastoma&quot;,&quot;gbm&quot;],&quot;Acoustic neuroma&quot;:[&quot;vestibular schwannoma&quot;,&quot;acoustic&quot;],&quot;Brain metastases&quot;:[&quot;metastases&quot;,&quot;metastasis&quot;,&quot;mets&quot;],&quot;Epidural hematoma&quot;:[&quot;epidural&quot;],&quot;Subdural hematoma&quot;:[&quot;subdural&quot;],&quot;NPH (normal pressure hydrocephalus)&quot;:[&quot;nph&quot;,&quot;hydrocephalus&quot;],&quot;Myasthenia gravis&quot;:[&quot;myasthenia&quot;,&quot;mg&quot;],&quot;Ischemic stroke (MCA)&quot;:[&quot;mca stroke&quot;,&quot;mca&quot;],&quot;Ischemic stroke (PCA)&quot;:[&quot;pca stroke&quot;,&quot;pca&quot;],&quot;Neuromyelitis optica (NMOSD)&quot;:[&quot;nmo&quot;,&quot;neuromyelitis&quot;],&quot;Dementia with Lewy bodies (DLB)&quot;:[&quot;lewy&quot;,&quot;lewy body&quot;],&quot;Frontotemporal dementia (FTD)&quot;:[&quot;frontotemporal&quot;,&quot;ftd&quot;],&quot;Trigeminal neuralgia&quot;:[&quot;trigeminal&quot;],&quot;Cluster headache&quot;:[&quot;cluster&quot;]};
+const ENTRIES=Object.keys(DB).map(k=&gt;{const al=new Set([norm(k),norm(k.replace(/\(.*?\)/g,&quot;&quot;))]);const p=k.match(/\((.*?)\)/);if(p)al.add(norm(p[1]));(EXTRA[k]||[]).forEach(a=&gt;al.add(norm(a)));return {k,al:[...al].filter(Boolean)};});
+const REG_ALIAS={&quot;Frontal lobe&quot;:[&quot;frontal&quot;],&quot;Parietal lobe&quot;:[&quot;parietal&quot;],&quot;Temporal lobe&quot;:[&quot;temporal&quot;],&quot;Occipital lobe&quot;:[&quot;occipital&quot;],&quot;Cerebellum&quot;:[&quot;cerebellum&quot;,&quot;cerebellar&quot;],&quot;Brainstem&quot;:[&quot;brainstem&quot;,&quot;brain stem&quot;,&quot;medulla&quot;]};
+function regionsOf(k){return Object.keys(REGIONS).filter(r=&gt;REGIONS[r].list.includes(k));}
+function wordIn(q,a){return (&quot; &quot;+q+&quot; &quot;).includes(&quot; &quot;+a+&quot; &quot;);}
+function findTerms(q){let best=[],len=0;ENTRIES.forEach(e=&gt;e.al.forEach(a=&gt;{if(a.length&gt;=2&amp;&amp;wordIn(q,a)){if(a.length&gt;len){best=[e.k];len=a.length;}else if(a.length===len&amp;&amp;!best.includes(e.k))best.push(e.k);}}));
+  if(!best.length&amp;&amp;wordIn(q,&quot;stroke&quot;))best=[&quot;Ischemic stroke (MCA)&quot;,&quot;Ischemic stroke (PCA)&quot;];return best;}
+function findRegion(q){for(const r in REG_ALIAS)if(REG_ALIAS[r].some(a=&gt;wordIn(q,a)))return r;return null;}
+function lev(a,b){const m=[...Array(b.length+1).keys()];for(let i=1;i&lt;=a.length;i++){let p=m[0];m[0]=i;for(let j=1;j&lt;=b.length;j++){const t=m[j];m[j]=Math.min(m[j]+1,m[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t;}}return m[b.length];}
+function suggest(q){const toks=q.split(&quot; &quot;).filter(t=&gt;t.length&gt;2);const sc=ENTRIES.map(e=&gt;{let s=0;e.al.forEach(a=&gt;a.split(&quot; &quot;).forEach(w=&gt;toks.forEach(t=&gt;{if(w.length&gt;2){if(w.startsWith(t)||t.startsWith(w))s+=3;else if(lev(w,t)&lt;=Math.max(1,Math.floor(w.length/4)))s+=2;}})));norm(DB[e.k]).split(&quot; &quot;).forEach(w=&gt;{if(w.length&gt;3&amp;&amp;toks.includes(w))s+=1;});return {k:e.k,s};}).filter(x=&gt;x.s&gt;0).sort((a,b)=&gt;b.s-a.s);return sc.slice(0,3).map(x=&gt;x.k);}
+const sug=k=&gt;&#x27;&lt;button class=&quot;sug&quot; data-q=&quot;What is &#x27;+esc(k)+&#x27;?&quot;&gt;&#x27;+esc(k)+&#x27;&lt;/button&gt;&#x27;;
+function termCard(k,intent){const rs=regionsOf(k);const where=rs.length?&quot;In the atlas it falls under the &quot;+rs.map(r=&gt;&quot;&lt;b&gt;&quot;+r.toLowerCase()+&quot;&lt;/b&gt;&quot;).join(&quot; and &quot;)+&quot;.&quot;:&quot;It isn&#x27;t tied to one region in the atlas.&quot;;
+  if(intent===&quot;where&quot;)return &quot;&lt;b&gt;&quot;+esc(k)+&quot;&lt;/b&gt;&lt;br&gt;&quot;+where+(rs.length?&quot;&lt;br&gt;&quot;+esc(REGIONS[rs[0]].info):&quot;&quot;);
+  if(intent===&quot;symptoms&quot;)return &quot;&lt;b&gt;&quot;+esc(k)+&quot;&lt;/b&gt;&lt;br&gt;Main features: &quot;+esc(DB[k]);
+  return &quot;&lt;b&gt;&quot;+esc(k)+&quot;&lt;/b&gt;&lt;br&gt;&quot;+esc(DB[k])+&quot;&lt;br&gt;&lt;span class=&#x27;muted&#x27; style=&#x27;font-size:13px&#x27;&gt;&quot;+where+&quot;&lt;/span&gt;&quot;;}
+function smartReply(raw){const q=norm(raw);if(!q)return {h:&quot;Type a question to get started.&quot;};
+  if(/^(hi|hello|hey)\b/.test(q))return {h:&quot;Hi. Ask about any of the 31 conditions in the dictionary or one of the six brain regions.&quot;};
+  const intent=/\bwhere\b|\blocat|\bregion\b|\blobe of\b/.test(q)?&quot;where&quot;:/symptom|sign|feature|present|cause/.test(q)?&quot;symptoms&quot;:&quot;what&quot;;
+  const terms=findTerms(q),reg=findRegion(q);
+  if(terms.length===1){const rs=regionsOf(terms[0]);return {h:termCard(terms[0],intent),region:rs[0]};}
+  if(terms.length&gt;1)return {h:&quot;That matches more than one entry.&lt;br&gt;&quot;+terms.map(k=&gt;&quot;• &quot;+termCard(k,intent)).join(&quot;&lt;br&gt;&quot;)};
+  if(reg){const r=REGIONS[reg];return {h:&quot;&lt;b&gt;&quot;+reg+&quot;&lt;/b&gt;&lt;br&gt;&quot;+esc(r.info)+&quot;&lt;br&gt;Conditions listed here:&lt;br&gt;&quot;+r.list.map(k=&gt;DB[k]?sug(k):&#x27;&lt;span class=&quot;tag&quot;&gt;&#x27;+esc(k)+&#x27;&lt;/span&gt;&#x27;).join(&quot;&quot;),region:reg};}
+  const s=suggest(q);if(s.length)return {h:&quot;I don&#x27;t have that one. Did you mean one of these?&lt;br&gt;&quot;+s.map(sug).join(&quot;&quot;)};
+  return {h:&quot;I only cover the conditions in the dictionary and the six regions in the atlas. Try a condition name, an abbreviation like MS or ALS, or a region like the temporal lobe.&lt;br&gt;&quot;+[&quot;Migraine&quot;,&quot;Parkinson disease&quot;,&quot;Meningioma&quot;].map(sug).join(&quot;&quot;)};}
+let busy=false;
+function send(text){text=(text||&quot;&quot;).trim();if(!text||busy)return;busy=true;bubble(esc(text),true);userInput.value=&quot;&quot;;
+  const t=bubble(&#x27;&lt;div class=&quot;typing&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;/div&gt;&#x27;);t.style.padding=&quot;0&quot;;
+  setTimeout(()=&gt;{const r=smartReply(text);t.remove();bubble(r.h);if(r.region)showRegion(r.region,true);busy=false;},650);}
+userInput.addEventListener(&quot;keydown&quot;,e=&gt;{if(e.key===&quot;Enter&quot;){e.preventDefault();send(userInput.value);}});
+$(&quot;sendBtn&quot;).onclick=()=&gt;send(userInput.value);
+chatLog.addEventListener(&quot;click&quot;,e=&gt;{const b=e.target.closest(&quot;.sug&quot;);if(b)send(b.dataset.q);});
+[&quot;What is MS?&quot;,&quot;Where is Broca area lesion?&quot;,&quot;Symptoms of Parkinson&quot;,&quot;Temporal lobe&quot;,&quot;What is GBS?&quot;].forEach(x=&gt;{const b=document.createElement(&quot;button&quot;);b.textContent=x;b.onclick=()=&gt;send(x);$(&quot;chips&quot;).appendChild(b);});
+bubble(&quot;Ask what a condition is, where it sits in the atlas, or what its main features are. Answers come from the Brainapedia dictionary and atlas.&quot;);
+addEventListener(&quot;keydown&quot;,e=&gt;{if(e.key===&quot;Escape&quot;&amp;&amp;aiPanel.classList.contains(&quot;open&quot;)&amp;&amp;!vbAnimating&amp;&amp;!zoomed)setChat(false);});
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>
+<p><a href="https://brainapedia.netlify.app" target="_blank" rel="noopener">Open full site</a></p>
 </div></section>
 
 <section id="contact"><div class="wrap"><h2>Contact</h2>
