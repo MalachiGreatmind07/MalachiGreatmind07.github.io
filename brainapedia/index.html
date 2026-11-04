@@ -65,6 +65,7 @@ main section.block.show{display:block}main section.block.vis{opacity:1}
 .cr-bar{position:absolute;right:12px;top:12px;display:flex;gap:6px}.cr-bar button,.cr-bar select,.cr-ask button{border:0;border-radius:8px;padding:6px 10px;background:rgba(255,255,255,.9);font-size:13px;cursor:pointer}.cr-bar select{max-width:160px}.cr-bar select[hidden],.cr-ask button[hidden]{display:none}
 .cr-ask{position:absolute;left:12px;bottom:14px;display:flex;gap:6px;width:min(400px,calc(50% - 90px))}.cr-ask input{flex:1;min-width:0;border:0;border-radius:8px;padding:8px 10px;font-size:14px}
 .cr-say{position:absolute;left:12px;bottom:56px;max-width:min(460px,70%);background:rgba(255,255,255,.95);color:#0f1b2d;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.45;max-height:35%;overflow:auto}.cr-say[hidden]{display:none}
+.cr-live{position:absolute;left:50%;transform:translateX(-50%);top:58px;max-width:min(520px,80%);background:rgba(10,10,10,.85);color:#fff;padding:8px 14px;border-radius:999px;font-size:14px;border:1px solid #fa8c00;pointer-events:none}.cr-live[hidden]{display:none}.cr-live.note{border-radius:10px;border-color:#555;font-size:13px}#crMic.on{background:#fa8c00;color:#000}
 .cr:fullscreen{height:100vh;border-radius:0}
 @media (pointer:coarse){.cr-ask{width:calc(100% - 190px)}}
 .room-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media (max-width:760px){.room-grid{grid-template-columns:1fr}}
@@ -111,6 +112,8 @@ main section.block.show{display:block}main section.block.vis{opacity:1}
 .qg-levels{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
 .qg-lv{text-align:left;border:1px solid #2f4d85;border-radius:12px;padding:14px;background:rgba(255,255,255,.04);color:#e8f0ff;cursor:pointer;font:inherit}.qg-lv:hover,.qg-lv:focus-visible{border-color:#38bdf8;background:rgba(56,189,248,.12)}
 .qg-lv b{display:block;font-size:15px}.qg-lv small{color:#9fb3d6}.qg-lv .n{font:800 12px system-ui;color:#38bdf8;letter-spacing:.08em}
+.qg-vs{margin-top:18px;border:1px solid #2f4d85;border-radius:12px;padding:14px}.qg-vs h4{margin:0;color:#38bdf8}.qg-vs p{margin:6px 0 10px;font-size:14px}.qg-vsrow{display:flex;gap:8px;margin-top:8px}.qg-vsrow input{flex:1;min-width:0;font:inherit;padding:9px 12px;border-radius:10px;border:0}.qg-vsmsg{min-height:18px;color:#facc15!important}
+.qg-board{display:grid;gap:8px;max-width:420px;margin:12px auto}.qg-board div{display:flex;justify-content:space-between;gap:10px;background:rgba(255,255,255,.06);border:1px solid #2f4d85;border-radius:10px;padding:10px 14px;font:700 16px system-ui}.qg-board div.me{border-color:#facc15}.qg-board.mini{grid-template-columns:1fr 1fr;max-width:none;margin:10px 0 0}.qg-board.mini div{font-size:13px;padding:6px 10px}.qg-count{font:800 64px system-ui;color:#facc15;min-height:70px;margin:6px 0}
 .qg-hs{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}.qg-hs ol{margin:4px 0 0;padding-left:22px;color:#cfe0ff;font-size:14px}.qg-hs h4{margin:0;font-size:14px;color:#facc15}
 .qg-hud{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;font:700 15px system-ui,sans-serif}
 .qg-hud .lives{letter-spacing:3px;color:#f43f5e;font-size:18px}.qg-hud .combo{color:#facc15}.qg-hud .grow{flex:1}
@@ -166,6 +169,43 @@ main section.block.show{display:block}main section.block.vis{opacity:1}
 .nw-modal .x{position:absolute;right:10px;top:10px;z-index:2;background:rgba(0,0,0,.7);color:#fff;border:1px solid #444;border-radius:3px;font:600 12px "JetBrains Mono",monospace;padding:6px 10px;cursor:pointer}
 .nw-modal .go{display:inline-block;margin-top:14px;background:#fa8c00;color:#000;font:700 14px Inter,sans-serif;text-decoration:none;padding:10px 16px;border-radius:3px}
 @media (max-width:760px){.nw-lead{grid-template-columns:1fr}#newsList{padding:16px}#news .nw-top{flex-wrap:wrap}}
+
+#game .fc{background:#0a0a0a;color:#f5f5f5;border-radius:14px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.45);font-family:Inter,system-ui,sans-serif}
+.fc h3{font:700 26px/1.1 "Archivo Narrow",Inter,sans-serif;margin:0}.fc .mono{font:12px "JetBrains Mono",monospace;color:#8a8a8a;text-transform:uppercase;letter-spacing:.08em}
+.fc-top{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;border-bottom:1px solid #262626;padding-bottom:14px;margin-bottom:18px}
+.fc-decks{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.fc-deck{border:1px solid #262626;border-top:2px solid #fa8c00;background:#111;padding:16px;display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center}
+.fc-deck h4{font:700 19px/1.15 "Archivo Narrow",sans-serif;margin:0 0 4px}.fc-deck .acts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.fc-ring{width:64px;height:64px}.fc-ring text{font:700 15px Inter,sans-serif;fill:#f5f5f5}
+.fc-b{border:1px solid #3a3a3a;background:#161616;color:#f5f5f5;border-radius:4px;padding:8px 12px;font:600 13px Inter,sans-serif;cursor:pointer}.fc-b:hover{border-color:#fa8c00}.fc-b.pri{background:#fa8c00;border-color:#fa8c00;color:#000}.fc-b:disabled{opacity:.4;cursor:default}
+.fc-due{color:#fa8c00}
+.fc-stage{perspective:1400px;display:grid;place-items:center;padding:10px 0 4px;touch-action:pan-y}
+.fc-card{position:relative;width:min(640px,100%);height:300px;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.3,1.3,.4,1);cursor:pointer}
+.fc-card.flip{transform:rotateY(180deg)}.fc-card.drag{transition:none}
+.fc-side{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;padding:28px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ background:linear-gradient(160deg,#1b1b1b,#0f0f0f);border:1px solid #2c2c2c;box-shadow:0 18px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
+.fc-side:after{content:"";position:absolute;inset:0;border-radius:14px;background:linear-gradient(115deg,rgba(255,255,255,.06),transparent 40%);pointer-events:none}
+.fc-side .mono{position:absolute;top:14px;left:18px}.fc-front b{font:700 clamp(26px,4vw,40px)/1.1 "Archivo Narrow",sans-serif}
+.fc-back{transform:rotateY(180deg);border-color:#fa8c00}.fc-back p{font:18px/1.55 Inter,sans-serif;color:#e5e5e5;margin:0}
+.fc-rate{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:640px;margin:16px auto 0}.fc-rate button{padding:10px 6px;line-height:1.25}.fc-rate small{display:block;font:11px "JetBrains Mono",monospace;color:#9a9a9a}
+.fc-rate .again{border-color:#b91c1c}.fc-rate .easy{border-color:#15803d}
+.fc-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;max-width:640px;margin:0 auto 10px}
+.fc-done{text-align:center;padding:30px}.fc-tip{text-align:center;margin-top:12px}
+@media (max-width:600px){.fc-card{height:260px}.fc-side{padding:20px}.fc-back p{font-size:16px}}
+
+#donate .dn{background:#0a0a0a;color:#f5f5f5;border-radius:14px;padding:26px;box-shadow:0 20px 50px rgba(0,0,0,.45);font-family:Inter,system-ui,sans-serif}
+.dn .mono{font:12px "JetBrains Mono",monospace;color:#8a8a8a;text-transform:uppercase;letter-spacing:.08em}.dn h2{font:700 40px/1.05 "Archivo Narrow",sans-serif;margin:6px 0 10px;color:#fff}.dn h3{font:700 22px "Archivo Narrow",sans-serif;margin:0 0 10px}
+.dn p{color:#cfcfcf;line-height:1.6}.dn-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:28px;margin-top:20px}
+.dn-box{border:1px solid #262626;border-top:2px solid #fa8c00;background:#111;padding:20px}
+.dn-chips{display:flex;flex-wrap:wrap;gap:8px}.dn-chip{border:1px solid #3a3a3a;background:#161616;color:#f5f5f5;border-radius:999px;padding:8px 16px;font:600 14px Inter,sans-serif;cursor:pointer}.dn-chip[aria-pressed=true]{background:#fa8c00;border-color:#fa8c00;color:#000}
+.dn label{display:block;font:600 13px Inter,sans-serif;margin:14px 0 6px;color:#e5e5e5}.dn input,.dn textarea,.dn select{width:100%;box-sizing:border-box;background:#0d0d0d;border:1px solid #333;color:#fff;border-radius:4px;padding:10px 12px;font:15px Inter,sans-serif}.dn textarea{min-height:110px;resize:vertical}
+.dn input:focus,.dn textarea:focus,.dn select:focus{outline:2px solid #fa8c00;border-color:#fa8c00}.dn .err{color:#f87171;font-size:12px;min-height:16px;display:block;margin-top:4px}.dn .bad{border-color:#f87171}
+.dn-funds li{margin:8px 0;color:#d4d4d4;line-height:1.5}.dn-funds li b{color:#fa8c00}
+.dn-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.dn-btn{border:1px solid #fa8c00;background:transparent;color:#fa8c00;border-radius:4px;padding:11px 18px;font:700 14px Inter,sans-serif;cursor:pointer;text-decoration:none}.dn-btn.pri{background:#fa8c00;color:#000}
+.dn pre{white-space:pre-wrap;background:#0d0d0d;border:1px solid #262626;padding:12px;font:12px/1.5 "JetBrains Mono",monospace;color:#cfcfcf;max-height:220px;overflow:auto}
+.dn-small{font-size:12px;color:#8a8a8a;margin-top:22px;border-top:1px solid #262626;padding-top:12px}
+.dn-thanks{text-align:center;padding:30px 10px}.dn-thanks h3{font-size:30px;color:#fa8c00}
+@media (max-width:760px){.dn-grid{grid-template-columns:1fr}.dn h2{font-size:32px}}
 .news-list{display:grid;gap:12px}.news-item{display:block;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none;transition:border-color .15s,transform .15s}
 .news-item:hover{border-color:var(--brand);transform:translateY(-1px)}.news-item b{display:block;font-size:16px;line-height:1.35;margin-bottom:6px}.news-item small{color:var(--muted)}
 @media (max-width:700px){main.wrap{padding:0 16px 80px}main section.block{margin:28px auto}.tabs a{padding:12px 13px;font-size:14px}}
@@ -333,7 +373,7 @@ body.light footer{color:var(--muted)}
 </header>
 
 <nav class="tabs" id="tabs" aria-label="Sections"><div class="wrap tabrow">
-<a href="#atlas" data-t="atlas">Atlas</a><a href="#dictionary" data-t="dictionary">Dictionary</a><a href="#study" data-t="study">Study Plan</a><a href="#quiz" data-t="quiz">Quiz</a><a href="#game" data-t="game">Flashcards</a><a href="#room" data-t="room">Study Room</a><a href="#library" data-t="library">Library</a><a href="#chat" data-t="chat">Chat</a><a href="#news" data-t="news">Neuro News</a>
+<a href="#atlas" data-t="atlas">Atlas</a><a href="#dictionary" data-t="dictionary">Dictionary</a><a href="#study" data-t="study">Study Plan</a><a href="#quiz" data-t="quiz">Quiz</a><a href="#game" data-t="game">Flashcards</a><a href="#room" data-t="room">Study Room</a><a href="#library" data-t="library">Library</a><a href="#chat" data-t="chat">Chat</a><a href="#news" data-t="news">Neuro News</a><a href="#donate" data-t="donate">Support</a>
 </div></nav>
 <main class="wrap">
 
@@ -477,28 +517,40 @@ body.light footer{color:var(--muted)}
       <div class="qg-modes"><button type="button" class="on" data-mode="classic">Classic</button><button type="button" data-mode="arcade">Signal Arcade</button></div>
       <p id="qgModeInfo">Classic: pick the right answer before the 15 second timer runs out.</p>
       <div class="qg-levels" id="qgLevels"></div>
+      <div class="qg-vs"><h4>Head to head battle</h4><p>Race a friend through the same ten questions. Create a room and share the code, or join theirs.</p>
+        <div class="qg-vsrow"><input id="bName" maxlength="20" placeholder="Your name" aria-label="Your name"><button class="qg-btn primary" id="bCreate" type="button">Create room</button></div>
+        <div class="qg-vsrow"><input id="bCode" maxlength="8" placeholder="Room code" aria-label="Room code" style="text-transform:uppercase"><button class="qg-btn" id="bJoin" type="button">Join</button></div><p class="qg-vsmsg" id="bMsg" aria-live="polite"></p></div>
       <div class="qg-hs"><div><h4>Classic high scores</h4><ol id="qgHS_classic"></ol></div><div><h4>Signal Arcade high scores</h4><ol id="qgHS_arcade"></ol></div></div>
     </div>
     <div class="qg-scr" id="qgPlay" hidden>
       <div class="qg-hud"><span id="qgLv"></span><span class="grow"></span><span class="lives" id="qgLives"></span><span class="combo" id="qgCombo"></span><span id="qgScore"></span><button class="qg-btn" id="qgQuit" type="button">Quit</button></div>
-      <div class="qg-time" id="qgTime"><span></span></div>
+      <div class="qg-board mini" id="bLive" hidden></div><div class="qg-time" id="qgTime"><span></span></div>
       <div class="qg-q" id="qgQ" aria-live="polite"></div>
       <div class="qg-ch" id="qgCh"></div>
       <div class="qg-ex" id="qgEx" aria-live="polite"></div>
     </div>
+    <div class="qg-scr qg-big" id="qgLobby" hidden><h3 id="bLobbyT">Room</h3><p class="stat" id="bLobbyS"></p><div class="qg-board" id="bLobbyBoard"></div><p id="bCount" class="qg-count" aria-live="polite"></p><button class="qg-btn primary" id="bStart" type="button" hidden>Start battle</button> <button class="qg-btn" id="bLeave" type="button">Leave</button></div>
+    <div class="qg-scr qg-big" id="qgWin" hidden><h3 id="bWinT">Winner</h3><div class="qg-board" id="bWinBoard"></div><p id="bWinS"></p><button class="qg-btn primary" id="bRematch" type="button">Rematch</button> <button class="qg-btn" id="bLeave2" type="button">Leave</button></div>
     <div class="qg-scr qg-big" id="qgUp" hidden><h3 id="qgUpTitle">Level up</h3><p class="stat" id="qgUpStat"></p><p id="qgUpNext"></p><button class="qg-btn primary" id="qgUpGo" type="button">Keep going</button></div>
     <div class="qg-scr qg-big" id="qgOver" hidden><h3 id="qgOverTitle">Out of lives</h3><p class="stat" id="qgOverStat"></p><label for="qgName">Name for the high score list</label><br><input id="qgName" maxlength="16" placeholder="Your name"><br><button class="qg-btn primary" id="qgSave" type="button">Save score</button> <button class="qg-btn" id="qgMenuBtn" type="button">Back to levels</button></div>
   </div>
 </section>
 
 <section class="block" id="game">
-  <div class="sec-head"><div><h2>Neuro Game Mode</h2><p>Review with flashcards, then test yourself in the ranking challenge.</p></div>
+  <div class="sec-head"><div><h2>Neuro Game Mode</h2><p>Study decks by topic with spaced repetition, then test yourself in the ranking challenge.</p></div>
     <div class="stats"><span class="chip" id="rankBadge">Rank: not set</span><div class="bar"><span id="rankProgress"></span></div><span class="chip" id="streak">Streak: 0</span><span class="chip" id="score">Score: 0</span></div></div>
   <div class="card"><div class="card-body">
-    <button class="btn primary" id="startFlash">Start flashcards</button>
-    <div id="flashPanel" class="hidden">
-      <div class="flashWrap"><div class="card3d" id="card3d" aria-label="Flashcard. Click to flip."><div class="face" id="face"><div class="front" id="front">Front</div><div class="back" id="back">Back</div></div></div></div>
-      <div class="row"><button class="btn" id="prevCard">‹ Previous</button><button class="btn primary" id="flipCard">Flip</button><button class="btn" id="nextCard">Next ›</button><button class="btn" id="shuffleCards">Shuffle</button></div>
+    <div class="fc" id="fc">
+      <div class="fc-top"><div><span class="mono">Spaced repetition</span><h3>Flashcard decks</h3></div><span class="mono" id="fcSum"></span></div>
+      <div id="fcHome"><div class="fc-decks" id="fcDecks"></div><p class="mono fc-tip">Space flips · 1 Again · 2 Hard · 3 Good · 4 Easy · swipe left for Again, right for Good</p></div>
+      <div id="fcStudy" hidden>
+        <div class="fc-bar"><button class="fc-b" id="fcBack" type="button">All decks</button><span class="mono" id="fcInfo"></span><button class="fc-b" id="fcShuf" type="button">Shuffle</button></div>
+        <div class="fc-stage" id="fcStage"><div class="fc-card" id="fcCard" role="button" tabindex="0" aria-label="Flashcard. Press space to flip."><div class="fc-side fc-front"><span class="mono" id="fcDeckName"></span><b id="fcFront"></b></div><div class="fc-side fc-back"><span class="mono">Answer</span><p id="fcBackTxt"></p></div></div></div>
+        <div class="fc-rate" id="fcRate"><button class="fc-b again" data-r="1">Again<small></small></button><button class="fc-b" data-r="2">Hard<small></small></button><button class="fc-b" data-r="3">Good<small></small></button><button class="fc-b easy" data-r="4">Easy<small></small></button></div>
+        <div class="fc-done" id="fcDone" hidden><h3>Deck clear for now</h3><p class="mono" id="fcDoneTxt"></p><button class="fc-b pri" id="fcDoneBack" type="button">Back to decks</button></div>
+      </div>
+    </div>
+    <div id="flashPanel">
       <hr class="divider">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="margin:0;font-size:16px">Ranking Test</h3><button class="btn primary" id="startRank">Start test</button></div>
       <div id="rankPanel" class="hidden" style="margin-top:12px">
@@ -515,7 +567,13 @@ body.light footer{color:var(--muted)}
     <div class="cr-hint" id="crHint">Click and drag to look around, scroll to zoom a little. Use WASD or the arrow keys to walk, and click a screen to use it. Use the buttons along the bottom of the chalkboard to change lessons or hear one read aloud. On a phone, drag to look and use the arrows to move.</div>
     <div class="cr-fb" id="crFallback" hidden><p>Your browser could not start 3D graphics here, so the classroom is not available. The focus timer and notes below still work.</p></div>
     <div class="cr-pad" aria-label="Move"><span></span><button data-mv="w" aria-label="Forward">&#9650;</button><span></span><button data-mv="a" aria-label="Left">&#9664;</button><button data-mv="s" aria-label="Back">&#9660;</button><button data-mv="d" aria-label="Right">&#9654;</button></div>
-    <div class="cr-bar"><button id="avBtn" type="button" aria-expanded="false" aria-controls="avPanel">Avatar</button><select id="lsVoice" aria-label="Teacher voice" hidden></select><button id="crFull" type="button">Fullscreen</button></div>
+    <div class="cr-bar"><button id="mpBtn" type="button" aria-expanded="false" aria-controls="mpPanel">Multiplayer</button><button id="mpWave" type="button" hidden>Wave</button><button id="avBtn" type="button" aria-expanded="false" aria-controls="avPanel">Avatar</button><select id="lsVoice" aria-label="Teacher voice" hidden></select><button id="crFull" type="button">Fullscreen</button></div>
+    <div class="av-panel" id="mpPanel" hidden><h4>Study together</h4>
+      <label for="mpName">Display name</label><input id="mpName" maxlength="20" placeholder="Pick a name" style="width:100%;padding:6px;border-radius:8px;border:1px solid #cbd5e1;font:inherit">
+      <label for="mpRoom">Room</label><select id="mpRoom"><option value="public">Public classroom</option><option value="private">Private room with a code</option></select>
+      <div id="mpCodeW" hidden><label for="mpCode">Room code</label><div style="display:flex;gap:6px"><input id="mpCode" maxlength="8" placeholder="ABCD1" style="flex:1;min-width:0;padding:6px;border-radius:8px;border:1px solid #cbd5e1;font:inherit;text-transform:uppercase"><button class="btn" id="mpNew" type="button">New code</button></div></div>
+      <p class="av-note" id="mpStatus">Join to see other students walking around the classroom. Your name, avatar and position are shared with people in the same room.</p>
+      <div class="ft-row"><button class="btn primary" id="mpJoin" type="button">Join room</button><button class="btn" id="mpClose" type="button">Close</button></div></div>
     <div class="av-panel" id="avPanel" hidden><h4>Your avatar</h4>
       <label>Skin tone</label><div class="av-sw" id="avSkin"></div>
       <label for="avHair">Hair style</label><select id="avHair"><option value="short">Short</option><option value="buzz">Buzz cut</option><option value="curly">Curly</option><option value="long">Long</option><option value="bun">Bun</option><option value="bald">Bald</option></select>
@@ -525,7 +583,7 @@ body.light footer{color:var(--muted)}
       <p class="av-note">Saved on this device. Look in the mirror on the right wall, or down at your hands.</p>
       <div class="ft-row"><button class="btn primary" id="avDone" type="button">Done</button><button class="btn" id="avReset" type="button">Reset</button></div></div>
     <form class="cr-ask" id="crAsk"><input id="crQ" placeholder="Ask the teacher, or try: teach me synapses, next slide, quiz me" autocomplete="off" aria-label="Ask the teacher"><button type="button" id="crMic" aria-label="Speak your question">Mic</button><button>Ask</button></form>
-    <div class="cr-say" id="crSay" aria-live="polite" hidden></div>
+    <div class="cr-say" id="crSay" aria-live="polite" hidden></div><div class="cr-live" id="crLive" aria-live="polite" hidden></div>
   </div>
   <div class="room-grid">
     <div class="card"><div class="card-head"><h3>Focus timer</h3></div><div class="card-body">
@@ -550,6 +608,29 @@ body.light footer{color:var(--muted)}
   <div class="lib-tools"><input id="libQ" type="search" placeholder="Filter the library, for example stroke or synapse" aria-label="Filter the library"></div>
   <div id="libList"><div class="lib-group"><h3>Start here: how the nervous system is built</h3><p>Plain language overviews to read before anything else.</p><div class="lib-grid"><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/public-education/brain-basics/brain-basics-know-your-brain" target="_blank" rel="noopener"><i>NINDS</i><b>Brain Basics: Know Your Brain</b><span>A friendly tour of the main parts of the brain and what each one does.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/12-introduction" target="_blank" rel="noopener"><i>OpenStax</i><b>Chapter 12: The Nervous System and Nervous Tissue</b><span>Free college textbook chapter from Anatomy and Physiology 2e.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/12-1-basic-structure-and-function-of-the-nervous-system" target="_blank" rel="noopener"><i>OpenStax</i><b>12.1 Basic Structure and Function of the Nervous System</b><span>Central versus peripheral, and what the system actually does.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/12-2-nervous-tissue" target="_blank" rel="noopener"><i>OpenStax</i><b>12.2 Nervous Tissue</b><span>Neurons and the glial cells that support them.</span></a><a class="lib-card" style="--c:#15803d" href="https://www.khanacademy.org/science/biology/human-biology/neuron-nervous-system" target="_blank" rel="noopener"><i>Khan Academy</i><b>Human biology: neurons and the nervous system</b><span>Short videos and articles, good for review.</span></a><a class="lib-card" style="--c:#15803d" href="https://www.khanacademy.org/science/biology/human-biology/neuron-nervous-system/a/overview-of-neuron-structure-and-function" target="_blank" rel="noopener"><i>Khan Academy</i><b>Overview of neuron structure and function</b><span>Dendrites, soma, axon and terminals in one read.</span></a><a class="lib-card" style="--c:#7c3aed" href="https://www.brainfacts.org/" target="_blank" rel="noopener"><i>BrainFacts</i><b>BrainFacts.org</b><span>The Society for Neuroscience site for the public.</span></a></div></div><div class="lib-group"><h3>Signals: action potentials and synapses</h3><p>How neurons fire and talk to each other.</p><div class="lib-grid"><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/12-4-the-action-potential" target="_blank" rel="noopener"><i>OpenStax</i><b>12.4 The Action Potential</b><span>Resting potential, depolarization and propagation.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/12-5-communication-between-neurons" target="_blank" rel="noopener"><i>OpenStax</i><b>12.5 Communication Between Neurons</b><span>Synapses, neurotransmitters and graded potentials.</span></a><a class="lib-card" style="--c:#15803d" href="https://www.khanacademy.org/science/biology/human-biology/neuron-nervous-system/a/depolarization-hyperpolarization-and-action-potentials" target="_blank" rel="noopener"><i>Khan Academy</i><b>Depolarization, hyperpolarization and action potentials</b><span>Walks through the voltage changes step by step.</span></a><a class="lib-card" style="--c:#15803d" href="https://www.khanacademy.org/science/biology/human-biology/neuron-nervous-system/a/the-synapse" target="_blank" rel="noopener"><i>Khan Academy</i><b>The synapse</b><span>Electrical and chemical synapses explained.</span></a><a class="lib-card" style="--c:#15803d" href="https://www.khanacademy.org/science/biology/human-biology/neuron-nervous-system/a/neurotransmitters-their-receptors" target="_blank" rel="noopener"><i>Khan Academy</i><b>Neurotransmitters and receptors</b><span>The main chemical messengers and what they bind to.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/public-education/brain-basics/brain-basics-life-and-death-neuron" target="_blank" rel="noopener"><i>NINDS</i><b>Brain Basics: The Life and Death of a Neuron</b><span>How neurons are born, connect and die.</span></a></div></div><div class="lib-group"><h3>Anatomy of the brain and spinal cord</h3><p>Structures, pathways and how a neuro exam tests them.</p><div class="lib-grid"><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/13-introduction" target="_blank" rel="noopener"><i>OpenStax</i><b>Chapter 13: Anatomy of the Nervous System</b><span>Overview of the brain, spinal cord and nerves.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/13-1-the-embryologic-perspective" target="_blank" rel="noopener"><i>OpenStax</i><b>13.1 The Embryologic Perspective</b><span>How the brain develops, which explains its layout.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/13-2-the-central-nervous-system" target="_blank" rel="noopener"><i>OpenStax</i><b>13.2 The Central Nervous System</b><span>Lobes, deep structures, brainstem and spinal cord.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/13-4-the-peripheral-nervous-system" target="_blank" rel="noopener"><i>OpenStax</i><b>13.4 The Peripheral Nervous System</b><span>Ganglia, cranial nerves and spinal nerves.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/14-introduction" target="_blank" rel="noopener"><i>OpenStax</i><b>Chapter 14: The Somatic Nervous System</b><span>Sensation, motor pathways and reflexes.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/15-introduction" target="_blank" rel="noopener"><i>OpenStax</i><b>Chapter 15: The Autonomic Nervous System</b><span>Sympathetic and parasympathetic control.</span></a><a class="lib-card" style="--c:#ea580c" href="https://openstax.org/books/anatomy-and-physiology-2e/pages/16-introduction" target="_blank" rel="noopener"><i>OpenStax</i><b>Chapter 16: The Neurological Exam</b><span>How clinicians localize a problem at the bedside.</span></a><a class="lib-card" style="--c:#7c3aed" href="https://www.brainfacts.org/brain-anatomy-and-function" target="_blank" rel="noopener"><i>BrainFacts</i><b>Brain Anatomy and Function</b><span>Articles on brain structures and what they do.</span></a><a class="lib-card" style="--c:#7c3aed" href="https://www.brainfacts.org/brain-anatomy-and-function/anatomy" target="_blank" rel="noopener"><i>BrainFacts</i><b>Anatomy</b><span>A focused set of anatomy explainers.</span></a><a class="lib-card" style="--c:#7c3aed" href="https://www.brainfacts.org/3d-brain" target="_blank" rel="noopener"><i>BrainFacts</i><b>3D Brain</b><span>Spin an interactive model and click each structure.</span></a><a class="lib-card" style="--c:#7c3aed" href="https://www.brainfacts.org/thinking-sensing-and-behaving" target="_blank" rel="noopener"><i>BrainFacts</i><b>Thinking, Sensing and Behaving</b><span>Memory, emotion, the senses and sleep.</span></a><a class="lib-card" style="--c:#7c3aed" href="https://www.brainfacts.org/the-brain-facts-book" target="_blank" rel="noopener"><i>BrainFacts</i><b>The Brain Facts Book</b><span>A free primer on the brain and nervous system.</span></a></div></div><div class="lib-group"><h3>Memory and movement disorders</h3><p>Neurodegenerative conditions that show up in the Atlas and Quiz.</p><div class="lib-grid"><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/alzheimers-disease" target="_blank" rel="noopener"><i>NINDS</i><b>Alzheimer disease</b><span>Symptoms, causes, treatment and research.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/frontotemporal-dementia" target="_blank" rel="noopener"><i>NINDS</i><b>Frontotemporal dementia</b><span>Changes in behavior and language.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/parkinsons-disease" target="_blank" rel="noopener"><i>NINDS</i><b>Parkinson disease</b><span>Tremor, rigidity and slowed movement.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/amyotrophic-lateral-sclerosis-als" target="_blank" rel="noopener"><i>NINDS</i><b>Amyotrophic lateral sclerosis (ALS)</b><span>Upper and lower motor neuron disease.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/normal-pressure-hydrocephalus" target="_blank" rel="noopener"><i>NINDS</i><b>Normal pressure hydrocephalus</b><span>Gait, bladder and thinking changes that can improve with a shunt.</span></a><a class="lib-card" style="--c:#7c3aed" href="https://www.brainfacts.org/diseases-and-disorders/neurodegenerative-disorders" target="_blank" rel="noopener"><i>BrainFacts</i><b>Neurodegenerative disorders</b><span>Research stories on these conditions.</span></a></div></div><div class="lib-group"><h3>Myelin, nerve and muscle</h3><p>Immune and neuromuscular conditions.</p><div class="lib-grid"><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/multiple-sclerosis" target="_blank" rel="noopener"><i>NINDS</i><b>Multiple sclerosis</b><span>Demyelination in the brain and spinal cord.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/guillain-barre-syndrome" target="_blank" rel="noopener"><i>NINDS</i><b>Guillain Barré syndrome</b><span>Ascending weakness from nerve inflammation.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/myasthenia-gravis" target="_blank" rel="noopener"><i>NINDS</i><b>Myasthenia gravis</b><span>Fatigable weakness at the nerve and muscle junction.</span></a></div></div><div class="lib-group"><h3>Stroke, injury and language</h3><p>Vascular events, head trauma and aphasia.</p><div class="lib-grid"><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/stroke" target="_blank" rel="noopener"><i>NINDS</i><b>Stroke</b><span>Warning signs, types and treatment.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/traumatic-brain-injury-tbi" target="_blank" rel="noopener"><i>NINDS</i><b>Traumatic brain injury</b><span>From concussion to severe injury.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/aphasia" target="_blank" rel="noopener"><i>NINDS</i><b>Aphasia</b><span>Language loss after damage to the brain.</span></a></div></div><div class="lib-group"><h3>Headache, pain and seizures</h3><p>Episodic conditions and how they are treated.</p><div class="lib-grid"><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/migraine" target="_blank" rel="noopener"><i>NINDS</i><b>Migraine</b><span>Triggers, aura and treatment options.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/trigeminal-neuralgia" target="_blank" rel="noopener"><i>NINDS</i><b>Trigeminal neuralgia</b><span>Sudden, severe facial pain.</span></a><a class="lib-card" style="--c:#0f766e" href="https://www.ninds.nih.gov/health-information/disorders/epilepsy-and-seizures" target="_blank" rel="noopener"><i>NINDS</i><b>Epilepsy and seizures</b><span>Seizure types, diagnosis and treatment.</span></a><a class="lib-card" style="--c:#7c3aed" href="https://www.brainfacts.org/diseases-and-disorders" target="_blank" rel="noopener"><i>BrainFacts</i><b>Diseases and disorders</b><span>Every condition BrainFacts covers, in one place.</span></a></div></div></div><p class="hint" id="libNone" hidden>Nothing matches that yet. Try a broader word.</p>
 </section>
+<section class="block" id="donate"><div class="dn">
+  <span class="mono">Support Brainapedia</span><h2>Help keep Brainapedia free for every student</h2>
+  <p>I built Brainapedia so anyone studying the brain can learn without paywalls or ads. If it has helped you, or you would like your school or organization to back it, tell me what you have in mind below. Nothing is charged on this site. You are only letting me know you are interested, and I will reply personally by email.</p>
+  <div class="dn-grid">
+    <div class="dn-box"><h3>What your support funds</h3><p class="mono" id="dnFundHead">Pick an amount to see where it goes</p><ul class="dn-funds" id="dnFunds"></ul></div>
+    <div class="dn-box" id="dnFormBox">
+      <form id="dnForm" novalidate>
+        <label>Amount you are thinking of</label><div class="dn-chips" id="dnAmts"><button type="button" class="dn-chip" data-a="10" aria-pressed="false">$10</button><button type="button" class="dn-chip" data-a="25" aria-pressed="true">$25</button><button type="button" class="dn-chip" data-a="50" aria-pressed="false">$50</button><button type="button" class="dn-chip" data-a="100" aria-pressed="false">$100</button><button type="button" class="dn-chip" data-a="custom" aria-pressed="false">Custom</button></div>
+        <div id="dnCustomW" hidden><label for="dnCustom">Custom amount in US dollars</label><input id="dnCustom" inputmode="decimal" placeholder="For example 40"><span class="err" id="dnCustomE"></span></div>
+        <label>How often</label><div class="dn-chips" id="dnFreq"><button type="button" class="dn-chip" data-f="one time" aria-pressed="true">One time</button><button type="button" class="dn-chip" data-f="monthly" aria-pressed="false">Monthly</button></div>
+        <label for="dnType">I am reaching out as</label><select id="dnType"><option value="individual">An individual</option><option value="school">A school or organization</option><option value="sponsor">A sponsor or partner</option></select>
+        <label for="dnName">Your name</label><input id="dnName" autocomplete="name"><span class="err" id="dnNameE"></span>
+        <label for="dnOrg" id="dnOrgL" hidden>School or organization name</label><input id="dnOrg" hidden>
+        <label for="dnEmail">Your email</label><input id="dnEmail" type="email" autocomplete="email"><span class="err" id="dnEmailE"></span>
+        <label for="dnMsg">Message (optional)</label><textarea id="dnMsg" placeholder="Anything you would like me to know"></textarea>
+        <div class="dn-btns"><button class="dn-btn pri" type="submit">Write my email</button><a class="dn-btn" href="mailto:BATISTEM0426@students.bowiestate.edu?subject=Brainapedia">Email Malachi</a></div>
+      </form>
+      <div id="dnReview" hidden><h3>Your email is ready</h3><p class="mono" id="dnSubj"></p><pre id="dnBody"></pre><div class="dn-btns"><a class="dn-btn pri" id="dnSend" href="#">Open in my email app</a><button class="dn-btn" type="button" id="dnCopy">Copy email text</button><button class="dn-btn" type="button" id="dnEdit">Edit</button></div><p class="mono" id="dnCopied"></p></div>
+      <div class="dn-thanks" id="dnThanks" hidden><h3>Thank you</h3><p>Your email app should have opened with everything filled in. Once you hit send, I will get back to you personally. If nothing opened, use Copy email text and send it to BATISTEM0426@students.bowiestate.edu.</p><button class="dn-btn" type="button" id="dnAgain">Start over</button></div>
+    </div>
+  </div>
+  <p class="dn-small">Brainapedia is a project of SMPI, Inc., a for profit company. Contributions are not tax deductible. No payment is collected on this site.</p>
+</div></section>
 <section class="block" id="chat">
   <div class="sec-head"><div><h2>Chat</h2><p>Talk through topics with other students in real time. Paste a GIF link to share a GIF.</p></div></div>
   <div id="chatBody"></div>
@@ -562,7 +643,7 @@ body.light footer{color:var(--muted)}
 </section>
 </main>
 
-<style>.legal-dlg{max-width:680px;width:calc(100% - 32px);max-height:85vh;border:0;border-radius:14px;padding:22px 26px;color:#0f1b2d;background:#fff;line-height:1.55}.legal-dlg::backdrop{background:rgba(5,12,25,.6)}.legal-dlg h3{margin:16px 0 4px;font-size:16px}.legal-dlg .x{float:right;border:0;background:#e8effd;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}.foot-legal a{color:inherit;text-decoration:underline;cursor:pointer;margin:0 6px}</style><footer>&copy; 2026 SMPI, Inc. All rights reserved. Brainapedia is owned by SMPI, Inc.<br>Created and developed by Malachi Batiste<br><span class="foot-legal"><a href="#terms" data-legal="dlgTerms">Terms of Use</a> <a href="#privacy" data-legal="dlgPrivacy">Privacy</a></span></footer><dialog class="legal-dlg" id="dlgTerms"><form method="dialog"><button class="x">Close</button></form><h2>Terms of Use</h2><p><small>Last updated November 4, 2026</small></p>
+<style>.legal-dlg{max-width:680px;width:calc(100% - 32px);max-height:85vh;border:0;border-radius:14px;padding:22px 26px;color:#0f1b2d;background:#fff;line-height:1.55}.legal-dlg::backdrop{background:rgba(5,12,25,.6)}.legal-dlg h3{margin:16px 0 4px;font-size:16px}.legal-dlg .x{float:right;border:0;background:#e8effd;border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}.foot-legal a{color:inherit;text-decoration:underline;cursor:pointer;margin:0 6px}</style><footer>&copy; 2026 SMPI, Inc. All rights reserved. Brainapedia is owned by SMPI, Inc.<br>Created and developed by Malachi Batiste<br><span class="foot-legal"><a href="#terms" data-legal="dlgTerms">Terms of Use</a> <a href="#privacy" data-legal="dlgPrivacy">Privacy</a> <a href="#donate">Support</a></span></footer><dialog class="legal-dlg" id="dlgTerms"><form method="dialog"><button class="x">Close</button></form><h2>Terms of Use</h2><p><small>Last updated November 4, 2026</small></p>
 <h3>Who owns this</h3><p>Brainapedia, including its name, written content, quizzes, lessons, artwork, 3D classroom, design and source code, is owned by SMPI, Inc. and protected by copyright and other intellectual property laws.</p>
 <h3>What you may not do</h3><p>You may not copy, scrape, crawl, mirror, republish, sell or redistribute any part of Brainapedia without written permission from SMPI, Inc. Personal study use in your browser is fine.</p>
 <h3>Educational use only</h3><p>Brainapedia is a study tool. It is not medical advice, diagnosis or treatment. If you have a health concern, talk to a doctor or other licensed clinician, and call 911 in an emergency.</p>
@@ -1075,9 +1156,9 @@ function hsList(){["classic","arcade"].forEach(m=>{const l=get("bpArcadeHS_"+m,[
 // game
 let S0=null,iv=0;
 function start(lv){S0={lv,start:lv,lives:3,score:0,combo:0,best:0,right:0,qs:mk(TOPICS[lv]),qi:0,lock:false};$("qgName").value=get("bpArcadeName","");snd("up");scr("qgPlay");next();}
-function hud(){$("qgLv").textContent="Level "+(S0.lv+1)+": "+TOPICS[S0.lv].n;$("qgLives").textContent="\u2665".repeat(S0.lives)+"\u2661".repeat(3-S0.lives);$("qgLives").setAttribute("aria-label",S0.lives+" lives left");$("qgScore").textContent=S0.score.toLocaleString()+" pts";const m=mult();$("qgCombo").textContent=S0.combo>1?"Combo "+S0.combo+"  x"+m:"x"+m;}
+function hud(){$("qgLives").hidden=!!S0.battle;$("bLive").hidden=!S0.battle;$("qgLv").textContent=S0.battle?"Battle":"Level "+(S0.lv+1)+": "+TOPICS[S0.lv].n;$("qgLives").textContent="\u2665".repeat(S0.lives)+"\u2661".repeat(3-S0.lives);$("qgLives").setAttribute("aria-label",S0.lives+" lives left");$("qgScore").textContent=S0.score.toLocaleString()+" pts";const m=mult();$("qgCombo").textContent=S0.combo>1?"Combo "+S0.combo+"  x"+m:"x"+m;}
 function mult(){return Math.min(5,1+Math.floor(S0.combo/3));}
-function next(){clearInterval(iv);if(S0.qi>=S0.qs.length){return levelUp();}const it=S0.qs[S0.qi];S0.lock=false;hud();
+function next(){clearInterval(iv);if(S0.qi>=S0.qs.length){return S0.battle?B.done():levelUp();}const it=S0.qs[S0.qi];S0.lock=false;hud();
  $("qgQ").innerHTML="<small>Question "+(S0.qi+1)+" of "+S0.qs.length+(it.tag?" &middot; "+it.tag:"")+"</small>"+esc(it.q);$("qgEx").textContent="";
  const ch=$("qgCh");ch.innerHTML="";it.c.forEach(c=>{const b=document.createElement("button");b.className="qg-c";b.textContent=c;b.onclick=()=>pick(b,c);ch.appendChild(b);});
  const T=mode==="arcade"?10:15;let left=T,last=performance.now(),lastS=T;const bar=$("qgTime");
@@ -1086,8 +1167,8 @@ function next(){clearInterval(iv);if(S0.qi>=S0.qs.length){return levelUp();}cons
 function pick(b,c){if(S0.lock)return;S0.lock=true;clearInterval(iv);const it=S0.qs[S0.qi],ch=[...$("qgCh").children];const good=c===it.a;
  const fire=()=>{ch.forEach(x=>{if(x.textContent===it.a)x.classList.add("ok");});
   if(good){S0.combo++;S0.best=Math.max(S0.best,S0.combo);S0.right++;const pts=Math.round((100+Math.max(0,S0.left)*10)*mult());S0.score+=pts;snd("good");const [x,y]=center(b);burst(x,y);floatTxt(x,y,"+"+pts);$("qgEx").textContent="Nice. "+it.ex;}
-  else{S0.combo=0;S0.lives--;if(b)b.classList.add("no");snd("bad");$("qgEx").textContent=(c===null?"Time is up. ":"Not quite. ")+"The answer is "+it.a+". "+(it.ex.startsWith(it.a)?"":it.ex);}
-  hud();setTimeout(()=>{if(S0.lives<=0)return over(false);S0.qi++;next();},good?1100:2400);};
+  else{S0.combo=0;if(!S0.battle)S0.lives--;if(b)b.classList.add("no");snd("bad");$("qgEx").textContent=(c===null?"Time is up. ":"Not quite. ")+"The answer is "+it.a+". "+(it.ex.startsWith(it.a)?"":it.ex);}
+  hud();if(S0.battle)B.report(S0.qi+1);setTimeout(()=>{if(S0.battle&&S0.battle.r!==B.round())return;if(S0.lives<=0&&!S0.battle)return over(false);S0.qi++;next();},good?1100:2400);};
  if(mode==="arcade"&&b){const s=G.querySelector(".qg-soma");const [x1,y1]=center(s),[x2,y2]=center(b);snd("zap");bolt(x1,y1,x2,y2,"#fde68a");bolt(x1,y1,x2,y2,"#fff");run();setTimeout(fire,180);}else fire();}
 function levelUp(){const acc=Math.round(S0.right/Math.max(1,S0.qi)*100);snd("up");const last=S0.lv>=TOPICS.length-1;
  $("qgUpTitle").textContent=last?"You cleared every level":"Level up";$("qgUpStat").textContent="Score "+S0.score.toLocaleString()+" \u00b7 best combo "+S0.best+" \u00b7 "+S0.lives+(S0.lives===1?" life":" lives")+" left";
@@ -1096,21 +1177,89 @@ function levelUp(){const acc=Math.round(S0.right/Math.max(1,S0.qi)*100);snd("up"
  $("qgUpGo").onclick=()=>{if(last)return over(true);S0.lv++;S0.qs=mk(TOPICS[S0.lv]);S0.qi=0;S0.right=0;scr("qgPlay");next();};}
 function over(win){clearInterval(iv);if(!win)snd("over");$("qgOverTitle").textContent=win?"Champion":"Out of lives";$("qgOverStat").textContent="Final score "+S0.score.toLocaleString()+". You reached level "+(S0.lv+1)+" with a best combo of "+S0.best+".";scr("qgOver");$("qgSave").disabled=false;}
 $("qgSave").onclick=()=>{const n=($("qgName").value.trim()||"Player").slice(0,16);put("bpArcadeName",n);const k="bpArcadeHS_"+mode,l=get(k,[]);l.push({n,s:S0.score,l:S0.lv+1});l.sort((a,b)=>b.s-a.s);put(k,l.slice(0,5));$("qgSave").disabled=true;hsList();scr("qgMenu");};
+$("qgQuit").addEventListener("click",()=>{if(S0&&S0.battle)B.leave();});
 $("qgMenuBtn").onclick=()=>{hsList();scr("qgMenu");};$("qgQuit").onclick=()=>{clearInterval(iv);scr("qgMenu");};
 addEventListener("resize",()=>{fw=0;});
-window.__qg={start,state:()=>S0,burst};
+
+// Head to head battle (Firestore: battles/{code} and battles/{code}/players/{uid})
+const B=(()=>{let fb=null,code=null,host=false,doc0=null,pl={},un=[],round=0,started=0;const N=10;
+ const msg=t=>$("bMsg").textContent=t;setTimeout(()=>{if(window.bpName)$("bName").value=bpName();},0);
+ const rng=seed=>()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+ function seq(seed){const r0=Math.random;Math.random=rng(seed);try{let all=[];TOPICS.forEach(t=>all=all.concat(mk(t)));return shuffle(all).slice(0,N).map(q=>Object.assign({},q,{c:shuffle(q.c.slice())}));}finally{Math.random=r0;}}
+ const nm=()=>($("bName").value.trim()||"Player").slice(0,20);
+ function board(el,mini){const ids=Object.keys(pl).sort((a,b)=>(pl[b].s||0)-(pl[a].s||0));$(el).innerHTML=ids.map(id=>'<div class="'+(id===fb.uid?'me':'')+'"><span>'+esc(pl[id].n||"Player")+(id===fb.uid?" (you)":"")+'</span><span>'+(pl[id].s||0).toLocaleString()+(mini?"":" pts")+(pl[id].rd===round?" \u00b7 Q"+Math.min(N,pl[id].q||0):"")+'</span></div>').join("")||"<div><span>Waiting for players</span></div>";}
+ async function conn(){if(!fb)fb=await bpFB();return fb;}
+ function cleanup(){un.forEach(u=>u());un=[];code=null;pl={};doc0=null;round=0;}
+ async function enter(c,isHost){const {FS,db,uid}=fb;code=c;host=isHost;
+  await FS.setDoc(FS.doc(db,"battles",c,"players",uid),{n:nm(),s:0,q:0,rd:0,t:FS.serverTimestamp()});
+  un.push(FS.onSnapshot(FS.doc(db,"battles",c),d=>{if(!d.exists()){return;}doc0=d.data();onDoc();},e=>{console.warn("Battle",e.code||e);msg("Could not reach that room.");}));
+  un.push(FS.onSnapshot(FS.collection(db,"battles",c,"players"),q=>{pl={};q.forEach(d=>pl[d.id]=d.data());board("bLobbyBoard");board("bLive",true);board("bWinBoard");check();},e=>console.warn("Battle",e.code||e)));
+  $("bLobbyT").textContent="Room "+c;$("bLobbyS").textContent=host?"Share this code with a friend. Start when they show up.":"Waiting for the host to start.";$("bCount").textContent="";scr("qgLobby");}
+ function onDoc(){$("bStart").hidden=!host||doc0.st==="count"||!doc0.guest;if(doc0.st==="count"&&doc0.rd!==round){round=doc0.rd;countdown(doc0.seed);}}
+ function countdown(seed){clearInterval(iv);scr("qgLobby");$("bStart").hidden=true;let n=3;const go=()=>{if(n>0){$("bCount").textContent=n;snd("tick");n--;setTimeout(go,1000);}else{$("bCount").textContent="Go";snd("up");setTimeout(()=>play(seed),400);}};go();}
+ function play(seed){S0={lv:0,start:0,lives:3,score:0,combo:0,best:0,right:0,qs:seq(seed),qi:0,lock:false,battle:{r:round}};started=Date.now();scr("qgPlay");report(0);next();}
+ async function report(q){if(!fb||!code)return;const {FS,db,uid}=fb;try{await FS.updateDoc(FS.doc(db,"battles",code,"players",uid),{n:nm(),s:S0.score,q,rd:round,t:FS.serverTimestamp()});}catch(e){console.warn("Battle",e.code||e);}}
+ function done(){clearInterval(iv);$("bWinT").textContent="Waiting for your opponent";$("bWinS").textContent="Your score: "+S0.score.toLocaleString();$("bRematch").hidden=true;scr("qgWin");S0.fin=true;S0.finAt=Date.now();setTimeout(check,30500);check();}
+ function check(){if(!S0||!S0.battle||!S0.fin||S0.battle.r!==round)return;const ids=Object.keys(pl);const all=ids.length>=2&&ids.every(id=>pl[id].rd===round&&(pl[id].q||0)>=N);if(!all&&Date.now()-S0.finAt<30000)return;
+  const sorted=ids.filter(id=>pl[id].rd===round).sort((a,b)=>(pl[b].s||0)-(pl[a].s||0));const tie=sorted.length>1&&pl[sorted[0]].s===pl[sorted[1]].s;
+  const me=sorted[0]===fb.uid;$("bWinT").textContent=tie?"It is a tie":me?"You win":(pl[sorted[0]].n||"Your opponent")+" wins";if(me&&!tie){const r=G.getBoundingClientRect();for(let i=0;i<4;i++)setTimeout(()=>burst(r.width*(.2+Math.random()*.6),r.height*.3),i*180);snd("up");}else snd(tie?"good":"over");
+  $("bWinS").textContent=host?"Up for another round?":"The host can start a rematch.";$("bRematch").hidden=!host;S0.fin=false;}
+ async function startRound(){const {FS,db}=fb;try{await FS.updateDoc(FS.doc(db,"battles",code),{st:"count",rd:(doc0.rd||0)+1,seed:Math.floor(Math.random()*2e9),t:FS.serverTimestamp()});}catch(e){console.warn("Battle",e.code||e);msg("Could not start the round.");}}
+ $("bStart").onclick=startRound;$("bRematch").onclick=startRound;
+ $("bCreate").onclick=async()=>{if(!$("bName").value.trim()){msg("Add your name first.");return;}bpSetName(nm());msg("Creating a room...");try{await conn();const {FS,db,uid}=fb;const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let c="";for(let i=0;i<5;i++)c+=A[Math.floor(Math.random()*A.length)];
+  await FS.setDoc(FS.doc(db,"battles",c),{host:uid,guest:"",st:"wait",rd:0,seed:0,t:FS.serverTimestamp()});msg("");await enter(c,true);}catch(e){console.warn("Battle",e.code||e);msg(e.code==="permission-denied"?"Battles are not switched on yet.":"Could not create a room right now.");}};
+ $("bJoin").onclick=async()=>{const c=$("bCode").value.trim().toUpperCase();if(!/^[A-Z0-9]{4,8}$/.test(c)){msg("Room codes are 4 to 8 letters or numbers.");return;}if(!$("bName").value.trim()){msg("Add your name first.");return;}bpSetName(nm());msg("Joining...");
+  try{await conn();const {FS,db,uid}=fb;const ref=FS.doc(db,"battles",c);await FS.runTransaction(db,async tx=>{const d=await tx.get(ref);if(!d.exists())throw {code:"none"};const v=d.data();if(v.host===uid)return;if(v.guest&&v.guest!==uid)throw {code:"full"};tx.update(ref,{guest:uid});});msg("");await enter(c,false);}
+  catch(e){console.warn("Battle",e.code||e);msg(e.code==="none"?"No room with that code.":e.code==="full"?"That room already has two players.":e.code==="permission-denied"?"Battles are not switched on yet.":"Could not join right now.");}};
+ async function leave(){const c=code,f=fb;clearInterval(iv);cleanup();scr("qgMenu");if(f&&c){try{await f.FS.deleteDoc(f.FS.doc(f.db,"battles",c,"players",f.uid));}catch(e){}}}
+ $("bLeave").onclick=leave;$("bLeave2").onclick=leave;
+ return {report,done,leave,round:()=>round,seq};})();
+window.__qg={start,state:()=>S0,burst,B};
 })();
 
 
-/* Flashcards */
-const TERMS=Object.keys(DB).map(k=>({term:k,def:DB[k]}));let idx=0;const face=$("face");
-function loadCard(i){$("front").innerHTML="<b>"+esc(TERMS[i].term)+"</b>";$("back").textContent=TERMS[i].def;face.classList.remove("flip");}
-function flip(){face.classList.toggle("flip");sfx("flip");}
-$("flipCard").onclick=flip;$("card3d").onclick=flip;
-$("nextCard").onclick=()=>{idx=(idx+1)%TERMS.length;loadCard(idx);sfx("next");};
-$("prevCard").onclick=()=>{idx=(idx-1+TERMS.length)%TERMS.length;loadCard(idx);sfx("next");};
-$("shuffleCards").onclick=()=>{shuffle(TERMS);idx=0;loadCard(0);sfx("shuffle");};
-$("startFlash").onclick=()=>{$("flashPanel").classList.remove("hidden");$("startFlash").classList.add("hidden");loadCard(0);sfx("start");};
+/* Flashcards: decks with spaced repetition */
+const TERMS=Object.keys(DB).map(k=>({term:k,def:DB[k]}));
+(()=>{const DK=[["Memory and movement",/Alzheimer|Frontotemporal|Lewy|Parkinson|ALS/],["Myelin and the immune system",/sclerosis \(MS|NMOSD|MOGAD|ADEM|Guillain|Myasthenia/],["Stroke and localization",/stroke|Wallenberg|Gerstmann|neglect|Broca|Wernicke|Conduction/],["Headaches and seizures",/Migraine|Cluster|Trigeminal|Epilepsy|Absence/],["Tumors, bleeds and pressure",/Glioblastoma|Meningioma|Acoustic|metastases|hematoma|NPH/]];
+ const decks=DK.map(([n,re])=>({n,cards:TERMS.filter(t=>re.test(t.term)).map(t=>({id:t.term,f:t.term,b:t.def}))}));
+ decks.push({n:"Brain regions",cards:Object.keys(REGIONS).map(k=>({id:"R:"+k,f:k,b:REGIONS[k].info}))});
+ const used=new Set(decks.flatMap(d=>d.cards.map(c=>c.id)));const rest=TERMS.filter(t=>!used.has(t.term));if(rest.length)decks.push({n:"More conditions",cards:rest.map(t=>({id:t.term,f:t.term,b:t.def}))});
+ let st=null;try{st=localStorage;st.getItem("x");}catch(e){}
+ let SR={};try{SR=JSON.parse(st.getItem("bpSRS")||"{}")||{};}catch(e){SR={};}
+ const save=()=>{try{st&&st.setItem("bpSRS",JSON.stringify(SR));}catch(e){}};
+ const DAY=864e5,now=()=>Date.now();
+ const due=c=>{const r=SR[c.id];return !r||r.due<=now();},learned=c=>{const r=SR[c.id];return r&&r.reps>0&&r.int>=1;},missed=c=>{const r=SR[c.id];return r&&r.miss;};
+ function sched(c,q,peek){const r=Object.assign({ef:2.5,int:0,reps:0,due:0,lapses:0,miss:false},SR[c.id]||{});
+  if(q===1){r.reps=0;r.int=0;r.lapses++;r.miss=true;r.ef=Math.max(1.3,r.ef-.2);r.due=now()+60e3;}
+  else{if(q===2){r.int=r.reps===0?1:Math.max(1,Math.round(r.int*1.2));r.ef=Math.max(1.3,r.ef-.15);}
+   else if(q===3){r.int=r.reps===0?1:r.reps===1?6:Math.round(r.int*r.ef);}
+   else{r.int=r.reps===0?4:r.reps===1?8:Math.round(r.int*r.ef*1.3);r.ef+=.15;}
+   r.reps++;r.due=now()+r.int*DAY;if(q>=3)r.miss=false;}
+  if(!peek){SR[c.id]=r;save();}return r;}
+ const lbl=r=>r.int?r.int+(r.int===1?" day":" days"):"1 min";
+ function ring(p){const C=2*Math.PI*26;return '<svg class="fc-ring" viewBox="0 0 64 64" aria-label="'+p+' percent mastered"><circle cx="32" cy="32" r="26" fill="none" stroke="#262626" stroke-width="6"/><circle cx="32" cy="32" r="26" fill="none" stroke="#fa8c00" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+(C*p/100)+' '+C+'" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle">'+p+'%</text></svg>';}
+ function home(){$("fcStudy").hidden=true;$("fcHome").hidden=false;let td=0;
+  $("fcDecks").innerHTML=decks.map((d,i)=>{const du=d.cards.filter(due).length,m=d.cards.filter(missed).length,p=Math.round(d.cards.filter(learned).length/d.cards.length*100);td+=du;
+   return '<div class="fc-deck">'+ring(p)+'<div><h4>'+esc(d.n)+'</h4><span class="mono">'+d.cards.length+' cards · <span class="fc-due">'+du+' due</span></span></div><div class="acts"><button class="fc-b pri" data-s="'+i+'"'+(du?'':' disabled')+'>'+(du?'Study '+du:'All caught up')+'</button><button class="fc-b" data-m="'+i+'"'+(m?'':' disabled')+'>Study missed ('+m+')</button><button class="fc-b" data-a="'+i+'">Review all</button></div></div>';}).join("");
+  $("fcSum").textContent=td+" cards due today";}
+ $("fcDecks").onclick=e=>{const b=e.target.closest("button");if(!b)return;const i=+(b.dataset.s??b.dataset.m??b.dataset.a);const d=decks[i];start(d,b.dataset.s!=null?d.cards.filter(due):b.dataset.m!=null?d.cards.filter(missed):d.cards.slice());};
+ let D=null,Q=[],cur=null,fl=false,cnt=0;
+ function start(d,cards){D=d;Q=cards.slice();cnt=0;$("fcHome").hidden=true;$("fcStudy").hidden=false;$("fcDeckName").textContent=d.n;show();sfx("start");}
+ function show(){fl=false;const c=$("fcCard");c.classList.remove("flip");c.style.transform="";$("fcDone").hidden=!!Q.length;$("fcStage").hidden=!Q.length;$("fcRate").hidden=!Q.length;
+  if(!Q.length){$("fcDoneTxt").textContent=cnt+" reviews done. Come back when more cards are due.";$("fcInfo").textContent="";return;}
+  cur=Q[0];$("fcFront").textContent=cur.f;setTimeout(()=>{$("fcBackTxt").textContent=cur.b;},fl?0:250);$("fcInfo").textContent=Q.length+" left";
+  [...$("fcRate").children].forEach(b=>{b.querySelector("small").textContent=lbl(sched(cur,+b.dataset.r,true));});}
+ function flip(){fl=!fl;$("fcCard").classList.toggle("flip",fl);sfx("flip");if(fl)$("fcBackTxt").textContent=cur.b;}
+ function rate(q){if(!cur||!Q.length)return;if(!fl){flip();return;}sched(cur,q);cnt++;Q.shift();if(q===1)Q.push(cur);sfx(q===1?"bad":"good");show();}
+ $("fcCard").onclick=()=>{if(!sw.moved)flip();};$("fcRate").onclick=e=>{const b=e.target.closest("[data-r]");if(b)rate(+b.dataset.r);};
+ $("fcBack").onclick=home;$("fcDoneBack").onclick=home;$("fcShuf").onclick=()=>{shuffle(Q);show();sfx("shuffle");};
+ const sw={x:0,moved:false,on:false};const cd=$("fcCard");
+ cd.addEventListener("pointerdown",e=>{sw.x=e.clientX;sw.on=true;sw.moved=false;});
+ cd.addEventListener("pointermove",e=>{if(!sw.on)return;const dx=e.clientX-sw.x;if(Math.abs(dx)>8){sw.moved=true;cd.classList.add("drag");cd.style.transform=(fl?"rotateY(180deg) ":"")+"translateX("+(fl?-dx:dx)+"px) rotate("+dx/30+"deg)";}});
+ const end=e=>{if(!sw.on)return;sw.on=false;cd.classList.remove("drag");const dx=e.clientX-sw.x;cd.style.transform="";if(sw.moved&&Math.abs(dx)>70){if(!fl)flip();else rate(dx<0?1:3);}setTimeout(()=>sw.moved=false,0);};
+ cd.addEventListener("pointerup",end);cd.addEventListener("pointercancel",end);
+ addEventListener("keydown",e=>{if(location.hash!=="#game"||$("fcStudy").hidden||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;if(e.key===" "){e.preventDefault();flip();}else if("1234".includes(e.key)&&e.key)rate(+e.key);});
+ home();window.__fc={decks,SR:()=>SR,rate,flip};})();
 
 /* Ranking test */
 let score=0,streak=0,timerStart=0,qPool=[],total=10;
@@ -1184,8 +1333,35 @@ addEventListener("keydown",e=>{if(e.key==="Escape"&&aiPanel.classList.contains("
 
 /* Library filter */
 $("libQ").addEventListener("input",()=>{const v=$("libQ").value.trim().toLowerCase();let any=0;document.querySelectorAll("#libList .lib-group").forEach(g=>{let n=0;g.querySelectorAll(".lib-card").forEach(c=>{const on=!v||c.textContent.toLowerCase().includes(v)||g.querySelector("h3").textContent.toLowerCase().includes(v);c.hidden=!on;if(on)n++;});g.hidden=!n;any+=n;});$("libNone").hidden=!!any;});
+/* Support form */
+(()=>{const TO="BATISTEM0426@students.bowiestate.edu";let amt="25",freq="one time";
+ const USES={individual:["<b>Hosting</b> that keeps the site fast and online for everyone","<b>New study tools</b> like more quiz levels and flashcard decks","<b>Content</b> such as new lessons, diagrams and reviewed explanations"],
+  school:["<b>Hosting</b> so classes can use the site without interruptions","<b>Classroom features</b> like shared rooms and study groups","<b>Content</b> matched to what your students are learning"],
+  sponsor:["<b>Hosting and reliability</b> as more students join","<b>Bigger features</b> such as multiplayer study and new 3D lessons","<b>Content partnerships</b> that we can plan together"]};
+ const amtTxt=()=>amt==="custom"?(($("dnCustom").value.trim()&&"$"+$("dnCustom").value.trim().replace(/^\$/,""))||"a custom amount"):"$"+amt;
+ function funds(){const t=$("dnType").value;$("dnFundHead").textContent=amtTxt()+(freq==="monthly"?" a month":" one time")+" from "+({individual:"you",school:"your school or organization",sponsor:"a sponsor or partner"})[t]+" helps with";
+  $("dnFunds").innerHTML=USES[t].map(x=>"<li>"+x+"</li>").join("")+(freq==="monthly"?"<li><b>Planning ahead</b>, since steady support lets me schedule work instead of guessing</li>":"");
+  const o=t!=="individual";$("dnOrg").hidden=!o;$("dnOrgL").hidden=!o;}
+ const chips=(id,key,cb)=>$(id).addEventListener("click",e=>{const b=e.target.closest(".dn-chip");if(!b)return;$(id).querySelectorAll(".dn-chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));cb(b.dataset[key]);funds();});
+ chips("dnAmts","a",v=>{amt=v;$("dnCustomW").hidden=v!=="custom";if(v==="custom")$("dnCustom").focus();});chips("dnFreq","f",v=>freq=v);
+ $("dnType").onchange=funds;$("dnCustom").oninput=funds;funds();
+ const err=(id,m)=>{$(id+"E").textContent=m;$(id).classList.toggle("bad",!!m);return !m;};
+ let mail={};
+ $("dnForm").onsubmit=e=>{e.preventDefault();const n=$("dnName").value.trim(),em=$("dnEmail").value.trim(),c=$("dnCustom").value.trim().replace(/^\$/,"");
+  let ok=err("dnName",n.length<2?"Please add your name.":"");ok=err("dnEmail",/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)?"":"Please enter a valid email address.")&&ok;
+  if(amt==="custom")ok=err("dnCustom",/^\d+(\.\d{1,2})?$/.test(c)&&+c>0?"":"Enter an amount in dollars, like 40.")&&ok;
+  if(!ok)return;const t=$("dnType").value,org=$("dnOrg").value.trim(),first=n.split(" ")[0],a=amt==="custom"?"$"+c:"$"+amt,f=freq==="monthly"?a+" a month":"a one time gift of "+a;
+  const who={individual:"a student and supporter",school:"reaching out on behalf of "+(org||"my school or organization"),sponsor:"interested in sponsoring or partnering"+(org?" through "+org:"")}[t];
+  const subj={individual:"Supporting Brainapedia",school:"Brainapedia support from "+(org||"our school"),sponsor:"Brainapedia sponsorship interest"+(org?" from "+org:"")}[t]+" ("+(freq==="monthly"?a+" monthly":a+" one time")+")";
+  const body="Hi Malachi,\n\nMy name is "+n+", and I am "+who+". I would like to support Brainapedia and keep it free for students. I am interested in "+f+".\n\n"+($("dnMsg").value.trim()?$("dnMsg").value.trim()+"\n\n":"")+(t==="individual"?"Could you let me know the best way to send it?":"Could we set up a time to talk about how this could work?")+"\n\nThanks,\n"+n+(org&&t!=="individual"?"\n"+org:"")+"\n"+em;
+  mail={subj,body};$("dnSubj").textContent="Subject: "+subj;$("dnBody").textContent=body;$("dnSend").href="mailto:"+TO+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
+  $("dnForm").hidden=true;$("dnReview").hidden=false;$("dnCopied").textContent="";};
+ $("dnSend").addEventListener("click",()=>{setTimeout(()=>{$("dnReview").hidden=true;$("dnThanks").hidden=false;},400);});
+ $("dnCopy").onclick=async()=>{const t="To: "+TO+"\nSubject: "+mail.subj+"\n\n"+mail.body;try{await navigator.clipboard.writeText(t);$("dnCopied").textContent="Copied. Paste it into any email app.";}catch(e){const r=document.createRange();r.selectNodeContents($("dnBody"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("dnCopied").textContent="Selected. Press Ctrl+C or Cmd+C to copy.";}};
+ $("dnEdit").onclick=()=>{$("dnReview").hidden=true;$("dnForm").hidden=false;};$("dnAgain").onclick=()=>{$("dnThanks").hidden=true;$("dnForm").hidden=false;$("dnForm").reset();funds();};
+})();
 /* Tabs */
-const TABS=["atlas","dictionary","study","quiz","game","room","library","chat","news"];let curTab=null;
+const TABS=["atlas","dictionary","study","quiz","game","room","library","chat","news","donate"];let curTab=null;
 function go(t){if(location.hash!=="#"+t)location.hash=t;showTab(t);}
 function showTab(t){if(!TABS.includes(t))t="atlas";if(t===curTab)return;const prev=curTab;curTab=t;
   document.querySelectorAll("#tabs a").forEach(a=>{const on=a.dataset.t===t;a.classList.toggle("on",on);if(on)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
@@ -1277,6 +1453,14 @@ if(framed||!store){
 <script type="module">
 const rb=document.getElementById("chatBody"),p=document.getElementById("srPanel"),j=document.getElementById("srJoin"),tg=document.getElementById("srToggle"),c=document.getElementById("srClose");
 if(p){rb.append(p);p.classList.add("open");if(tg)tg.remove();if(c)c.remove();}else if(j){rb.append(j);}
+</script>
+<script>
+/* Shared Firebase for multiplayer (lazy) */
+window.bpFB=(()=>{let p=null;return()=>p||(p=(async()=>{const cfg={apiKey:"AIzaSyBK9_dug-YR6T-RBJzNZAxYfq_8EsNKwC8",authDomain:"brainapedia-chat.firebaseapp.com",projectId:"brainapedia-chat",storageBucket:"brainapedia-chat.firebasestorage.app",messagingSenderId:"630494977912",appId:"1:630494977912:web:ec4fd515a6de34e821328d"};
+ const [A,U,FS]=await Promise.all([import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')]);
+ const app=A.initializeApp(cfg,'multiplayer');const cred=await U.signInAnonymously(U.getAuth(app));return {FS,db:FS.getFirestore(app),uid:cred.user.uid};})().catch(e=>{p=null;throw e;}));})();
+window.bpName=()=>{let n='';try{n=localStorage.getItem('bpMpName')||localStorage.getItem('srName')||localStorage.getItem('bpArcadeName')||'';}catch(e){}return n.slice(0,20);};
+window.bpSetName=n=>{try{localStorage.setItem('bpMpName',n.slice(0,20));}catch(e){}};
 </script>
 <script>
 /* Avatar customizer */
@@ -1548,38 +1732,38 @@ const AVG=new THREE.Group();rig.add(AVG);const HANDS=new THREE.Group();cam.add(H
 const avM={skin:M({color:0xc99367,roughness:.7,flatShading:true}),hair:M({color:0x1b1b1b,roughness:.9,flatShading:true}),cloth:M({color:0x2563eb,roughness:.8,flatShading:true}),pants:M({color:0x27324a,roughness:.9,flatShading:true}),shoe:M({color:0x1f2937,roughness:.6}),coat:M({color:0xf8fafc,roughness:.8,flatShading:true}),eye:M({color:0x111111})};
 function mesh(g,m,x,y,z,p){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);if(p)p.add(o);o.castShadow=!MOB;return o;}
 let handL,handR;
-function buildAvatar(A){AVG.clear();HANDS.clear();avM.skin.color.set(A.skin);avM.hair.color.set(A.hairColor);avM.cloth.color.set(A.clothes==='labcoat'?A.clothesColor:A.clothesColor);
- const b=new THREE.Group();AVG.add(b);
+function buildAvatar(A,G_,H_,M_){G_=G_||AVG;M_=M_||avM;if(H_===undefined)H_=HANDS;G_.clear();if(H_)H_.clear();M_.skin.color.set(A.skin);M_.hair.color.set(A.hairColor);M_.cloth.color.set(A.clothes==='labcoat'?A.clothesColor:A.clothesColor);
+ const b=new THREE.Group();G_.add(b);
  // legs and shoes
- [-.1,.1].forEach(x=>{mesh(new THREE.CylinderGeometry(.075,.065,.78,6),avM.pants,x,.43,0,b);mesh(new THREE.BoxGeometry(.13,.08,.26),avM.shoe,x,.04,-.04,b);});
+ [-.1,.1].forEach(x=>{mesh(new THREE.CylinderGeometry(.075,.065,.78,6),M_.pants,x,.43,0,b);mesh(new THREE.BoxGeometry(.13,.08,.26),M_.shoe,x,.04,-.04,b);});
  // torso
- const torsoM=avM.cloth;mesh(new THREE.CylinderGeometry(.2,.17,.6,7),torsoM,0,1.12,0,b);
- if(A.clothes==='labcoat'){const c=mesh(new THREE.CylinderGeometry(.215,.24,.86,7,1,true),avM.coat,0,1.0,0,b);c.material.side=THREE.DoubleSide;
-  [-.07,.07].forEach(x=>{const l=mesh(new THREE.BoxGeometry(.06,.5,.02),avM.coat,x,1.18,-.19,b);l.rotation.z=x>0?-.12:.12;});}
- if(A.clothes==='hoodie'){const h=mesh(new THREE.TorusGeometry(.12,.05,5,8),avM.cloth,0,1.43,.06,b);h.rotation.x=Math.PI/2.4;mesh(new THREE.BoxGeometry(.2,.12,.03),avM.cloth,0,.98,-.18,b);}
- if(A.clothes==='sweater'){mesh(new THREE.CylinderGeometry(.205,.205,.06,7),avM.cloth,0,.85,0,b);mesh(new THREE.CylinderGeometry(.09,.1,.06,7),avM.cloth,0,1.44,0,b);}
- mesh(new THREE.CylinderGeometry(.055,.06,.1,6),avM.skin,0,1.46,0,b);
+ const torsoM=M_.cloth;mesh(new THREE.CylinderGeometry(.2,.17,.6,7),torsoM,0,1.12,0,b);
+ if(A.clothes==='labcoat'){const c=mesh(new THREE.CylinderGeometry(.215,.24,.86,7,1,true),M_.coat,0,1.0,0,b);c.material.side=THREE.DoubleSide;
+  [-.07,.07].forEach(x=>{const l=mesh(new THREE.BoxGeometry(.06,.5,.02),M_.coat,x,1.18,-.19,b);l.rotation.z=x>0?-.12:.12;});}
+ if(A.clothes==='hoodie'){const h=mesh(new THREE.TorusGeometry(.12,.05,5,8),M_.cloth,0,1.43,.06,b);h.rotation.x=Math.PI/2.4;mesh(new THREE.BoxGeometry(.2,.12,.03),M_.cloth,0,.98,-.18,b);}
+ if(A.clothes==='sweater'){mesh(new THREE.CylinderGeometry(.205,.205,.06,7),M_.cloth,0,.85,0,b);mesh(new THREE.CylinderGeometry(.09,.1,.06,7),M_.cloth,0,1.44,0,b);}
+ mesh(new THREE.CylinderGeometry(.055,.06,.1,6),M_.skin,0,1.46,0,b);
  // arms
- const sleeve=A.clothes==='labcoat'?avM.coat:avM.cloth,shortS=A.clothes==='tee';
- [-1,1].forEach(s=>{const a=new THREE.Group();a.position.set(s*.25,1.38,0);a.rotation.z=s*.12;b.add(a);
-  mesh(new THREE.CylinderGeometry(.06,.055,shortS?.22:.55,6),sleeve,0,shortS?-.11:-.275,0,a);if(shortS)mesh(new THREE.CylinderGeometry(.048,.045,.36,6),avM.skin,0,-.4,0,a);
-  mesh(new THREE.IcosahedronGeometry(.055,0),avM.skin,0,-.62,0,a);});
+ const sleeve=A.clothes==='labcoat'?M_.coat:M_.cloth,shortS=A.clothes==='tee';
+ [-1,1].forEach(s=>{const a=new THREE.Group();a.userData.arm=s;a.position.set(s*.25,1.38,0);a.rotation.z=s*.12;b.add(a);
+  mesh(new THREE.CylinderGeometry(.06,.055,shortS?.22:.55,6),sleeve,0,shortS?-.11:-.275,0,a);if(shortS)mesh(new THREE.CylinderGeometry(.048,.045,.36,6),M_.skin,0,-.4,0,a);
+  mesh(new THREE.IcosahedronGeometry(.055,0),M_.skin,0,-.62,0,a);});
  // head
- const hd=new THREE.Group();hd.position.set(0,1.6,0);b.add(hd);mesh(new THREE.IcosahedronGeometry(.13,1),avM.skin,0,0,0,hd);
- [-.045,.045].forEach(x=>mesh(new THREE.BoxGeometry(.025,.025,.01),avM.eye,x,.02,-.122,hd));mesh(new THREE.BoxGeometry(.05,.012,.01),avM.eye,0,-.05,-.118,hd);
- const cap=(r,cut)=>{const m=mesh(new THREE.SphereGeometry(r,9,5,0,Math.PI*2,0,cut),avM.hair,0,0,0,hd);m.rotation.x=.35;return m;};
+ const hd=new THREE.Group();hd.position.set(0,1.6,0);b.add(hd);mesh(new THREE.IcosahedronGeometry(.13,1),M_.skin,0,0,0,hd);
+ [-.045,.045].forEach(x=>mesh(new THREE.BoxGeometry(.025,.025,.01),M_.eye,x,.02,-.122,hd));mesh(new THREE.BoxGeometry(.05,.012,.01),M_.eye,0,-.05,-.118,hd);
+ const cap=(r,cut)=>{const m=mesh(new THREE.SphereGeometry(r,9,5,0,Math.PI*2,0,cut),M_.hair,0,0,0,hd);m.rotation.x=.35;return m;};
  if(A.hair==='short')cap(.142,1.35);
  if(A.hair==='buzz')cap(.136,1.2);
- if(A.hair==='long'){cap(.145,1.45);mesh(new THREE.BoxGeometry(.28,.36,.08),avM.hair,0,-.14,.1,hd);}
- if(A.hair==='bun'){cap(.142,1.4);mesh(new THREE.IcosahedronGeometry(.07,0),avM.hair,0,.1,.15,hd);}
- if(A.hair==='curly'){cap(.14,1.3);for(let i=0;i<10;i++){const a=i/10*Math.PI*2;mesh(new THREE.IcosahedronGeometry(.05,0),avM.hair,Math.cos(a)*.11,.06+Math.sin(i*1.7)*.03,Math.sin(a)*.11+.02,hd);}mesh(new THREE.IcosahedronGeometry(.07,0),avM.hair,0,.13,0,hd);}
+ if(A.hair==='long'){cap(.145,1.45);mesh(new THREE.BoxGeometry(.28,.36,.08),M_.hair,0,-.14,.1,hd);}
+ if(A.hair==='bun'){cap(.142,1.4);mesh(new THREE.IcosahedronGeometry(.07,0),M_.hair,0,.1,.15,hd);}
+ if(A.hair==='curly'){cap(.14,1.3);for(let i=0;i<10;i++){const a=i/10*Math.PI*2;mesh(new THREE.IcosahedronGeometry(.05,0),M_.hair,Math.cos(a)*.11,.06+Math.sin(i*1.7)*.03,Math.sin(a)*.11+.02,hd);}mesh(new THREE.IcosahedronGeometry(.07,0),M_.hair,0,.13,0,hd);}
  // first person hands
- [-1,1].forEach(s=>{const h=new THREE.Group();h.position.set(s*.2,-.26,-.42);h.rotation.set(.9,0,-s*.25);HANDS.add(h);
-  mesh(new THREE.CylinderGeometry(.04,.045,.24,6),shortS?avM.skin:sleeve,0,-.1,0,h).castShadow=false;
-  const p=mesh(new THREE.BoxGeometry(.075,.09,.03),avM.skin,0,.06,0,h);p.castShadow=false;
-  for(let f=0;f<4;f++)mesh(new THREE.BoxGeometry(.016,.045,.02),avM.skin,-.026+f*.017,.125,0,h).castShadow=false;
-  mesh(new THREE.BoxGeometry(.018,.04,.02),avM.skin,s*-.045,.07,-.005,h).rotation.z=s*.6;
-  if(s<0)handL=h;else handR=h;});
+ if(H_)[-1,1].forEach(s=>{const h=new THREE.Group();h.position.set(s*.2,-.26,-.42);h.rotation.set(.9,0,-s*.25);H_.add(h);
+  mesh(new THREE.CylinderGeometry(.04,.045,.24,6),shortS?M_.skin:sleeve,0,-.1,0,h).castShadow=false;
+  const p=mesh(new THREE.BoxGeometry(.075,.09,.03),M_.skin,0,.06,0,h);p.castShadow=false;
+  for(let f=0;f<4;f++)mesh(new THREE.BoxGeometry(.016,.045,.02),M_.skin,-.026+f*.017,.125,0,h).castShadow=false;
+  mesh(new THREE.BoxGeometry(.018,.04,.02),M_.skin,s*-.045,.07,-.005,h).rotation.z=s*.6;
+  if(H_===HANDS){if(s<0)handL=h;else handR=h;}});
 }
 window.__bpAvatarSet=buildAvatar;buildAvatar(window.__bpAvatarCfg?window.__bpAvatarCfg():{skin:'#c99367',hair:'short',hairColor:'#1b1b1b',clothes:'hoodie',clothesColor:'#2563eb'});
 // mirror on the right wall, near the back
@@ -1590,6 +1774,55 @@ window.__bpLookMirror=()=>{if(R.xr.isPresenting)return;rig.position.set(W/2-2.4,
 function avatarAnim(dt){cam.updateMatrixWorld();AVG.position.set(cam.position.x,R.xr.isPresenting?cam.position.y-1.6:0,cam.position.z);AVG.rotation.y=R.xr.isPresenting?new THREE.Euler().setFromQuaternion(cam.quaternion,'YXZ').y:yaw;
  HANDS.visible=!R.xr.isPresenting;const sp=vel.length();if(handL){const w=Math.sin(tt*8)*Math.min(1,sp)*.03;handL.position.y=-.26+w;handR.position.y=-.26-w;}}
 
+
+// multiplayer presence
+const MP=(()=>{const P=document.getElementById('mpPanel'),btn=document.getElementById('mpBtn'),wave=document.getElementById('mpWave'),st=document.getElementById('mpStatus'),jb=document.getElementById('mpJoin'),rs=document.getElementById('mpRoom'),cw=document.getElementById('mpCodeW'),ci=document.getElementById('mpCode'),ni=document.getElementById('mpName');
+ const others=new Map();let fb=null,room=null,unsub=null,lastSent=0,lastBeat=0,sent={x:0,z:0,r:0},myWave=0,myWaveT=0,joining=false,force=false;
+ const codeOk=c=>/^[A-Z0-9]{4,8}$/.test(c);const rid=()=>rs.value==='public'?'public':'p_'+ci.value.trim().toUpperCase();
+ let pref={};try{pref=JSON.parse(localStorage.getItem('bpMp')||'{}')||{};}catch(e){}
+ ni.value=bpName();if(pref.room&&pref.room!=='public'){rs.value='private';ci.value=pref.room.slice(2);}cw.hidden=rs.value!=='private';
+ rs.onchange=()=>{cw.hidden=rs.value!=='private';if(rs.value==='private'&&!ci.value)newCode();};
+ function newCode(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let c='';for(let i=0;i<5;i++)c+=A[Math.floor(Math.random()*A.length)];ci.value=c;}
+ document.getElementById('mpNew').onclick=newCode;
+ btn.onclick=()=>{P.hidden=!P.hidden;btn.setAttribute('aria-expanded',String(!P.hidden));};document.getElementById('mpClose').onclick=()=>{P.hidden=true;btn.setAttribute('aria-expanded','false');};
+ const avCfg=()=>{const A=window.__bpAvatarCfg?window.__bpAvatarCfg():{};return {s:String(A.skin||'#c99367').slice(0,9),h:String(A.hair||'short').slice(0,8),hc:String(A.hairColor||'#1b1b1b').slice(0,9),c:String(A.clothes||'hoodie').slice(0,8),cc:String(A.clothesColor||'#2563eb').slice(0,9)};};
+ const toA=v=>({skin:v.s,hair:v.h,hairColor:v.hc,clothes:v.c,clothesColor:v.cc});
+ function tag(name){const c=document.createElement('canvas');c.width=256;c.height=64;const g=c.getContext('2d');g.fillStyle='rgba(10,10,10,.75)';g.beginPath();g.roundRect(4,8,248,48,24);g.fill();g.strokeStyle='#fa8c00';g.lineWidth=3;g.stroke();g.fillStyle='#fff';g.font='bold 28px system-ui';g.textAlign='center';g.fillText(name,128,42);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,depthTest:true}));sp.scale.set(.8,.2,1);sp.position.y=1.98;return sp;}
+ function mats(){return {skin:M({roughness:.7,flatShading:true}),hair:M({roughness:.9,flatShading:true}),cloth:M({roughness:.8,flatShading:true}),pants:avM.pants,shoe:avM.shoe,coat:M({color:0xf8fafc,roughness:.8,flatShading:true}),eye:avM.eye};}
+ function upsert(id,d){let o=others.get(id);const key=JSON.stringify(d.av||{});
+  if(!o){const g=new THREE.Group();S.add(g);o={g,body:new THREE.Group(),m:mats(),key:'',name:'',x:d.x,z:d.z,r:d.r,wave:0,wt:0};g.add(o.body);g.position.set(d.x,0,d.z);others.set(id,o);}
+  if(key!==o.key){o.key=key;buildAvatar(toA(Object.assign(avCfg(),d.av||{})),o.body,null,o.m);}
+  const nm=String(d.n||'Student').slice(0,20);if(nm!==o.name){if(o.tag)o.g.remove(o.tag);o.tag=tag(nm);o.g.add(o.tag);o.name=nm;}
+  o.tx=+d.x||0;o.tz=+d.z||0;o.tr=+d.r||0;o.seen=Date.now();if(d.w&&d.w!==o.wt){o.wt=d.w;o.wave=2.2;}}
+ function drop(id){const o=others.get(id);if(!o)return;S.remove(o.g);others.delete(id);}
+ function myPos(){cam.getWorldPosition(hp);return {x:Math.round(hp.x*100)/100,z:Math.round(hp.z*100)/100,r:Math.round(yaw*100)/100};}
+ async function write(full){if(!fb||!room)return;const {FS,db,uid}=fb;const p=myPos();sent=p;lastSent=performance.now();
+  const d={n:(ni.value.trim()||'Student').slice(0,20),x:p.x,z:p.z,r:p.r,av:avCfg(),w:myWave,t:FS.serverTimestamp()};
+  try{await FS.setDoc(FS.doc(db,'rooms',room,'players',uid),d);}catch(e){console.warn('Multiplayer write',e.code||e);if(full&&e.code==='permission-denied')fail('The shared classroom is not switched on yet.');}}
+ function fail(m){st.textContent=m;leave(true);}
+ async function join(){if(joining)return;const nm=ni.value.trim();if(nm.length<1){st.textContent='Pick a display name first.';ni.focus();return;}
+  if(rs.value==='private'&&!codeOk(ci.value.trim().toUpperCase())){st.textContent='Room codes are 4 to 8 letters or numbers.';ci.focus();return;}
+  bpSetName(nm);joining=true;st.textContent='Connecting...';
+  try{fb=await bpFB();}catch(e){joining=false;console.warn('Multiplayer',e);st.textContent='Could not connect right now. Try again in a bit.';return;}
+  if(room)await leave(true);room=rid();joining=false;try{localStorage.setItem('bpMp',JSON.stringify({on:true,room}));}catch(e){}
+  const {FS,db}=fb;await write(true);if(!room)return;
+  const since=FS.Timestamp.fromMillis(Date.now()-30000);
+  unsub=FS.onSnapshot(FS.query(FS.collection(db,'rooms',room,'players'),FS.where('t','>',since)),snap=>{snap.docChanges().forEach(ch=>{const id=ch.doc.id;if(id===fb.uid)return;if(ch.type==='removed')drop(id);else upsert(id,ch.doc.data());});},e=>{console.warn('Multiplayer read',e.code||e);fail(e.code==='permission-denied'?'The shared classroom is not switched on yet.':'Lost the connection to the room.');});
+  st.textContent=room==='public'?'You are in the Public classroom.':'You are in private room '+room.slice(2)+'. Share the code with a friend.';jb.textContent='Leave room';wave.hidden=false;}
+ async function leave(quiet){const r=room;room=null;if(unsub){unsub();unsub=null;}[...others.keys()].forEach(drop);wave.hidden=true;jb.textContent='Join room';
+  if(!quiet){try{localStorage.setItem('bpMp',JSON.stringify({on:false,room:r}));}catch(e){}st.textContent='You left the room.';}
+  if(fb&&r){try{await fb.FS.deleteDoc(fb.FS.doc(fb.db,'rooms',r,'players',fb.uid));}catch(e){}}}
+ jb.onclick=()=>room?leave(false):join();
+ wave.onclick=()=>{myWave=Date.now();myWaveT=2.2;force=true;};
+ addEventListener('pagehide',()=>{if(room&&fb)try{fb.FS.deleteDoc(fb.FS.doc(fb.db,'rooms',room,'players',fb.uid));}catch(e){}});
+ if(pref.on&&ni.value)setTimeout(join,1500);
+ function waveArm(body,t){body.traverse(o=>{if(o.userData.arm===-1){o.rotation.z=t>0?-2.6+Math.sin(t*12)*.35:-.12;}});}
+ window.__mp={upsert,others,drop};
+ return {tick(dt){if(myWaveT>0){myWaveT-=dt;waveArm(AVG,myWaveT);if(myWaveT<=0)waveArm(AVG,0);}
+   if(room&&fb){const now=performance.now(),p=myPos();const moved=Math.hypot(p.x-sent.x,p.z-sent.z)>.05||Math.abs(p.r-sent.r)>.05;if(((moved||force)&&now-lastSent>200)||now-lastSent>15000){force=false;write();}}
+   const k=Math.min(1,dt*8),cut=Date.now()-30000;
+   others.forEach((o,id)=>{if(o.seen<cut){drop(id);return;}o.g.position.x+=(o.tx-o.g.position.x)*k;o.g.position.z+=(o.tz-o.g.position.z)*k;let dr=o.tr-o.body.rotation.y;dr=Math.atan2(Math.sin(dr),Math.cos(dr));o.body.rotation.y+=dr*k;
+    if(o.wave>0){o.wave-=dt;waveArm(o.body,o.wave);if(o.wave<=0)waveArm(o.body,0);}});},sync(){if(location.hash!=='#room'&&room){/* keep presence while away briefly */}}};})();
 const mob4=mirror.onBeforeRender;mirror.onBeforeRender=function(...a){const v=HANDS.visible;HANDS.visible=false;mob4.apply(this,a);HANDS.visible=v;};
 // interaction
 const hits=[kiosk.m,card.m,tp.m,board.m,shelf];const ray=new THREE.Raycaster(),nd=new THREE.Vector2();
@@ -1628,28 +1861,54 @@ function loadVoices(){if(!SY)return;const vs=SY.getVoices().filter(v=>/^en/i.tes
 if(SY){loadVoices();SY.addEventListener('voiceschanged',loadVoices);}
 vsel.onchange=()=>{VOICE=SY.getVoices().find(v=>v.name===vsel.value)||VOICE;try{localStorage.setItem('bpVoice',vsel.value);}catch(e){}};
 window.__bpVoice=()=>VOICE;
-function say(t){if(!SY)return;SY.cancel();const u=new SpeechSynthesisUtterance(t);if(VOICE)u.voice=VOICE;u.rate=1;u.onstart=()=>{gest=Math.max(gest,1.2);};SY.speak(u);}
+function say(t){if(!SY)return;SY.cancel();const u=new SpeechSynthesisUtterance(t);if(VOICE)u.voice=VOICE;u.rate=1;u.onstart=()=>{gest=Math.max(gest,1.2);MIC.hold(true);};u.onend=u.onerror=()=>MIC.hold(false);MIC.hold(true);SY.speak(u);}
 const sayBox=document.getElementById('crSay');
-function answer(raw){const q=raw.toLowerCase();let txt;const L=()=>LESSONS[li];
- if(/next/.test(q)){goL(1);txt='Sure. Next up is '+L().t+'.';}
- else if(/prev|go back|last slide/.test(q)){goL(-1);txt='Going back to '+L().t+'.';}
- else if(/quiz/.test(q)){rig.position.set(3.2,0,-D/2+4.4);yaw=-.6;pitch=-.1;txt='Let\u2019s do it. I moved you to the quiz kiosk. Click an answer on the screen and it keeps score.';}
- else{const map=[[/lobe/,'lobe'],[/neuron/,'neuron'],[/action potential/,'action'],[/synap|neurotransmit/,'synap'],[/myelin|conduction|ranvier/,'myelin'],[/brainstem|brain stem|cerebell/,'cerebell'],[/multiple sclerosis|\bms\b/,'sclerosis']];
-  const m=/teach|show|lesson|go to|explain|cover/.test(q)&&map.find(([r])=>r.test(q));const idx=m?LESSONS.findIndex(x=>x.t.toLowerCase().includes(m[1])):-1;
+const NORM=t=>String(t).toLowerCase().replace(/[\u2018\u2019']/g,"").replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;if(!m||!n)return m||n;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c;}return p[n];}
+const near=(w,k)=>w===k||(k.length>3&&w.length>3&&lev(w,k)<=(k.length>7?2:1))||(k.length>4&&w.startsWith(k));
+const hasWord=(ws,k)=>{const kp=k.split(' ');if(kp.length>1)return kp.every(x=>ws.some(w=>near(w,x)));return ws.some(w=>near(w,k));};
+const FILL=/\b(can|could|would|you|please|explain|tell|me|about|what|whats|is|are|a|an|the|teach|show|go|over|lesson|on|define|describe|i|want|to|learn|know|more|of|does|do|mean|meaning|hey|teacher|okay|ok|so|um|uh)\b/g;
+const LT=[[['lobe','lobes','frontal','parietal','temporal','occipital'],'lobe'],[['neuron','neurons','nerve cell'],'neuron'],[['action potential','depolarization','firing'],'action'],[['synapse','synapses','neurotransmitter','neurotransmitters'],'synap'],[['myelin','conduction','ranvier','saltatory'],'myelin'],[['brainstem','brain stem','cerebellum','medulla','pons'],'cerebell'],[['multiple sclerosis','ms'],'sclerosis']];
+const DBK=(typeof DB!=='undefined')?Object.keys(DB):[];
+function findTerm(ws){let best=null,bs=0;for(const k of DBK){const ab=(k.match(/\(([^)]+)\)/)||[])[1];if(ab&&ab.length<=6&&ws.includes(NORM(ab)))return k;
+  const toks=NORM(k.replace(/\(.*?\)/g,'')).split(' ').filter(t=>t.length>2&&!/disease|syndrome|lesion|area/.test(t));if(!toks.length)continue;const hit=toks.filter(t=>ws.some(w=>near(w,t))).length;const sc=hit/toks.length;if(hit&&sc>bs){bs=sc;best=k;}}return bs>=.99||(bs>=.5&&best&&best.split(' ').length>2)?best:null;}
+function answer(raw){const q=NORM(raw),ws=q.split(' ');let txt;const L=()=>LESSONS[li];
+ const isAsk=/\b(explain|tell me|what|whats|teach|show|lesson|define|describe|learn|go over|cover)\b/.test(q);
+ if(/\b(next|go on|continue|keep going|move on|forward|skip)\b/.test(q)&&!/\b(previous|back)\b/.test(q)){goL(1);txt='Sure. Next up is '+L().t+'.';}
+ else if(/\b(prev|previous|go back|back up|last slide|rewind|before that)\b/.test(q)){goL(-1);txt='Going back to '+L().t+'.';}
+ else if(/\b(quiz|test me|question me|check me|practice|drill me)\b/.test(q)||hasWord(ws,'quiz')){rig.position.set(3.2,0,-D/2+4.4);yaw=-.6;pitch=-.1;txt='Let\u2019s do it. I moved you to the quiz kiosk. Click an answer on the screen and it keeps score.';}
+ else{const rest=q.replace(FILL,' ').replace(/\s+/g,' ').trim().split(' ').filter(Boolean);const pool=rest.length?rest:ws;
+  const lt=LT.find(([keys])=>keys.some(k=>hasWord(pool,k)));const idx=lt?LESSONS.findIndex(x=>x.t.toLowerCase().includes(lt[1])):-1;const term=findTerm(pool);
   if(idx>=0){goL(idx-li);txt='Okay, let\u2019s go over '+L().t+'. '+L().p.join('. ')+'.';}
+  else if(term){txt=term.replace(/\(([^)]+)\)/,'or $1')+'. '+DB[term];}
   else if(typeof smartReply==='function'){const d=document.createElement('div');d.innerHTML=smartReply(raw).h.replace(/<br>/g,'. ').replace(/<button[^>]*>([^<]*)<\/button>/g,'$1, ');txt=d.textContent.replace(/\.\s*\./g,'.').replace(/\s+/g,' ').trim();}
   else txt='I\u2019m not sure about that one yet.';}
  sayBox.hidden=false;sayBox.textContent=txt;gest=1.2;say(txt);return txt;}
 window.__askTeacher=answer;
 document.getElementById('crAsk').addEventListener('submit',e=>{e.preventDefault();const i=document.getElementById('crQ');if(i.value.trim())answer(i.value.trim());i.value='';});
-const SRc=window.SpeechRecognition||window.webkitSpeechRecognition,mic=document.getElementById('crMic');
-if(!SRc)mic.hidden=true;else mic.onclick=()=>{const r=new SRc();r.lang='en-US';r.onresult=e=>{const t=e.results[0][0].transcript;document.getElementById('crQ').value=t;answer(t);};mic.textContent='Listening';r.onend=()=>mic.textContent='Mic';r.onerror=()=>mic.textContent='Mic';r.start();};
+const SRc=window.SpeechRecognition||window.webkitSpeechRecognition,mic=document.getElementById('crMic'),liveB=document.getElementById('crLive');
+const MIC=(()=>{let rec=null,want=false,held=false,running=false,denied=false,fails=0;let pref='on';try{pref=localStorage.getItem('bpMic')||'on';}catch(e){}
+ const lab=()=>{mic.textContent=denied?'Mic blocked':(want?'Mic on':'Mic off');mic.setAttribute('aria-pressed',String(want));mic.classList.toggle('on',want&&!denied);};
+ const note=t=>{liveB.hidden=false;liveB.className='cr-live note';liveB.textContent=t;};
+ function make(){rec=new SRc();rec.lang='en-US';rec.continuous=true;rec.interimResults=true;
+  rec.onstart=()=>{running=true;fails=0;};
+  rec.onresult=e=>{let fin='',int='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=t;else int+=t;}
+   if(held)return;liveB.hidden=false;liveB.className='cr-live';liveB.textContent=(fin||int).trim()?'\u201c'+(fin||int).trim()+'\u201d':'';if(fin.trim()){document.getElementById('crQ').value='';answer(fin.trim());setTimeout(()=>{if(!running||held)liveB.hidden=true;},2500);}};
+  rec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){denied=true;want=false;lab();note('Voice input is blocked in this browser, so type your question in the box below instead.');}else fails++;};
+  rec.onend=()=>{running=false;if(want&&!held&&!denied&&location.hash==='#room'&&!document.hidden)setTimeout(go,fails>4?3000:300);};}
+ function go(){if(!want||held||running||denied)return;try{if(!rec)make();rec.start();}catch(e){}}
+ function stop(){try{rec&&rec.abort();}catch(e){}running=false;}
+ if(!SRc){mic.hidden=true;setTimeout(()=>note('Voice input is not supported in this browser, so type your question in the box below.'),800);return {hold(){},start(){},sync(){}};}
+ mic.onclick=()=>{if(denied){denied=false;}want=!want;try{localStorage.setItem('bpMic',want?'on':'off');}catch(e){}lab();if(want)go();else{stop();liveB.hidden=true;}};
+ want=pref!=='off';lab();
+ return {hold(h){held=h;if(h)stop();else setTimeout(go,350);},start(){go();},sync(){if(location.hash==='#room'&&!document.hidden)go();else stop();}};})();
+addEventListener('hashchange',()=>MIC.sync());document.addEventListener('visibilitychange',()=>MIC.sync());MIC.sync();
 document.getElementById('crFull').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else if(box.requestFullscreen)box.requestFullscreen().catch(()=>{});};
 R.xr.addEventListener('sessionstart',()=>{cam.position.y=0;rig.position.y=0;});R.xr.addEventListener('sessionend',()=>{cam.position.y=1.6;});
 function size(){const w=box.clientWidth,h=box.clientHeight;R.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
 new ResizeObserver(size).observe(box);size();
 const clk=new THREE.Clock(),fw=new THREE.Vector3(),rt=new THREE.Vector3();let tt=0;
-function frame(){const dt=Math.min(clk.getDelta(),.05);tt+=dt;brain.rotation.y+=dt*.6;teacherAnim(dt);avatarAnim(dt);brain.position.y=1.35+Math.sin(tt*1.6)*.05;
+function frame(){const dt=Math.min(clk.getDelta(),.05);tt+=dt;brain.rotation.y+=dt*.6;teacherAnim(dt);avatarAnim(dt);MP.tick(dt);brain.position.y=1.35+Math.sin(tt*1.6)*.05;
  if(!R.xr.isPresenting){cam.rotation.set(pitch,yaw,0,'YXZ');}
  const f=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0),s=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0);
  if(R.xr.isPresenting)xrInput();else{cam.getWorldDirection(fw);fw.y=0;fw.normalize();rt.crossVectors(fw,THREE.Object3D.DEFAULT_UP);tv.set(0,0,0).addScaledVector(fw,f).addScaledVector(rt,s);if(tv.lengthSq()>1)tv.normalize();tv.multiplyScalar(2.6);vel.lerp(tv,Math.min(1,dt*10));}
