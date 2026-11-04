@@ -596,9 +596,9 @@ body.light footer{color:var(--muted)}
   &lt;/div&gt;&lt;/div&gt;
 &lt;/section&gt;
 &lt;section class=&quot;block&quot; id=&quot;room&quot;&gt;
-  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Study Room&lt;/h2&gt;&lt;p&gt;Step into a 3D classroom with the study plan on the board, a quiz kiosk, flashcards, and your timer and notes on the wall. Works in VR headsets too.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Study Room&lt;/h2&gt;&lt;p&gt;Step into a 3D classroom with a teacher giving lessons on the chalkboard, a quiz kiosk, flashcards, and your timer and notes on the wall. Works in VR headsets too.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
   &lt;div class=&quot;cr&quot; id=&quot;crView&quot;&gt;&lt;div class=&quot;cr-load&quot;&gt;Loading the classroom...&lt;/div&gt;
-    &lt;div class=&quot;cr-hint&quot; id=&quot;crHint&quot;&gt;Click and drag to look around. Use WASD or the arrow keys to walk, and click a screen to use it. On a phone, drag to look and use the arrows to move.&lt;/div&gt;
+    &lt;div class=&quot;cr-hint&quot; id=&quot;crHint&quot;&gt;Click and drag to look around. Use WASD or the arrow keys to walk, and click a screen to use it. Use the buttons along the bottom of the chalkboard to change lessons or hear one read aloud. On a phone, drag to look and use the arrows to move.&lt;/div&gt;
     &lt;div class=&quot;cr-fb&quot; id=&quot;crFallback&quot; hidden&gt;&lt;p&gt;Your browser could not start 3D graphics here, so the classroom is not available. The focus timer and notes below still work.&lt;/p&gt;&lt;/div&gt;
     &lt;div class=&quot;cr-pad&quot; aria-label=&quot;Move&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;button data-mv=&quot;w&quot; aria-label=&quot;Forward&quot;&gt;&amp;#9650;&lt;/button&gt;&lt;span&gt;&lt;/span&gt;&lt;button data-mv=&quot;a&quot; aria-label=&quot;Left&quot;&gt;&amp;#9664;&lt;/button&gt;&lt;button data-mv=&quot;s&quot; aria-label=&quot;Back&quot;&gt;&amp;#9660;&lt;/button&gt;&lt;button data-mv=&quot;d&quot; aria-label=&quot;Right&quot;&gt;&amp;#9654;&lt;/button&gt;&lt;/div&gt;
   &lt;/div&gt;
@@ -1348,11 +1348,70 @@ const bframe=new THREE.Mesh(new THREE.BoxGeometry(6.2,2.2,.06),M({color:0x7a5532
 const tray=new THREE.Mesh(new THREE.BoxGeometry(6,.05,.12),M({color:0x7a5532}));tray.position.set(0,.88,-D/2+.1);S.add(tray);
 const PLAN={1:&#x27;Foundations and 40 questions&#x27;,2:&#x27;Tracts and lesions and 40 questions&#x27;,3:&#x27;Neuropharmacology and 40 questions&#x27;,4:&#x27;Infection, tumor, and trauma and 40 questions&#x27;,5:&#x27;Vascular neurology and 40 questions&#x27;,6:&#x27;80 to 120 mixed questions&#x27;,0:&#x27;Light review and rest&#x27;};
 const DN=[&#x27;Sunday&#x27;,&#x27;Monday&#x27;,&#x27;Tuesday&#x27;,&#x27;Wednesday&#x27;,&#x27;Thursday&#x27;,&#x27;Friday&#x27;,&#x27;Saturday&#x27;];
-(function(){const {g,pw,ph}=board;g.fillStyle=&#x27;#1f3b2c&#x27;;g.fillRect(0,0,pw,ph);for(let i=0;i&lt;300;i++){g.fillStyle=&#x27;rgba(255,255,255,.03)&#x27;;g.fillRect(Math.random()*pw,Math.random()*ph,40,2);}
- const d=new Date().getDay();g.fillStyle=&#x27;#f3f1e7&#x27;;g.font=&#x27;bold 64px Georgia,serif&#x27;;g.fillText(&#x27;Study Plan&#x27;,60,90);
- g.font=&#x27;40px Georgia,serif&#x27;;g.fillStyle=&#x27;#ffe28a&#x27;;g.fillText(&quot;Today is &quot;+DN[d]+&quot;: &quot;+PLAN[d],60,160);
- g.fillStyle=&#x27;#f3f1e7&#x27;;g.font=&#x27;34px Georgia,serif&#x27;;[&#x27;25 new Anki cards and 150 reviews&#x27;,&#x27;40 to 60 minutes of active reading&#x27;,&#x27;20 to 40 timed, mixed Qbank questions&#x27;,&#x27;10 minutes updating an error log&#x27;,&#x27;15 to 20 minutes of teach back&#x27;].forEach((s,i)=&gt;g.fillText(&#x27;\u2022 &#x27;+s,80,230+i*50));
- g.font=&#x27;30px Georgia,serif&#x27;;g.fillStyle=&#x27;#cfe8d8&#x27;;[1,2,3,4,5,6,0].forEach((k,i)=&gt;{g.fillText(DN[k].slice(0,3)+&#x27;: &#x27;+PLAN[k],860,230+i*40);});board.t.needsUpdate=true;})();
+const LESSONS=[
+{t:&#x27;Brain lobes and their functions&#x27;,p:[&#x27;Frontal lobe: planning, voluntary movement, and speech production (Broca area)&#x27;,&#x27;Parietal lobe: touch and body sense, plus spatial attention&#x27;,&#x27;Temporal lobe: hearing, memory, and language comprehension (Wernicke area)&#x27;,&#x27;Occipital lobe: vision, through the primary visual cortex&#x27;],d:&#x27;lobes&#x27;},
+{t:&#x27;Neuron anatomy&#x27;,p:[&#x27;Dendrites receive signals from other neurons&#x27;,&#x27;The cell body (soma) holds the nucleus&#x27;,&#x27;The axon hillock is where an action potential usually starts&#x27;,&#x27;The axon carries the signal away from the cell body&#x27;,&#x27;Axon terminals release neurotransmitter at the synapse&#x27;],d:&#x27;neuron&#x27;},
+{t:&#x27;The action potential&#x27;,p:[&#x27;A resting neuron sits near minus 70 mV inside&#x27;,&#x27;At threshold, near minus 55 mV, voltage gated Na+ channels open&#x27;,&#x27;Na+ rushes in and the cell depolarizes&#x27;,&#x27;K+ channels open, K+ flows out, and the cell repolarizes&#x27;,&#x27;It is all or none, followed by a brief refractory period&#x27;],d:&#x27;ap&#x27;},
+{t:&#x27;Synapse and neurotransmitters&#x27;,p:[&#x27;The action potential opens voltage gated Ca2+ channels in the terminal&#x27;,&#x27;Ca2+ entry makes vesicles fuse and release transmitter&#x27;,&#x27;Transmitter crosses the cleft and binds receptors on the next cell&#x27;,&#x27;It is cleared by reuptake, enzymes, or diffusion&#x27;,&#x27;Glutamate mainly excites, GABA mainly inhibits&#x27;],d:&#x27;syn&#x27;},
+{t:&#x27;Myelin and nerve conduction&#x27;,p:[&#x27;Myelin is a fatty wrap that insulates the axon&#x27;,&#x27;Oligodendrocytes make it in the CNS, Schwann cells in the PNS&#x27;,&#x27;Nodes of Ranvier are small gaps rich in Na+ channels&#x27;,&#x27;The signal jumps node to node (saltatory conduction)&#x27;,&#x27;Myelin and a wider axon both make conduction faster&#x27;],d:&#x27;myelin&#x27;},
+{t:&#x27;Brainstem and cerebellum&#x27;,p:[&#x27;The brainstem has three parts: midbrain, pons, and medulla&#x27;,&#x27;It holds most cranial nerve nuclei and the long tracts&#x27;,&#x27;The medulla helps control breathing and heart rate&#x27;,&#x27;The cerebellum coordinates movement and balance&#x27;,&#x27;Cerebellar damage causes ataxia and intention tremor on the same side&#x27;],d:&#x27;stem&#x27;},
+{t:&#x27;Disease overview: multiple sclerosis&#x27;,p:[&#x27;The immune system attacks myelin in the brain and spinal cord&#x27;,&#x27;Lesions are spread out in time and in space&#x27;,&#x27;Common signs: optic neuritis, numbness, weakness, and INO&#x27;,&#x27;MRI shows white matter plaques; CSF may show oligoclonal bands&#x27;,&#x27;Most people start with a relapsing remitting course&#x27;],d:&#x27;ms&#x27;}];
+const DAYL={1:0,2:4,3:3,4:6,5:0,6:2,0:1};let li=DAYL[new Date().getDay()],planMode=false,speaking=false;
+const CH=&#x27;&quot;Chalkboard SE&quot;,&quot;Chalkboard&quot;,&quot;Comic Sans MS&quot;,&quot;Segoe Print&quot;,cursive&#x27;;
+function chalk(g,s,x,y){g.save();g.globalAlpha=.35;g.fillText(s,x+1.5,y+1);g.restore();g.fillText(s,x,y);}
+function cline(g,pts,close){g.beginPath();pts.forEach(([x,y],i)=&gt;i?g.lineTo(x,y):g.moveTo(x,y));if(close)g.closePath();g.stroke();}
+function lab(g,s,x,y,tx,ty){g.beginPath();g.moveTo(x,y);g.lineTo(tx,ty);g.stroke();g.font=&#x27;22px &#x27;+CH;chalk(g,s,tx+(tx&lt;x?-g.measureText(s).width-6:6),ty+7);}
+function diagram(g,k){g.save();g.translate(990,110);g.strokeStyle=&#x27;#f3f1e7&#x27;;g.fillStyle=&#x27;#f3f1e7&#x27;;g.lineWidth=3;g.lineCap=&#x27;round&#x27;;const W=480,H=300;
+ if(k===&#x27;lobes&#x27;){g.beginPath();g.ellipse(230,140,170,105,0,Math.PI,0);g.lineTo(400,170);g.quadraticCurveTo(300,250,120,235);g.quadraticCurveTo(50,220,60,140);g.stroke();
+  cline(g,[[215,36],[200,150]]);cline(g,[[110,170],[200,150],[330,160]]);cline(g,[[340,70],[350,190]]);
+  g.beginPath();g.ellipse(330,250,55,28,0,0,7);g.stroke();cline(g,[[250,230],[262,300]]);
+  g.font=&#x27;22px &#x27;+CH;chalk(g,&#x27;Frontal&#x27;,95,120);chalk(g,&#x27;Parietal&#x27;,245,95);chalk(g,&#x27;Temporal&#x27;,150,205);chalk(g,&#x27;Occipital&#x27;,355,145);chalk(g,&#x27;Cerebellum&#x27;,300,255);chalk(g,&#x27;Brainstem&#x27;,195,300);}
+ if(k===&#x27;neuron&#x27;){g.beginPath();g.arc(100,150,38,0,7);g.stroke();g.beginPath();g.arc(100,150,12,0,7);g.fill();[[0,.5],[-1,-.6],[1,-.9],[2.2,.2],[-2.4,.4]].forEach(([a])=&gt;cline(g,[[100+38*Math.cos(a+3),150+38*Math.sin(a+3)],[100+85*Math.cos(a+3),150+85*Math.sin(a+3)]]));
+  cline(g,[[138,150],[420,150]]);for(let i=0;i&lt;4;i++){g.strokeRect(175+i*60,140,46,20);}cline(g,[[420,150],[455,120]]);cline(g,[[420,150],[460,150]]);cline(g,[[420,150],[455,180]]);
+  lab(g,&#x27;Dendrites&#x27;,40,95,10,40);lab(g,&#x27;Soma&#x27;,100,188,60,250);lab(g,&#x27;Nucleus&#x27;,100,150,170,70);lab(g,&#x27;Myelin&#x27;,220,160,230,240);lab(g,&#x27;Axon&#x27;,330,150,330,95);lab(g,&#x27;Terminals&#x27;,455,180,400,250);}
+ if(k===&#x27;ap&#x27;){cline(g,[[40,270],[40,20]]);cline(g,[[40,270],[460,270]]);g.setLineDash([8,8]);cline(g,[[40,175],[460,175]]);g.setLineDash([]);
+  g.beginPath();g.moveTo(40,210);g.lineTo(140,210);g.quadraticCurveTo(160,205,170,175);g.lineTo(205,45);g.lineTo(250,215);g.quadraticCurveTo(270,250,300,235);g.quadraticCurveTo(340,212,460,210);g.stroke();
+  g.font=&#x27;20px &#x27;+CH;chalk(g,&#x27;mV&#x27;,5,30);chalk(g,&#x27;time&#x27;,400,298);lab(g,&#x27;Threshold&#x27;,90,175,60,150);lab(g,&#x27;Depolarization&#x27;,185,110,240,70);lab(g,&#x27;Repolarization&#x27;,232,160,290,140);lab(g,&#x27;Hyperpolarization&#x27;,280,240,270,295);lab(g,&#x27;Resting&#x27;,80,210,80,245);}
+ if(k===&#x27;syn&#x27;){g.beginPath();g.moveTo(60,20);g.lineTo(60,90);g.quadraticCurveTo(40,170,120,170);g.lineTo(340,170);g.quadraticCurveTo(420,170,400,90);g.lineTo(400,20);g.stroke();
+  cline(g,[[40,205],[420,205]]);[[150,110],[200,135],[260,100],[310,130]].forEach(([x,y])=&gt;{g.beginPath();g.arc(x,y,16,0,7);g.stroke();});[[180,188],[230,192],[280,186]].forEach(([x,y])=&gt;{g.beginPath();g.arc(x,y,4,0,7);g.fill();});
+  [140,220,300].forEach(x=&gt;g.strokeRect(x,205,24,16));lab(g,&#x27;Presynaptic terminal&#x27;,60,60,90,50);lab(g,&#x27;Vesicle&#x27;,310,130,360,110);lab(g,&#x27;Synaptic cleft&#x27;,330,188,360,250);lab(g,&#x27;Receptors&#x27;,152,222,110,270);lab(g,&#x27;Postsynaptic cell&#x27;,420,205,300,295);}
+ if(k===&#x27;myelin&#x27;){cline(g,[[20,150],[470,150]]);for(let i=0;i&lt;4;i++){g.beginPath();g.ellipse(80+i*110,150,45,26,0,0,7);g.stroke();}
+  g.font=&#x27;28px &#x27;+CH;[[135,110],[245,110],[355,110]].forEach(([x,y],i)=&gt;{g.beginPath();g.moveTo(x-50,y);g.quadraticCurveTo(x,y-50,x+60,y);g.stroke();chalk(g,&#x27;\u2192&#x27;,x+50,y+8);});
+  lab(g,&#x27;Myelin sheath&#x27;,80,176,60,250);lab(g,&#x27;Node of Ranvier&#x27;,190,150,230,250);lab(g,&#x27;Axon&#x27;,470,150,440,200);g.font=&#x27;22px &#x27;+CH;chalk(g,&#x27;Signal jumps node to node&#x27;,120,40);}
+ if(k===&#x27;stem&#x27;){g.beginPath();g.ellipse(170,50,150,45,0,Math.PI*.95,Math.PI*2.05);g.stroke();cline(g,[[140,80],[150,130],[140,175],[150,215],[150,280]]);cline(g,[[210,80],[205,130],[220,175],[205,215],[200,280]]);
+  cline(g,[[140,130],[205,130]]);cline(g,[[140,175],[220,175]]);g.beginPath();g.ellipse(240,175,40,35,0,0,7);g.stroke();g.beginPath();g.ellipse(320,200,85,55,0,0,7);g.stroke();for(let i=0;i&lt;4;i++)cline(g,[[250,175+i*14],[395,190+i*14]]);
+  lab(g,&#x27;Cerebrum&#x27;,170,30,360,30);lab(g,&#x27;Midbrain&#x27;,145,105,40,110);lab(g,&#x27;Pons&#x27;,240,175,90,165);lab(g,&#x27;Medulla&#x27;,150,240,60,240);lab(g,&#x27;Cerebellum&#x27;,370,180,420,120);}
+ if(k===&#x27;ms&#x27;){cline(g,[[20,120],[470,120]]);for(let i=0;i&lt;4;i++){if(i===2){g.setLineDash([6,10]);}g.beginPath();g.ellipse(70+i*115,120,48,26,0,0,7);g.stroke();g.setLineDash([]);}
+  g.font=&#x27;22px &#x27;+CH;lab(g,&#x27;Healthy myelin&#x27;,70,146,40,210);lab(g,&#x27;Damaged myelin&#x27;,300,146,320,210);chalk(g,&#x27;Signal slows or fails&#x27;,250,270);g.beginPath();g.ellipse(300,120,62,40,0,0,7);g.stroke();}
+ g.restore();}
+function drawBoard(){const {g,pw,ph}=board;g.fillStyle=&#x27;#1f3b2c&#x27;;g.fillRect(0,0,pw,ph);for(let i=0;i&lt;300;i++){g.fillStyle=&#x27;rgba(255,255,255,.03)&#x27;;g.fillRect((i*137)%pw,(i*71)%ph,40,2);}
+ g.fillStyle=&#x27;rgba(255,255,255,.025)&#x27;;g.beginPath();g.ellipse(1100,300,320,90,-.2,0,7);g.fill();
+ const d=new Date().getDay();
+ if(planMode){g.fillStyle=&#x27;#f3f1e7&#x27;;g.font=&#x27;bold 60px &#x27;+CH;chalk(g,&#x27;Study Plan&#x27;,60,80);g.font=&#x27;36px &#x27;+CH;g.fillStyle=&#x27;#ffe28a&#x27;;chalk(g,&quot;Today is &quot;+DN[d]+&quot;: &quot;+PLAN[d],60,140);
+  g.fillStyle=&#x27;#f3f1e7&#x27;;g.font=&#x27;30px &#x27;+CH;[&#x27;25 new Anki cards and 150 reviews&#x27;,&#x27;40 to 60 minutes of active reading&#x27;,&#x27;20 to 40 timed, mixed Qbank questions&#x27;,&#x27;10 minutes updating an error log&#x27;,&#x27;15 to 20 minutes of teach back&#x27;].forEach((s,i)=&gt;chalk(g,&#x27;\u2022 &#x27;+s,80,200+i*44));
+  g.font=&#x27;26px &#x27;+CH;g.fillStyle=&#x27;#cfe8d8&#x27;;[1,2,3,4,5,6,0].forEach((k,i)=&gt;chalk(g,DN[k].slice(0,3)+&#x27;: &#x27;+PLAN[k],880,200+i*36));}
+ else{const L=LESSONS[li];g.fillStyle=&#x27;#ffe28a&#x27;;g.font=&#x27;24px &#x27;+CH;chalk(g,&#x27;Lesson &#x27;+(li+1)+&#x27; of &#x27;+LESSONS.length+(li===DAYL[d]?&#x27;  \u2022  today\u2019s topic&#x27;:&#x27;&#x27;),60,46);
+  g.fillStyle=&#x27;#f3f1e7&#x27;;g.font=&#x27;bold 50px &#x27;+CH;chalk(g,L.t,60,104);g.strokeStyle=&#x27;#f3f1e7&#x27;;g.lineWidth=3;cline(g,[[60,118],[60+Math.min(880,g.measureText(L.t).width),122]]);
+  g.font=&#x27;27px &#x27;+CH;let y=170;L.p.forEach(s=&gt;{y=wrapC(g,&#x27;\u2022 &#x27;+s,70,y,900,32)+12;});diagram(g,L.d);}
+ const bt=[[&#x27;\u2039 Prev&#x27;,40],[planMode?&#x27;Lessons&#x27;:&#x27;Study Plan&#x27;,330],[speaking?&#x27;Stop reading&#x27;:&#x27;Read aloud&#x27;,1020],[&#x27;Next \u203a&#x27;,1340]];g.font=&#x27;bold 28px &#x27;+CH;
+ bt.forEach(([s,x])=&gt;{g.strokeStyle=&#x27;#ffe28a&#x27;;g.lineWidth=3;g.strokeRect(x,452,x===1340||x===40?160:220,48);g.fillStyle=&#x27;#ffe28a&#x27;;chalk(g,s,x+18,486);});board.t.needsUpdate=true;}
+function wrapC(g,s,x,y,w,lh){const ws=s.split(&#x27; &#x27;);let l=&#x27;&#x27;;for(const t of ws){const tt=l?l+&#x27; &#x27;+t:t;if(g.measureText(tt).width&gt;w&amp;&amp;l){chalk(g,l,x,y);y+=lh;l=&#x27;   &#x27;+t;}else l=tt;}chalk(g,l,x,y);return y+lh;}
+function speak(){const ss=window.speechSynthesis;if(!ss)return;ss.cancel();if(!speaking||planMode){speaking=false;return;}const L=LESSONS[li];const u=new SpeechSynthesisUtterance(L.t+&#x27;. &#x27;+L.p.join(&#x27;. &#x27;).replace(/\+/g,&#x27; &#x27;).replace(/Ca2/g,&#x27;calcium&#x27;).replace(/mV/g,&#x27;millivolts&#x27;)+&#x27;.&#x27;);u.rate=.95;u.onend=()=&gt;{speaking=false;drawBoard();};ss.speak(u);}
+let gest=0;function goL(n){planMode=false;li=(li+n+LESSONS.length)%LESSONS.length;gest=1.2;drawBoard();if(speaking)speak();}
+board.m.userData.hit=uv=&gt;{const x=uv.x*1536,y=(1-uv.y)*512;if(y&lt;440)return;if(x&lt;200)goL(-1);else if(x&gt;1340)goL(1);else if(x&gt;330&amp;&amp;x&lt;550){planMode=!planMode;gest=1.2;if(planMode&amp;&amp;speaking){speaking=false;speechSynthesis.cancel();}drawBoard();}else if(x&gt;1020&amp;&amp;x&lt;1240){speaking=!speaking&amp;&amp;!planMode&amp;&amp;!!window.speechSynthesis;speak();drawBoard();}};
+drawBoard();
+// teacher figure
+const teach=new THREE.Group();teach.position.set(-3.35,0,-D/2+.75);teach.rotation.y=.5;S.add(teach);
+const skin=M({color:0xc58c63,roughness:.7,flatShading:true}),suit=M({color:0x34405a,roughness:.8,flatShading:true}),pant=M({color:0x262a33,roughness:.9,flatShading:true});
+[-.1,.1].forEach(x=&gt;{const l=new THREE.Mesh(new THREE.CylinderGeometry(.07,.06,.85,6),pant);l.position.set(x,.43,0);teach.add(l);});
+const torso=new THREE.Mesh(new THREE.CylinderGeometry(.2,.16,.65,7),suit);torso.position.y=1.18;teach.add(torso);
+const head=new THREE.Mesh(new THREE.IcosahedronGeometry(.13,1),skin);head.position.y=1.65;teach.add(head);
+const hair=new THREE.Mesh(new THREE.SphereGeometry(.135,7,5,0,Math.PI*2,0,1.2),M({color:0x1b1410,flatShading:true}));hair.position.y=1.67;teach.add(hair);
+function arm(x){const p=new THREE.Group();p.position.set(x,1.45,0);const a=new THREE.Mesh(new THREE.CylinderGeometry(.05,.045,.6,6),suit);a.position.y=-.3;p.add(a);const h=new THREE.Mesh(new THREE.IcosahedronGeometry(.05,0),skin);h.position.y=-.62;p.add(h);teach.add(p);return p;}
+const armL=arm(-.25),armR=arm(.25);armL.rotation.z=-.08;
+const pointer=new THREE.Mesh(new THREE.CylinderGeometry(.008,.008,.45,5),M({color:0xe8d9b0}));pointer.position.set(0,-.85,0);armR.add(pointer);
+function teacherAnim(dt){gest=Math.max(0,gest-dt);const k=gest&gt;0?Math.sin(Math.min(1,(1.2-gest)/.3)*Math.PI/2)*(gest&lt;.3?gest/.3:1):0;
+ armR.rotation.z=.15+k*1.9;armR.rotation.x=-k*.5;head.rotation.y=.2+k*.5;teach.position.y=Math.sin(tt*1.5)*.005;armL.rotation.x=Math.sin(tt*1.2)*.05;}
 // teacher desk + brain
 const td=new THREE.Group();td.position.set(0,0,-D/2+2.2);S.add(td);
 const tdTop=new THREE.Mesh(new THREE.BoxGeometry(2.4,.08,1),M({color:0x8a5a35,roughness:.5}));tdTop.position.y=.78;tdTop.castShadow=tdTop.receiveShadow=true;td.add(tdTop);
@@ -1404,7 +1463,7 @@ label(&#x27;Quiz kiosk&#x27;,4.6,2.35,-D/2+2.7,-.6);label(&#x27;Flashcards&#x27;
 const shelf=new THREE.Mesh(new THREE.BoxGeometry(3,1.6,.35),woodM);shelf.position.set(-2,.8,D/2-.2);S.add(shelf);
 const cols=[0xb91c1c,0x2563eb,0x15803d,0xd97706,0x6d28d9];for(let r=0;r&lt;3;r++)for(let i=0;i&lt;14;i++){const b=new THREE.Mesh(new THREE.BoxGeometry(.16,.36+((i*7)%5)*.03,.25),M({color:cols[(i+r)%5],roughness:.8}));b.position.set(-3.3+i*.19,.25+r*.5+.18,D/2-.25);S.add(b);}
 // interaction
-const hits=[kiosk.m,card.m,tp.m];const ray=new THREE.Raycaster(),nd=new THREE.Vector2();
+const hits=[kiosk.m,card.m,tp.m,board.m];const ray=new THREE.Raycaster(),nd=new THREE.Vector2();
 let yaw=0,pitch=-.08,drag=null,moved=0;const el=R.domElement;el.style.touchAction=&#x27;none&#x27;;
 el.addEventListener(&#x27;pointerdown&#x27;,e=&gt;{drag={x:e.clientX,y:e.clientY,id:e.pointerId};moved=0;el.setPointerCapture(e.pointerId);});
 el.addEventListener(&#x27;pointermove&#x27;,e=&gt;{if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved+=Math.abs(dx)+Math.abs(dy);drag.x=e.clientX;drag.y=e.clientY;yaw-=dx*.005;pitch=Math.max(-1.3,Math.min(1.3,pitch-dy*.005));});
@@ -1422,7 +1481,7 @@ R.xr.addEventListener(&#x27;sessionstart&#x27;,()=&gt;{cam.position.y=0;rig.posi
 function size(){const w=box.clientWidth,h=box.clientHeight;R.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
 new ResizeObserver(size).observe(box);size();
 const clk=new THREE.Clock(),fw=new THREE.Vector3(),rt=new THREE.Vector3();let tt=0;
-function frame(){const dt=Math.min(clk.getDelta(),.05);tt+=dt;brain.rotation.y+=dt*.6;brain.position.y=1.35+Math.sin(tt*1.6)*.05;
+function frame(){const dt=Math.min(clk.getDelta(),.05);tt+=dt;brain.rotation.y+=dt*.6;teacherAnim(dt);brain.position.y=1.35+Math.sin(tt*1.6)*.05;
  if(!R.xr.isPresenting){cam.rotation.set(pitch,yaw,0,&#x27;YXZ&#x27;);}
  const f=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0),s=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0);
  if(f||s){cam.getWorldDirection(fw);fw.y=0;fw.normalize();rt.crossVectors(fw,THREE.Object3D.DEFAULT_UP);rig.position.addScaledVector(fw,f*dt*2.4).addScaledVector(rt,s*dt*2.4);rig.position.x=Math.max(-W/2+.5,Math.min(W/2-.5,rig.position.x));rig.position.z=Math.max(-D/2+1.2,Math.min(D/2-.5,rig.position.z));}
