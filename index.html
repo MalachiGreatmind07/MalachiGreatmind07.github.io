@@ -258,6 +258,14 @@ main section.block{display:none;margin:44px auto;opacity:0;transition:opacity .2
 main section.block.show{display:block}main section.block.vis{opacity:1}
 #chatBody #srPanel{position:static;display:flex;width:auto;max-width:none;height:calc(100vh - 230px);min-height:420px;max-height:none;box-shadow:none}
 #chatBody #srJoin{position:static;display:inline-block}
+.cr{position:relative;height:min(70vh,620px);min-height:380px;border-radius:var(--radius);overflow:hidden;background:#1b2433;margin-bottom:20px;box-shadow:var(--shadow)}
+.cr canvas{display:block;width:100%;height:100%;cursor:grab}.cr canvas:active{cursor:grabbing}
+.cr-load{position:absolute;inset:0;display:grid;place-items:center;color:#cbd5e1;font-size:15px}.cr.ready .cr-load{display:none}
+.cr-hint{position:absolute;left:12px;top:12px;max-width:min(420px,80%);background:rgba(15,27,45,.72);color:#fff;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.4;pointer-events:none}
+.cr-fb[hidden]{display:none}.cr-fb{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:#e2e8f0}
+.cr .cr-vr{bottom:14px!important}
+.cr-pad{position:absolute;right:12px;bottom:60px;display:none;grid-template-columns:repeat(3,44px);gap:6px}.cr-pad button{height:44px;border-radius:10px;border:0;background:rgba(255,255,255,.8);font-size:18px;touch-action:none}
+@media (pointer:coarse){.cr-pad{display:grid}}
 .room-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media (max-width:760px){.room-grid{grid-template-columns:1fr}}
 .ft-time{font:700 56px/1.1 system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:1px}.ft-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 #roomNotes{width:100%;min-height:220px;resize:vertical;font:inherit;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);box-sizing:border-box}
@@ -402,6 +410,7 @@ body.light footer{color:var(--muted)}
 @media (max-width:560px){.hero{padding:36px 16px 18px}.unit b{font-size:15px}.countMsg{font-size:12.5px;text-align:center}.legend{position:static;margin:8px}.stage{display:block;padding-top:8px}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 &lt;/style&gt;
+&lt;script type=&quot;importmap&quot;&gt;{&quot;imports&quot;:{&quot;three&quot;:&quot;https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js&quot;,&quot;three/addons/&quot;:&quot;https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/&quot;}}&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
 
@@ -587,7 +596,12 @@ body.light footer{color:var(--muted)}
   &lt;/div&gt;&lt;/div&gt;
 &lt;/section&gt;
 &lt;section class=&quot;block&quot; id=&quot;room&quot;&gt;
-  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Study Room&lt;/h2&gt;&lt;p&gt;A quiet corner for focused sessions. Set a timer and keep your notes in one place.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Study Room&lt;/h2&gt;&lt;p&gt;Step into a 3D classroom with the study plan on the board, a quiz kiosk, flashcards, and your timer and notes on the wall. Works in VR headsets too.&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;cr&quot; id=&quot;crView&quot;&gt;&lt;div class=&quot;cr-load&quot;&gt;Loading the classroom...&lt;/div&gt;
+    &lt;div class=&quot;cr-hint&quot; id=&quot;crHint&quot;&gt;Click and drag to look around. Use WASD or the arrow keys to walk, and click a screen to use it. On a phone, drag to look and use the arrows to move.&lt;/div&gt;
+    &lt;div class=&quot;cr-fb&quot; id=&quot;crFallback&quot; hidden&gt;&lt;p&gt;Your browser could not start 3D graphics here, so the classroom is not available. The focus timer and notes below still work.&lt;/p&gt;&lt;/div&gt;
+    &lt;div class=&quot;cr-pad&quot; aria-label=&quot;Move&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;button data-mv=&quot;w&quot; aria-label=&quot;Forward&quot;&gt;&amp;#9650;&lt;/button&gt;&lt;span&gt;&lt;/span&gt;&lt;button data-mv=&quot;a&quot; aria-label=&quot;Left&quot;&gt;&amp;#9664;&lt;/button&gt;&lt;button data-mv=&quot;s&quot; aria-label=&quot;Back&quot;&gt;&amp;#9660;&lt;/button&gt;&lt;button data-mv=&quot;d&quot; aria-label=&quot;Right&quot;&gt;&amp;#9654;&lt;/button&gt;&lt;/div&gt;
+  &lt;/div&gt;
   &lt;div class=&quot;room-grid&quot;&gt;
     &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;card-head&quot;&gt;&lt;h3&gt;Focus timer&lt;/h3&gt;&lt;/div&gt;&lt;div class=&quot;card-body&quot;&gt;
       &lt;div id=&quot;ftTime&quot; class=&quot;ft-time&quot; aria-live=&quot;polite&quot;&gt;25:00&lt;/div&gt;&lt;p class=&quot;hint&quot; id=&quot;ftLabel&quot;&gt;Focus block&lt;/p&gt;
@@ -1269,6 +1283,159 @@ if(p){rb.append(p);p.classList.add(&quot;open&quot;);if(tg)tg.remove();if(c)c.re
  function paint(items){box.innerHTML=items.slice(0,24).map(i=&gt;&#x27;&lt;a class=&quot;news-item&quot; href=&quot;&#x27;+e(safe(i.l))+&#x27;&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;&lt;b&gt;&#x27;+e(i.t)+&#x27;&lt;/b&gt;&lt;small&gt;&#x27;+e(i.s)+(fmt(i.d)?&#x27; · &#x27;+fmt(i.d):&#x27;&#x27;)+&#x27;&lt;/small&gt;&lt;/a&gt;&#x27;).join(&quot;&quot;);}
  window.loadNews=()=&gt;load(false);document.getElementById(&quot;newsRefresh&quot;).onclick=()=&gt;load(true);
  if(location.hash===&quot;#news&quot;)load(false);})();
+&lt;/script&gt;
+&lt;script type=&quot;text/plain&quot; id=&quot;crSrc&quot;&gt;import * as THREE from &#x27;three&#x27;;
+import {VRButton} from &#x27;three/addons/webxr/VRButton.js&#x27;;
+const box=document.getElementById(&#x27;crView&#x27;),fb=document.getElementById(&#x27;crFallback&#x27;);
+function hasGL(){try{const c=document.createElement(&#x27;canvas&#x27;);return !!(window.WebGLRenderingContext&amp;&amp;(c.getContext(&#x27;webgl2&#x27;)||c.getContext(&#x27;webgl&#x27;)));}catch(e){return false;}}
+if(!hasGL()){fb.hidden=false;document.getElementById(&#x27;crHint&#x27;).hidden=true;}else{
+const MOB=matchMedia(&#x27;(pointer:coarse)&#x27;).matches||innerWidth&lt;700;
+const R=new THREE.WebGLRenderer({antialias:!MOB,powerPreference:&#x27;high-performance&#x27;});
+R.setPixelRatio(Math.min(devicePixelRatio,MOB?1.5:2));R.outputColorSpace=THREE.SRGBColorSpace;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;
+R.shadowMap.enabled=!MOB;R.shadowMap.type=THREE.PCFSoftShadowMap;R.xr.enabled=true;
+box.prepend(R.domElement);R.domElement.setAttribute(&#x27;aria-label&#x27;,&#x27;3D classroom&#x27;);
+const vb=VRButton.createButton(R);vb.classList.add(&#x27;cr-vr&#x27;);box.appendChild(vb);
+const S=new THREE.Scene();S.background=new THREE.Color(0xdfe8f2);S.fog=new THREE.Fog(0xdfe8f2,22,40);
+const cam=new THREE.PerspectiveCamera(70,1,0.05,60);const rig=new THREE.Group();rig.add(cam);S.add(rig);
+rig.position.set(0,0,6);cam.position.y=1.6;
+const W=12,D=16,H=3.6;
+function tex(w,h,draw,rep){const c=document.createElement(&#x27;canvas&#x27;);c.width=w;c.height=h;const g=c.getContext(&#x27;2d&#x27;);draw(g,w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;if(rep){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep[0],rep[1]);}t.userData={c,g};return t;}
+const floorT=tex(512,512,(g,w,h)=&gt;{for(let i=0;i&lt;8;i++){const y=i*h/8;g.fillStyle=`hsl(30,${38+((i*7)%9)}%,${42+((i*13)%8)}%)`;g.fillRect(0,y,w,h/8);g.fillStyle=&#x27;rgba(0,0,0,.25)&#x27;;g.fillRect(0,y,w,2);const o=(i%2)*w/2;g.fillRect(o,y,2,h/8);for(let k=0;k&lt;40;k++){g.fillStyle=&#x27;rgba(60,30,10,.08)&#x27;;g.fillRect(Math.random()*w,y+Math.random()*h/8,60+Math.random()*90,1);}}},[6,8]);
+const M=(o)=&gt;new THREE.MeshStandardMaterial(o);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(W,D),M({map:floorT,roughness:.75}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;S.add(floor);
+const ceil=new THREE.Mesh(new THREE.PlaneGeometry(W,D),M({color:0xf4f4f0,roughness:1}));ceil.rotation.x=Math.PI/2;ceil.position.y=H;S.add(ceil);
+const wallM=M({color:0xe9e2d4,roughness:.95});
+function wall(w,x,z,ry){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,H),wallM);m.position.set(x,H/2,z);m.rotation.y=ry;m.receiveShadow=true;S.add(m);return m;}
+wall(W,0,-D/2,0);wall(W,0,D/2,Math.PI);wall(D,W/2,0,-Math.PI/2);
+// left wall with windows: build from pieces
+const lw=new THREE.Group();S.add(lw);
+const wins=[-5,-1.5,2,5.5];
+const lwBase=new THREE.Mesh(new THREE.BoxGeometry(.1,1,D),wallM);lwBase.position.set(-W/2,.5,0);S.add(lwBase);
+const lwTop=new THREE.Mesh(new THREE.BoxGeometry(.1,H-2.8,D),wallM);lwTop.position.set(-W/2,(2.8+H)/2,0);S.add(lwTop);
+let prev=-D/2;wins.forEach(z=&gt;{const a=z-1.1,b=z+1.1;const p=new THREE.Mesh(new THREE.BoxGeometry(.1,1.8,a-prev),wallM);p.position.set(-W/2,1.9,(a+prev)/2);S.add(p);prev=b;});
+{const p=new THREE.Mesh(new THREE.BoxGeometry(.1,1.8,D/2-prev),wallM);p.position.set(-W/2,1.9,(D/2+prev)/2);S.add(p);}
+const skyT=tex(256,256,(g,w,h)=&gt;{const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,&#x27;#8ec5ff&#x27;);gr.addColorStop(.7,&#x27;#dff0ff&#x27;);gr.addColorStop(.72,&#x27;#7fb069&#x27;);gr.addColorStop(1,&#x27;#5d8c4a&#x27;);g.fillStyle=gr;g.fillRect(0,0,w,h);g.fillStyle=&#x27;rgba(255,255,255,.8)&#x27;;for(let i=0;i&lt;5;i++){g.beginPath();g.ellipse(40+i*50,40+(i%2)*30,30,10,0,0,7);g.fill();}});
+const frameM=M({color:0xffffff,roughness:.5});
+wins.forEach(z=&gt;{const s=new THREE.Mesh(new THREE.PlaneGeometry(2.2,1.8),new THREE.MeshBasicMaterial({map:skyT}));s.position.set(-W/2-.06,1.9,z);s.rotation.y=Math.PI/2;S.add(s);
+ [[0,.9],[0,-.9]].forEach(([_,y])=&gt;{const f=new THREE.Mesh(new THREE.BoxGeometry(.16,.08,2.3),frameM);f.position.set(-W/2+.02,1.9+y,z);S.add(f);});
+ [-1.1,0,1.1].forEach(dz=&gt;{const f=new THREE.Mesh(new THREE.BoxGeometry(.16,1.8,.06),frameM);f.position.set(-W/2+.02,1.9,z+dz);S.add(f);});
+ const sill=new THREE.Mesh(new THREE.BoxGeometry(.3,.05,2.4),frameM);sill.position.set(-W/2+.12,.98,z);S.add(sill);});
+// baseboard
+const bbM=M({color:0x6b5640});[[W,0,-D/2+.02,0],[W,0,D/2-.02,0],[D,W/2-.02,0,1]].forEach(([w,x,z,r])=&gt;{const b=new THREE.Mesh(new THREE.BoxGeometry(r?.04:w,.12,r?w:.04),bbM);b.position.set(x,.06,z);S.add(b);});
+// lights
+S.add(new THREE.HemisphereLight(0xffffff,0x8a7560,.9));
+const sun=new THREE.DirectionalLight(0xfff2dd,1.6);sun.position.set(-10,6,2);sun.target.position.set(0,0,0);S.add(sun,sun.target);
+if(!MOB){sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-9,right:9,top:9,bottom:-9,near:1,far:30});sun.shadow.bias=-.0005;}
+const panM=new THREE.MeshStandardMaterial({color:0xffffff,emissive:0xffffff,emissiveIntensity:1.2});
+for(let x=-3;x&lt;=3;x+=3)for(let z=-5;z&lt;=5;z+=3.4){const p=new THREE.Mesh(new THREE.BoxGeometry(1.2,.04,.6),panM);p.position.set(x,H-.02,z);S.add(p);}
+[[-3,-3],[3,-3],[-3,3],[3,3]].forEach(([x,z])=&gt;{const l=new THREE.PointLight(0xfff6e8,MOB?5:7,12,1.6);l.position.set(x,H-.3,z);S.add(l);});
+// student desks + chairs (instanced)
+const deskTopG=new THREE.BoxGeometry(1.1,.05,.6),legG=new THREE.BoxGeometry(.05,.72,.05),seatG=new THREE.BoxGeometry(.45,.05,.45),backG=new THREE.BoxGeometry(.45,.45,.04);
+const pos=[];for(let r=0;r&lt;4;r++)for(let c=0;c&lt;4;c++)pos.push([-3.6+c*2.4,-1+r*2.1]);
+function inst(g,mat,n,set){const m=new THREE.InstancedMesh(g,mat,n);const o=new THREE.Object3D();let i=0;pos.forEach(p=&gt;set(p,o,()=&gt;{o.updateMatrix();m.setMatrixAt(i++,o.matrix);}));m.castShadow=m.receiveShadow=!MOB;S.add(m);return m;}
+const woodM=M({color:0xb98b5e,roughness:.6}),metM=M({color:0x3c4450,roughness:.4,metalness:.6}),chairM=M({color:0x2f5d9e,roughness:.6});
+inst(deskTopG,woodM,pos.length,([x,z],o,a)=&gt;{o.position.set(x,.75,z);a();});
+inst(legG,metM,pos.length*4,([x,z],o,a)=&gt;{[[-.5,-.25],[.5,-.25],[-.5,.25],[.5,.25]].forEach(([dx,dz])=&gt;{o.position.set(x+dx,.36,z+dz);a();});});
+inst(seatG,chairM,pos.length,([x,z],o,a)=&gt;{o.position.set(x,.45,z+.55);a();});
+inst(backG,chairM,pos.length,([x,z],o,a)=&gt;{o.position.set(x,.75,z+.78);a();});
+inst(legG,metM,pos.length*4,([x,z],o,a)=&gt;{[[-.2,.35],[.2,.35],[-.2,.75],[.2,.75]].forEach(([dx,dz])=&gt;{o.scale.set(1,.62,1);o.position.set(x+dx,.22,z+dz);a();});o.scale.set(1,1,1);});
+// text helper
+function wrap(g,t,x,y,mw,lh,max=99){const ws=String(t).split(&#x27; &#x27;);let l=&#x27;&#x27;,n=0;for(const w of ws){const k=l?l+&#x27; &#x27;+w:w;if(g.measureText(k).width&gt;mw&amp;&amp;l){g.fillText(l,x,y);y+=lh;l=w;if(++n&gt;=max)return y;}else l=k;}if(l)g.fillText(l,x,y);return y+lh;}
+function panel(w,h,pw,ph){const t=tex(pw,ph,()=&gt;{});const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:t,roughness:.85,emissive:0xffffff,emissiveMap:t,emissiveIntensity:.35}));return {m,t,g:t.userData.g,pw,ph};}
+// chalkboard with study plan
+const board=panel(6,2,1536,512);board.m.position.set(0,1.95,-D/2+.06);S.add(board.m);
+const bframe=new THREE.Mesh(new THREE.BoxGeometry(6.2,2.2,.06),M({color:0x7a5532}));bframe.position.set(0,1.95,-D/2+.02);S.add(bframe);
+const tray=new THREE.Mesh(new THREE.BoxGeometry(6,.05,.12),M({color:0x7a5532}));tray.position.set(0,.88,-D/2+.1);S.add(tray);
+const PLAN={1:&#x27;Foundations and 40 questions&#x27;,2:&#x27;Tracts and lesions and 40 questions&#x27;,3:&#x27;Neuropharmacology and 40 questions&#x27;,4:&#x27;Infection, tumor, and trauma and 40 questions&#x27;,5:&#x27;Vascular neurology and 40 questions&#x27;,6:&#x27;80 to 120 mixed questions&#x27;,0:&#x27;Light review and rest&#x27;};
+const DN=[&#x27;Sunday&#x27;,&#x27;Monday&#x27;,&#x27;Tuesday&#x27;,&#x27;Wednesday&#x27;,&#x27;Thursday&#x27;,&#x27;Friday&#x27;,&#x27;Saturday&#x27;];
+(function(){const {g,pw,ph}=board;g.fillStyle=&#x27;#1f3b2c&#x27;;g.fillRect(0,0,pw,ph);for(let i=0;i&lt;300;i++){g.fillStyle=&#x27;rgba(255,255,255,.03)&#x27;;g.fillRect(Math.random()*pw,Math.random()*ph,40,2);}
+ const d=new Date().getDay();g.fillStyle=&#x27;#f3f1e7&#x27;;g.font=&#x27;bold 64px Georgia,serif&#x27;;g.fillText(&#x27;Study Plan&#x27;,60,90);
+ g.font=&#x27;40px Georgia,serif&#x27;;g.fillStyle=&#x27;#ffe28a&#x27;;g.fillText(&quot;Today is &quot;+DN[d]+&quot;: &quot;+PLAN[d],60,160);
+ g.fillStyle=&#x27;#f3f1e7&#x27;;g.font=&#x27;34px Georgia,serif&#x27;;[&#x27;25 new Anki cards and 150 reviews&#x27;,&#x27;40 to 60 minutes of active reading&#x27;,&#x27;20 to 40 timed, mixed Qbank questions&#x27;,&#x27;10 minutes updating an error log&#x27;,&#x27;15 to 20 minutes of teach back&#x27;].forEach((s,i)=&gt;g.fillText(&#x27;\u2022 &#x27;+s,80,230+i*50));
+ g.font=&#x27;30px Georgia,serif&#x27;;g.fillStyle=&#x27;#cfe8d8&#x27;;[1,2,3,4,5,6,0].forEach((k,i)=&gt;{g.fillText(DN[k].slice(0,3)+&#x27;: &#x27;+PLAN[k],860,230+i*40);});board.t.needsUpdate=true;})();
+// teacher desk + brain
+const td=new THREE.Group();td.position.set(0,0,-D/2+2.2);S.add(td);
+const tdTop=new THREE.Mesh(new THREE.BoxGeometry(2.4,.08,1),M({color:0x8a5a35,roughness:.5}));tdTop.position.y=.78;tdTop.castShadow=tdTop.receiveShadow=true;td.add(tdTop);
+const tdFront=new THREE.Mesh(new THREE.BoxGeometry(2.4,.74,.05),M({color:0x7a4e2c}));tdFront.position.set(0,.37,.45);td.add(tdFront);
+[-1.15,1.15].forEach(x=&gt;{const s=new THREE.Mesh(new THREE.BoxGeometry(.05,.74,1),M({color:0x7a4e2c}));s.position.set(x,.37,0);td.add(s);});
+const bg=new THREE.IcosahedronGeometry(.32,MOB?4:5);{const p=bg.attributes.position,v=new THREE.Vector3();for(let i=0;i&lt;p.count;i++){v.fromBufferAttribute(p,i);const n=v.clone().normalize();const f=1+.06*Math.sin(n.x*18+n.y*7)*Math.cos(n.z*15+n.y*9)+.03*Math.sin(n.y*30);v.copy(n).multiplyScalar(.32*f);v.x*=1.25;v.y*=.9;if(Math.abs(n.x)&lt;.06)v.multiplyScalar(.93);p.setXYZ(i,v.x,v.y,v.z);}bg.computeVertexNormals();}
+const brain=new THREE.Mesh(bg,M({color:0xe8a3a8,roughness:.45,emissive:0x40161a,emissiveIntensity:.3}));brain.position.set(0,1.35,0);brain.castShadow=true;td.add(brain);
+const ped=new THREE.Mesh(new THREE.CylinderGeometry(.18,.22,.1,24),M({color:0xd0d6de,metalness:.5,roughness:.3}));ped.position.y=.87;td.add(ped);
+const glow=new THREE.PointLight(0xff9db0,1.5,3);glow.position.set(0,1.35,.4);td.add(glow);
+// quiz kiosk
+const kiosk=panel(1,1.25,512,640);const kg=new THREE.Group();kg.position.set(4.6,0,-D/2+2.6);kg.rotation.y=-.6;S.add(kg);
+const kb=new THREE.Mesh(new THREE.BoxGeometry(1.15,1.5,.25),M({color:0x1d2c44,roughness:.4,metalness:.3}));kb.position.y=1.35;kg.add(kb);
+const kp=new THREE.Mesh(new THREE.BoxGeometry(.3,.6,.3),M({color:0x1d2c44}));kp.position.y=.3;kg.add(kp);
+kiosk.m.position.set(0,1.38,.13);kg.add(kiosk.m);
+const BQ=(typeof BANK!==&#x27;undefined&#x27;?BANK:[]);let qi=0,qPick=-1,qScore=0;
+function drawKiosk(){const {g,pw,ph}=kiosk;g.fillStyle=&#x27;#0d1726&#x27;;g.fillRect(0,0,pw,ph);g.fillStyle=&#x27;#2563eb&#x27;;g.fillRect(0,0,pw,70);g.fillStyle=&#x27;#fff&#x27;;g.font=&#x27;bold 34px system-ui,sans-serif&#x27;;g.fillText(&#x27;Quiz kiosk&#x27;,20,47);g.font=&#x27;24px system-ui&#x27;;g.fillText(&#x27;Score &#x27;+qScore,pw-140,47);
+ if(!BQ.length){g.fillText(&#x27;No questions found.&#x27;,20,120);kiosk.t.needsUpdate=true;return;}const it=BQ[qi];g.font=&#x27;26px system-ui&#x27;;g.fillStyle=&#x27;#e8eefc&#x27;;let y=wrap(g,&#x27;Q&#x27;+(qi+1)+&#x27;. &#x27;+it.q,20,112,pw-40,32,4);
+ it.c.forEach((c,i)=&gt;{const by=250+i*80;g.fillStyle=qPick&lt;0?&#x27;#1e3352&#x27;:(i===it.a?&#x27;#15803d&#x27;:(i===qPick?&#x27;#b91c1c&#x27;:&#x27;#1e3352&#x27;));g.fillRect(20,by,pw-40,68);g.fillStyle=&#x27;#fff&#x27;;g.font=&#x27;22px system-ui&#x27;;wrap(g,c,34,by+28,pw-70,24,2);});
+ g.fillStyle=&#x27;#9fb3d1&#x27;;g.font=&#x27;20px system-ui&#x27;;if(qPick&gt;=0){wrap(g,it.ex,20,580,pw-40,24,1);g.fillStyle=&#x27;#ffe28a&#x27;;g.fillText(&#x27;Tap the screen for the next question&#x27;,20,625);}else g.fillText(&#x27;Click an answer&#x27;,20,600);kiosk.t.needsUpdate=true;}
+kiosk.m.userData.hit=uv=&gt;{const y=(1-uv.y)*640;if(qPick&gt;=0){qPick=-1;qi=(qi+1)%BQ.length;}else{const i=Math.floor((y-250)/80);if(i&gt;=0&amp;&amp;i&lt;4&amp;&amp;y-250-i*80&lt;68){qPick=i;if(i===BQ[qi].a)qScore++;}}drawKiosk();};drawKiosk();
+// flashcard station
+const fsg=new THREE.Group();fsg.position.set(-4,0,-D/2+2.6);fsg.rotation.y=.6;S.add(fsg);
+const ft=new THREE.Mesh(new THREE.BoxGeometry(1.4,.06,.8),woodM);ft.position.y=.8;fsg.add(ft);[[-.6,-.3],[.6,-.3],[-.6,.3],[.6,.3]].forEach(([x,z])=&gt;{const l=new THREE.Mesh(new THREE.BoxGeometry(.05,.8,.05),metM);l.position.set(x,.4,z);fsg.add(l);});
+const card=panel(1.1,.7,768,490);card.m.position.set(0,1.3,0);card.m.rotation.x=-.25;fsg.add(card.m);
+const stand=new THREE.Mesh(new THREE.BoxGeometry(.06,.5,.06),metM);stand.position.set(0,1,-.05);fsg.add(stand);
+const TM=(typeof TERMS!==&#x27;undefined&#x27;?TERMS.slice():[]);let fi=0,fb2=false;
+function drawCard(){const {g,pw,ph}=card;g.fillStyle=fb2?&#x27;#fff8e6&#x27;:&#x27;#ffffff&#x27;;g.fillRect(0,0,pw,ph);g.strokeStyle=&#x27;#2563eb&#x27;;g.lineWidth=10;g.strokeRect(5,5,pw-10,ph-10);g.fillStyle=&#x27;#0f1b2d&#x27;;
+ if(!TM.length){g.font=&#x27;30px system-ui&#x27;;g.fillText(&#x27;No flashcards found.&#x27;,30,80);}else if(!fb2){g.font=&#x27;bold 44px system-ui&#x27;;g.textAlign=&#x27;center&#x27;;wrap(g,TM[fi].term,pw/2,180,pw-80,52,3);g.textAlign=&#x27;left&#x27;;}else{g.font=&#x27;26px system-ui&#x27;;wrap(g,TM[fi].def,30,60,pw-60,32,11);}
+ g.fillStyle=&#x27;#eef3fb&#x27;;g.fillRect(10,ph-70,pw-20,60);g.fillStyle=&#x27;#1d4ed8&#x27;;g.font=&#x27;bold 26px system-ui&#x27;;g.fillText(&#x27;\u2039 Prev&#x27;,30,ph-30);g.fillText(&#x27;Flip&#x27;,pw/2-26,ph-30);g.fillText(&#x27;Next \u203a&#x27;,pw-130,ph-30);g.fillStyle=&#x27;#5b6b82&#x27;;g.font=&#x27;20px system-ui&#x27;;g.fillText(&#x27;Card &#x27;+(fi+1)+&#x27; of &#x27;+TM.length,30,40);card.t.needsUpdate=true;}
+card.m.userData.hit=uv=&gt;{if(!TM.length)return;const y=(1-uv.y)*490,x=uv.x*768;if(y&gt;420){if(x&lt;250)fi=(fi-1+TM.length)%TM.length,fb2=false;else if(x&gt;520)fi=(fi+1)%TM.length,fb2=false;else fb2=!fb2;}else fb2=!fb2;drawCard();};drawCard();
+// focus timer + notes wall panel (right wall)
+const tp=panel(3.2,1.8,1024,576);tp.m.position.set(W/2-.06,1.8,-1.5);tp.m.rotation.y=-Math.PI/2;S.add(tp.m);
+const tpf=new THREE.Mesh(new THREE.BoxGeometry(.04,1.9,3.3),M({color:0x2a2f38}));tpf.position.set(W/2-.03,1.8,-1.5);S.add(tpf);
+const $=id=&gt;document.getElementById(id);let lastT=&#x27;&#x27;;
+function drawTimer(force){const t=$(&#x27;ftTime&#x27;).textContent,lb=$(&#x27;ftLabel&#x27;).textContent,go=$(&#x27;ftGo&#x27;).textContent,nt=$(&#x27;roomNotes&#x27;).value;const key=t+lb+go+nt.length;if(!force&amp;&amp;key===lastT)return;lastT=key;
+ const {g,pw,ph}=tp;g.fillStyle=&#x27;#101826&#x27;;g.fillRect(0,0,pw,ph);g.fillStyle=&#x27;#9fb3d1&#x27;;g.font=&#x27;26px system-ui&#x27;;g.fillText(&#x27;FOCUS TIMER&#x27;,40,56);g.fillText(&#x27;NOTES&#x27;,560,56);
+ g.fillStyle=&#x27;#fff&#x27;;g.font=&#x27;bold 140px ui-monospace,monospace&#x27;;g.fillText(t,30,210);g.fillStyle=&#x27;#ffe28a&#x27;;g.font=&#x27;28px system-ui&#x27;;g.fillText(lb,40,260);
+ const btn=(x,y,w,l,c)=&gt;{g.fillStyle=c;g.fillRect(x,y,w,70);g.fillStyle=&#x27;#fff&#x27;;g.font=&#x27;bold 28px system-ui&#x27;;g.fillText(l,x+20,y+46);};
+ btn(40,300,200,go,&#x27;#2563eb&#x27;);btn(260,300,200,&#x27;Reset&#x27;,&#x27;#334155&#x27;);btn(40,400,130,&#x27;25 min&#x27;,&#x27;#1e3352&#x27;);btn(185,400,130,&#x27;50 min&#x27;,&#x27;#1e3352&#x27;);btn(330,400,130,&#x27;Break&#x27;,&#x27;#1e3352&#x27;);
+ g.fillStyle=&#x27;#fdfbf3&#x27;;g.fillRect(550,80,440,460);g.fillStyle=&#x27;#22324a&#x27;;g.font=&#x27;22px system-ui&#x27;;const lines=(nt||&#x27;Click here to write notes.&#x27;).split(&#x27;\n&#x27;);let y=115;for(const l of lines){y=wrap(g,l||&#x27; &#x27;,570,y,400,28,14);if(y&gt;520)break;}tp.t.needsUpdate=true;}
+tp.m.userData.hit=uv=&gt;{const x=uv.x*1024,y=(1-uv.y)*576;const ms=document.querySelectorAll(&#x27;.ft-row [data-m]&#x27;);
+ if(y&gt;300&amp;&amp;y&lt;370){if(x&gt;40&amp;&amp;x&lt;240)$(&#x27;ftGo&#x27;).click();else if(x&gt;260&amp;&amp;x&lt;460)$(&#x27;ftReset&#x27;).click();}else if(y&gt;400&amp;&amp;y&lt;470){if(x&lt;170)ms[0]&amp;&amp;ms[0].click();else if(x&lt;315)ms[1]&amp;&amp;ms[1].click();else if(x&lt;460)ms[2]&amp;&amp;ms[2].click();}
+ else if(x&gt;550&amp;&amp;!R.xr.isPresenting){const n=$(&#x27;roomNotes&#x27;);n.scrollIntoView({behavior:&#x27;smooth&#x27;,block:&#x27;center&#x27;});setTimeout(()=&gt;n.focus({preventScroll:true}),400);}drawTimer(true);};
+drawTimer(true);
+// labels above stations
+function label(txt,x,y,z,ry){const p=panel(1.3,.26,512,104);const {g}=p;g.fillStyle=&#x27;#2563eb&#x27;;g.fillRect(0,0,512,104);g.fillStyle=&#x27;#fff&#x27;;g.font=&#x27;bold 48px system-ui&#x27;;g.textAlign=&#x27;center&#x27;;g.fillText(txt,256,68);p.t.needsUpdate=true;p.m.position.set(x,y,z);p.m.rotation.y=ry||0;S.add(p.m);}
+label(&#x27;Quiz kiosk&#x27;,4.6,2.35,-D/2+2.7,-.6);label(&#x27;Flashcards&#x27;,-4,1.95,-D/2+2.7,.6);label(&#x27;Timer and notes&#x27;,W/2-.08,2.9,-1.5,-Math.PI/2);
+// clock on back wall? keep it light: bookshelf on back wall
+const shelf=new THREE.Mesh(new THREE.BoxGeometry(3,1.6,.35),woodM);shelf.position.set(-2,.8,D/2-.2);S.add(shelf);
+const cols=[0xb91c1c,0x2563eb,0x15803d,0xd97706,0x6d28d9];for(let r=0;r&lt;3;r++)for(let i=0;i&lt;14;i++){const b=new THREE.Mesh(new THREE.BoxGeometry(.16,.36+((i*7)%5)*.03,.25),M({color:cols[(i+r)%5],roughness:.8}));b.position.set(-3.3+i*.19,.25+r*.5+.18,D/2-.25);S.add(b);}
+// interaction
+const hits=[kiosk.m,card.m,tp.m];const ray=new THREE.Raycaster(),nd=new THREE.Vector2();
+let yaw=0,pitch=-.08,drag=null,moved=0;const el=R.domElement;el.style.touchAction=&#x27;none&#x27;;
+el.addEventListener(&#x27;pointerdown&#x27;,e=&gt;{drag={x:e.clientX,y:e.clientY,id:e.pointerId};moved=0;el.setPointerCapture(e.pointerId);});
+el.addEventListener(&#x27;pointermove&#x27;,e=&gt;{if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved+=Math.abs(dx)+Math.abs(dy);drag.x=e.clientX;drag.y=e.clientY;yaw-=dx*.005;pitch=Math.max(-1.3,Math.min(1.3,pitch-dy*.005));});
+el.addEventListener(&#x27;pointerup&#x27;,e=&gt;{if(drag&amp;&amp;moved&lt;8){const r=el.getBoundingClientRect();nd.set((e.clientX-r.left)/r.width*2-1,-((e.clientY-r.top)/r.height)*2+1);ray.setFromCamera(nd,cam);pick();}drag=null;});
+function pick(){const h=ray.intersectObjects(hits,false)[0];if(h&amp;&amp;h.uv&amp;&amp;h.distance&lt;9)h.object.userData.hit(h.uv);}
+const keys={};let focused=false;
+box.addEventListener(&#x27;pointerenter&#x27;,()=&gt;focused=true);box.addEventListener(&#x27;pointerleave&#x27;,()=&gt;focused=false);
+addEventListener(&#x27;keydown&#x27;,e=&gt;{if(location.hash!==&#x27;#room&#x27;||/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;const k=e.key.toLowerCase();if(&#x27;wasd&#x27;.includes(k)&amp;&amp;k.length==1||k.startsWith(&#x27;arrow&#x27;)){keys[k]=1;if(focused||k.length==1)e.preventDefault();}});
+addEventListener(&#x27;keyup&#x27;,e=&gt;{keys[e.key.toLowerCase()]=0;});
+box.querySelectorAll(&#x27;[data-mv]&#x27;).forEach(b=&gt;{const k=b.dataset.mv;const on=e=&gt;{e.preventDefault();keys[k]=1;},off=()=&gt;keys[k]=0;b.addEventListener(&#x27;pointerdown&#x27;,on);b.addEventListener(&#x27;pointerup&#x27;,off);b.addEventListener(&#x27;pointerleave&#x27;,off);b.addEventListener(&#x27;pointercancel&#x27;,off);});
+// VR controllers
+const tmp=new THREE.Matrix4();for(let i=0;i&lt;2;i++){const c=R.xr.getController(i);c.addEventListener(&#x27;select&#x27;,()=&gt;{tmp.identity().extractRotation(c.matrixWorld);ray.ray.origin.setFromMatrixPosition(c.matrixWorld);ray.ray.direction.set(0,0,-1).applyMatrix4(tmp);pick();});
+ const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3(0,0,-4)]),new THREE.LineBasicMaterial({color:0x60a5fa}));c.add(line);rig.add(c);}
+R.xr.addEventListener(&#x27;sessionstart&#x27;,()=&gt;{cam.position.y=0;rig.position.y=0;});R.xr.addEventListener(&#x27;sessionend&#x27;,()=&gt;{cam.position.y=1.6;});
+function size(){const w=box.clientWidth,h=box.clientHeight;R.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();}
+new ResizeObserver(size).observe(box);size();
+const clk=new THREE.Clock(),fw=new THREE.Vector3(),rt=new THREE.Vector3();let tt=0;
+function frame(){const dt=Math.min(clk.getDelta(),.05);tt+=dt;brain.rotation.y+=dt*.6;brain.position.y=1.35+Math.sin(tt*1.6)*.05;
+ if(!R.xr.isPresenting){cam.rotation.set(pitch,yaw,0,&#x27;YXZ&#x27;);}
+ const f=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0),s=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0);
+ if(f||s){cam.getWorldDirection(fw);fw.y=0;fw.normalize();rt.crossVectors(fw,THREE.Object3D.DEFAULT_UP);rig.position.addScaledVector(fw,f*dt*2.4).addScaledVector(rt,s*dt*2.4);rig.position.x=Math.max(-W/2+.5,Math.min(W/2-.5,rig.position.x));rig.position.z=Math.max(-D/2+1.2,Math.min(D/2-.5,rig.position.z));}
+ if((tt*4|0)!==((tt-dt)*4|0))drawTimer();R.render(S,cam);}
+let running=false;function sync(){const want=R.xr.isPresenting||(location.hash===&#x27;#room&#x27;&amp;&amp;!document.hidden);if(want!==running){running=want;R.setAnimationLoop(want?frame:null);if(want)clk.getDelta();}}
+addEventListener(&#x27;hashchange&#x27;,sync);document.addEventListener(&#x27;visibilitychange&#x27;,sync);R.xr.addEventListener(&#x27;sessionend&#x27;,sync);running=false;sync();if(!running){R.render(S,cam);}
+box.classList.add(&#x27;ready&#x27;);window.__crReady=true;
+}
+&lt;/script&gt;
+&lt;script&gt;
+(()=&gt;{let done=false;function chk(){if(done||location.hash!==&quot;#room&quot;)return;done=true;const m=document.createElement(&quot;script&quot;);m.type=&quot;module&quot;;m.textContent=document.getElementById(&quot;crSrc&quot;).textContent;m.onerror=()=&gt;{};document.body.appendChild(m);
+ setTimeout(()=&gt;{const v=document.getElementById(&quot;crView&quot;);if(v&amp;&amp;!v.classList.contains(&quot;ready&quot;)&amp;&amp;document.getElementById(&quot;crFallback&quot;).hidden){v.querySelector(&quot;.cr-load&quot;).textContent=&quot;The classroom could not load. Check your connection and refresh. The timer and notes below still work.&quot;;}},15000);}
+ addEventListener(&quot;hashchange&quot;,chk);chk();})();
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
