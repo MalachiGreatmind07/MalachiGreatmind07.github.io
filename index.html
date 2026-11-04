@@ -213,6 +213,7 @@ var lg=$(&#x27;legend&#x27;);Array.from(C).forEach(function(c,k){var d=document.
 &lt;title&gt;Brainapedia | Final Presentation (© Malachi Batiste)&lt;/title&gt;
 &lt;meta name=&quot;author&quot; content=&quot;Malachi Batiste&quot;&gt;
 &lt;meta name=&quot;copyright&quot; content=&quot;© 2025 Malachi Batiste. All Rights Reserved.&quot;&gt;
+&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.googleapis.com&quot;&gt;&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&amp;family=Inter:wght@400;600;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
 &lt;style&gt;
 :root{--bg:#0b1a33;--bg2:#10264a;--surface:#ffffff;--surface2:#f5f7fb;--ink:#0f1b2d;--muted:#5b6b82;--line:#e3e8f0;--brand:#2563eb;--brand2:#1d4ed8;--soft:#e8effd;--ok:#15803d;--bad:#b91c1c;--radius:14px;--shadow:0 1px 2px rgba(15,27,45,.06),0 8px 24px rgba(15,27,45,.10)}
 body.light{--bg:#eef2f8;--bg2:#e3e9f3}
@@ -337,6 +338,39 @@ main section.block.show{display:block}main section.block.vis{opacity:1}
 @keyframes qgUp{to{transform:translateY(-50px);opacity:0}}
 @media (max-width:600px){.qg{padding:14px;min-height:480px}.qg-ch,.qg.arcade .qg-ch{grid-template-columns:1fr}.qg-q{font-size:17px}.qg-hs{grid-template-columns:1fr}.qg-c{padding:12px}}
 
+
+#news{--nk:#0a0a0a;--nk2:#141414;--nl:#262626;--nw:#f5f5f5;--ng:#8a8a8a;--no:#fa8c00;background:var(--nk);color:var(--nw);border-radius:14px;padding:0 0 24px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+#news .nw-top{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid var(--nl)}
+#news .nw-brand{font:700 26px/1 &quot;Archivo Narrow&quot;,Inter,system-ui,sans-serif;letter-spacing:.01em;text-transform:uppercase}#news .nw-brand span{color:var(--no)}
+#news .nw-sub{font:12px &quot;JetBrains Mono&quot;,ui-monospace,monospace;color:var(--ng);flex:1}
+#news #newsRefresh{background:transparent;border:1px solid var(--no);color:var(--no);font:600 12px &quot;JetBrains Mono&quot;,monospace;text-transform:uppercase;letter-spacing:.08em;border-radius:3px;padding:7px 12px;cursor:pointer}#news #newsRefresh:hover{background:var(--no);color:#000}
+.nw-tick{display:flex;background:#000;border-bottom:1px solid var(--nl);overflow:hidden;font:600 13px &quot;JetBrains Mono&quot;,monospace;height:34px;align-items:center}
+.nw-tick b{background:var(--no);color:#000;padding:0 12px;height:100%;display:flex;align-items:center;flex:none;letter-spacing:.08em;z-index:1}
+.nw-tick .tr{display:flex;white-space:nowrap;animation:nwTick 90s linear infinite;padding-left:20px}.nw-tick:hover .tr{animation-play-state:paused}
+.nw-tick a{color:var(--nw);text-decoration:none;margin-right:42px;cursor:pointer}.nw-tick a:before{content:&quot;\25B8  &quot;;color:var(--no)}.nw-tick a:hover{color:var(--no)}
+@keyframes nwTick{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.nw-tick .tr{animation:none}}
+#newsList{padding:22px}
+.nw-lead{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;padding-bottom:22px;border-bottom:1px solid var(--nl);margin-bottom:20px;cursor:pointer}
+.nw-img{position:relative;overflow:hidden;background:#111;aspect-ratio:16/9;border-radius:2px}
+.nw-img img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .6s ease,transform .6s ease}.nw-img img.in{opacity:1}
+.nw-lead:hover .nw-img img,.nw-card:hover .nw-img img,.nw-card:focus-visible .nw-img img,.nw-lead:focus-visible .nw-img img{transform:scale(1.05)}
+.nw-ph{position:absolute;inset:0;width:100%;height:100%}
+.nw-kick{font:600 11px &quot;JetBrains Mono&quot;,monospace;color:var(--no);text-transform:uppercase;letter-spacing:.1em}
+.nw-lead h3{font:700 clamp(28px,3.4vw,44px)/1.05 &quot;Archivo Narrow&quot;,Inter,sans-serif;margin:10px 0 12px;color:var(--nw)}
+.nw-lead p,.nw-card p{color:#bdbdbd;font:15px/1.5 Inter,system-ui,sans-serif;margin:0}
+.nw-time{font:12px &quot;JetBrains Mono&quot;,monospace;color:var(--ng);margin-top:12px;display:block}
+.nw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px 20px}
+.nw-card{cursor:pointer;border-top:2px solid var(--nl);padding-top:12px;outline:none;transition:border-color .2s}.nw-card:hover,.nw-card:focus-visible{border-top-color:var(--no)}
+.nw-card h4{font:700 20px/1.15 &quot;Archivo Narrow&quot;,Inter,sans-serif;margin:10px 0 6px;color:var(--nw)}.nw-card:hover h4{color:#fff;text-decoration:underline;text-decoration-color:var(--no)}
+.nw-card p{font-size:13px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#news .nw-msg{color:#ccc;font:14px Inter,sans-serif}#news .nw-msg a{color:var(--no)}
+.nw-modal{max-width:820px;width:calc(100% - 24px);max-height:90vh;border:1px solid #333;border-top:3px solid #fa8c00;background:#0d0d0d;color:#f5f5f5;padding:0;border-radius:4px}
+.nw-modal::backdrop{background:rgba(0,0,0,.78)}.nw-modal .nw-img{aspect-ratio:16/8}.nw-modal .bd{padding:20px 24px 24px}
+.nw-modal h3{font:700 32px/1.08 &quot;Archivo Narrow&quot;,Inter,sans-serif;margin:8px 0 10px}.nw-modal p{color:#cfcfcf;font:16px/1.6 Inter,sans-serif}
+.nw-modal .x{position:absolute;right:10px;top:10px;z-index:2;background:rgba(0,0,0,.7);color:#fff;border:1px solid #444;border-radius:3px;font:600 12px &quot;JetBrains Mono&quot;,monospace;padding:6px 10px;cursor:pointer}
+.nw-modal .go{display:inline-block;margin-top:14px;background:#fa8c00;color:#000;font:700 14px Inter,sans-serif;text-decoration:none;padding:10px 16px;border-radius:3px}
+@media (max-width:760px){.nw-lead{grid-template-columns:1fr}#newsList{padding:16px}#news .nw-top{flex-wrap:wrap}}
 .news-list{display:grid;gap:12px}.news-item{display:block;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none;transition:border-color .15s,transform .15s}
 .news-item:hover{border-color:var(--brand);transform:translateY(-1px)}.news-item b{display:block;font-size:16px;line-height:1.35;margin-bottom:6px}.news-item small{color:var(--muted)}
 @media (max-width:700px){main.wrap{padding:0 16px 80px}main section.block{margin:28px auto}.tabs a{padding:12px 13px;font-size:14px}}
@@ -726,8 +760,10 @@ body.light footer{color:var(--muted)}
   &lt;div id=&quot;chatBody&quot;&gt;&lt;/div&gt;
 &lt;/section&gt;
 &lt;section class=&quot;block&quot; id=&quot;news&quot;&gt;
-  &lt;div class=&quot;sec-head&quot;&gt;&lt;div&gt;&lt;h2&gt;Neuro News&lt;/h2&gt;&lt;p&gt;Recent neuroscience stories from ScienceDaily, Neuroscience News and MIT News.&lt;/p&gt;&lt;/div&gt;&lt;button class=&quot;btn&quot; id=&quot;newsRefresh&quot;&gt;Refresh&lt;/button&gt;&lt;/div&gt;
-  &lt;div id=&quot;newsList&quot; class=&quot;news-list&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;nw-top&quot;&gt;&lt;h2 class=&quot;nw-brand&quot;&gt;Neuro&lt;span&gt;News&lt;/span&gt;&lt;/h2&gt;&lt;span class=&quot;nw-sub&quot; id=&quot;nwSub&quot;&gt;ScienceDaily · Neuroscience News · MIT News&lt;/span&gt;&lt;button id=&quot;newsRefresh&quot; type=&quot;button&quot;&gt;Refresh&lt;/button&gt;&lt;/div&gt;
+  &lt;div class=&quot;nw-tick&quot; aria-label=&quot;Latest headlines&quot;&gt;&lt;b&gt;LATEST&lt;/b&gt;&lt;div class=&quot;tr&quot; id=&quot;nwTick&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div id=&quot;newsList&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+  &lt;dialog class=&quot;nw-modal&quot; id=&quot;nwModal&quot;&gt;&lt;form method=&quot;dialog&quot;&gt;&lt;button class=&quot;x&quot; aria-label=&quot;Close story&quot;&gt;CLOSE&lt;/button&gt;&lt;/form&gt;&lt;div id=&quot;nwBody&quot;&gt;&lt;/div&gt;&lt;/dialog&gt;
 &lt;/section&gt;
 &lt;/main&gt;
 
@@ -1501,20 +1537,34 @@ if(p){rb.append(p);p.classList.add(&quot;open&quot;);if(tg)tg.remove();if(c)c.re
  const box=document.getElementById(&quot;newsList&quot;);let loaded=false,busy=false;
  const e=s=&gt;String(s).replace(/[&amp;&lt;&gt;&quot;]/g,c=&gt;({&quot;&amp;&quot;:&quot;&amp;amp;&quot;,&quot;&lt;&quot;:&quot;&amp;lt;&quot;,&quot;&gt;&quot;:&quot;&amp;gt;&quot;,&#x27;&quot;&#x27;:&quot;&amp;quot;&quot;}[c]));
  const tmo=(p,ms)=&gt;Promise.race([p,new Promise((_,r)=&gt;setTimeout(()=&gt;r(new Error(&quot;timeout&quot;)),ms))]);
- const viaJson=f=&gt;tmo(fetch(&quot;https://api.rss2json.com/v1/api.json?rss_url=&quot;+encodeURIComponent(f.url)),9000).then(r=&gt;r.json()).then(j=&gt;{if(j.status!==&quot;ok&quot;||!j.items||!j.items.length)throw new Error(&quot;rss2json&quot;);return j.items.map(i=&gt;({t:i.title,l:i.link,d:i.pubDate?new Date(i.pubDate.replace(&quot; &quot;,&quot;T&quot;)+&quot;Z&quot;):null,s:f.name}));});
+ const viaJson=f=&gt;tmo(fetch(&quot;https://api.rss2json.com/v1/api.json?rss_url=&quot;+encodeURIComponent(f.url)),9000).then(r=&gt;r.json()).then(j=&gt;{if(j.status!==&quot;ok&quot;||!j.items||!j.items.length)throw new Error(&quot;rss2json&quot;);return j.items.map(i=&gt;({t:i.title,l:i.link,d:i.pubDate?new Date(i.pubDate.replace(&quot; &quot;,&quot;T&quot;)+&quot;Z&quot;):null,s:f.name,img:pickImg([i.enclosure&amp;&amp;(/image/.test(i.enclosure.type||&quot;&quot;)||/\.(jpe?g|png|webp|gif)/i.test(i.enclosure.link||&quot;&quot;))?i.enclosure.link:&quot;&quot;,i.thumbnail],(i.description||&quot;&quot;)+(i.content||&quot;&quot;)),sum:txt(i.description||i.content||&quot;&quot;)}));});
  const viaXml=f=&gt;tmo(fetch(&quot;https://api.allorigins.win/raw?url=&quot;+encodeURIComponent(f.url)),9000).then(r=&gt;{if(!r.ok)throw new Error(&quot;proxy&quot;);return r.text();}).then(x=&gt;{const d=new DOMParser().parseFromString(x,&quot;text/xml&quot;),it=[...d.querySelectorAll(&quot;item&quot;)];if(!it.length)throw new Error(&quot;empty&quot;);
-  return it.map(i=&gt;{const g=q=&gt;(i.querySelector(q)||{}).textContent||&quot;&quot;;return {t:g(&quot;title&quot;),l:g(&quot;link&quot;),d:g(&quot;pubDate&quot;)?new Date(g(&quot;pubDate&quot;)):null,s:f.name};});});
+  return it.map(i=&gt;{const g=q=&gt;(i.querySelector(q)||{}).textContent||&quot;&quot;;const ns=n=&gt;[...i.getElementsByTagName(&quot;*&quot;)].filter(x=&gt;x.localName===n);const enc=[...ns(&quot;enclosure&quot;)].filter(x=&gt;/image/.test(x.getAttribute(&quot;type&quot;)||&quot;&quot;)).map(x=&gt;x.getAttribute(&quot;url&quot;));const desc=g(&quot;description&quot;),cont=(ns(&quot;encoded&quot;)[0]||{}).textContent||&quot;&quot;;
+   return {t:g(&quot;title&quot;),l:g(&quot;link&quot;),d:g(&quot;pubDate&quot;)?new Date(g(&quot;pubDate&quot;)):null,s:f.name,img:pickImg([...enc,...ns(&quot;content&quot;).filter(x=&gt;(x.getAttribute(&quot;medium&quot;)||&quot;image&quot;)===&quot;image&quot;||/\.(jpe?g|png|webp)/i.test(x.getAttribute(&quot;url&quot;)||&quot;&quot;)).map(x=&gt;x.getAttribute(&quot;url&quot;)),...ns(&quot;thumbnail&quot;).map(x=&gt;x.getAttribute(&quot;url&quot;))],desc+cont),sum:txt(desc||cont)};});});
+ const txt=h=&gt;{const d=new DOMParser().parseFromString(&quot;&lt;body&gt;&quot;+h,&quot;text/html&quot;);d.querySelectorAll(&quot;script,style&quot;).forEach(x=&gt;x.remove());let t=(d.body.textContent||&quot;&quot;).replace(/\s+/g,&quot; &quot;).trim();t=t.replace(/The post .* appeared first on .*$/,&quot;&quot;).trim();return t.length&gt;700?t.slice(0,700).replace(/\s\S*$/,&quot;&quot;)+&quot;…&quot;:t;};
+ const pickImg=(c,h)=&gt;{for(const u of c){if(u&amp;&amp;safe(u))return safe(u);}const m=/&lt;img[^&gt;]+src=[&quot;&#x27;]([^&quot;&#x27;]+)/i.exec(h||&quot;&quot;);return m&amp;&amp;safe(m[1])?safe(m[1]):&quot;&quot;;};
  const one=f=&gt;viaJson(f).catch(()=&gt;viaXml(f));
  const safe=u=&gt;{try{const x=new URL(u);return x.protocol===&quot;https:&quot;||x.protocol===&quot;http:&quot;?x.href:null;}catch(_){return null;}};
  const fmt=d=&gt;d&amp;&amp;!isNaN(d)?d.toLocaleDateString(undefined,{month:&quot;short&quot;,day:&quot;numeric&quot;,year:&quot;numeric&quot;}):&quot;&quot;;
- async function load(force){if(busy||(loaded&amp;&amp;!force))return;busy=true;box.innerHTML=&#x27;&lt;p class=&quot;hint&quot;&gt;Fetching the latest stories…&lt;/p&gt;&#x27;;let ca=null;try{ca=JSON.parse(sessionStorage.getItem(&quot;bpNews&quot;)||&quot;null&quot;);}catch(_){}
+ async function load(force){if(busy||(loaded&amp;&amp;!force))return;busy=true;box.innerHTML=&#x27;&lt;p class=&quot;nw-msg&quot;&gt;Fetching the latest stories…&lt;/p&gt;&#x27;;let ca=null;try{ca=JSON.parse(sessionStorage.getItem(&quot;bpNews2&quot;)||&quot;null&quot;);}catch(_){}
   if(!force&amp;&amp;ca&amp;&amp;Date.now()-ca.at&lt;1800000&amp;&amp;ca.items.length){busy=false;loaded=true;paint(ca.items.map(i=&gt;Object.assign(i,{d:i.d?new Date(i.d):null})));return;}
   const res=await Promise.allSettled(FEEDS.map(one));let items=[];res.forEach(r=&gt;{if(r.status===&quot;fulfilled&quot;)items=items.concat(r.value);});
   items=items.filter(i=&gt;i.t&amp;&amp;safe(i.l));const seen=new Set();items=items.filter(i=&gt;{const k=i.t.trim().toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
   items.sort((a,b)=&gt;(b.d||0)-(a.d||0));busy=false;
-  if(!items.length){box.innerHTML=&#x27;&lt;p&gt;We could not load the news right now. You can read the latest stories straight from the sources:&lt;/p&gt;&lt;p&gt;&#x27;+FEEDS.map(f=&gt;&#x27;&lt;a href=&quot;&#x27;+f.home+&#x27;&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;&#x27;+f.name+&#x27;&lt;/a&gt;&#x27;).join(&quot; · &quot;)+&#x27;&lt;/p&gt;&#x27;;return;}
-  loaded=true;try{sessionStorage.setItem(&quot;bpNews&quot;,JSON.stringify({at:Date.now(),items:items.slice(0,24)}));}catch(_){}paint(items);}
- function paint(items){box.innerHTML=items.slice(0,24).map(i=&gt;&#x27;&lt;a class=&quot;news-item&quot; href=&quot;&#x27;+e(safe(i.l))+&#x27;&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;&lt;b&gt;&#x27;+e(i.t)+&#x27;&lt;/b&gt;&lt;small&gt;&#x27;+e(i.s)+(fmt(i.d)?&#x27; · &#x27;+fmt(i.d):&#x27;&#x27;)+&#x27;&lt;/small&gt;&lt;/a&gt;&#x27;).join(&quot;&quot;);}
+  if(!items.length){box.innerHTML=&#x27;&lt;p class=&quot;nw-msg&quot;&gt;We could not load the news right now. You can read the latest stories straight from the sources:&lt;/p&gt;&lt;p&gt;&#x27;+FEEDS.map(f=&gt;&#x27;&lt;a href=&quot;&#x27;+f.home+&#x27;&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;&#x27;+f.name+&#x27;&lt;/a&gt;&#x27;).join(&quot; · &quot;)+&#x27;&lt;/p&gt;&#x27;;return;}
+  loaded=true;try{sessionStorage.setItem(&quot;bpNews2&quot;,JSON.stringify({at:Date.now(),items:items.slice(0,24)}));}catch(_){}paint(items);}
+ const PH=&#x27;&lt;svg class=&quot;nw-ph&quot; viewBox=&quot;0 0 320 180&quot; preserveAspectRatio=&quot;xMidYMid slice&quot; aria-hidden=&quot;true&quot;&gt;&lt;rect width=&quot;320&quot; height=&quot;180&quot; fill=&quot;#121212&quot;/&gt;&lt;g fill=&quot;none&quot; stroke=&quot;#fa8c00&quot; stroke-opacity=&quot;.55&quot; stroke-width=&quot;1.4&quot; stroke-linecap=&quot;round&quot;&gt;&lt;circle cx=&quot;120&quot; cy=&quot;92&quot; r=&quot;16&quot;/&gt;&lt;path d=&quot;M136 92 C170 90 190 100 236 96 S280 84 300 92&quot;/&gt;&lt;path d=&quot;M104 84 L70 60 L52 62 M70 60 L64 40 M106 102 L76 128 L58 126 M76 128 L74 150 M114 76 L108 44 M126 108 L134 140&quot;/&gt;&lt;path d=&quot;M236 96 l12 -12 M236 96 l12 12 M300 92 l10 -8 M300 92 l10 8&quot; stroke-opacity=&quot;.35&quot;/&gt;&lt;/g&gt;&lt;g fill=&quot;#fa8c00&quot; fill-opacity=&quot;.6&quot;&gt;&lt;circle cx=&quot;170&quot; cy=&quot;91&quot; r=&quot;2&quot;/&gt;&lt;circle cx=&quot;200&quot; cy=&quot;98&quot; r=&quot;2&quot;/&gt;&lt;circle cx=&quot;262&quot; cy=&quot;90&quot; r=&quot;2&quot;/&gt;&lt;/g&gt;&lt;/svg&gt;&#x27;;
+ const imgH=i=&gt;&#x27;&lt;div class=&quot;nw-img&quot;&gt;&#x27;+PH+(i.img?&#x27;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; referrerpolicy=&quot;no-referrer&quot; src=&quot;&#x27;+e(i.img)+&#x27;&quot; onload=&quot;this.classList.add(\&#x27;in\&#x27;)&quot; onerror=&quot;this.remove()&quot;&gt;&#x27;:&#x27;&#x27;)+&#x27;&lt;/div&gt;&#x27;;
+ const ago=d=&gt;{if(!d||isNaN(d))return&quot;&quot;;const m=Math.round((Date.now()-d)/6e4);if(m&lt;60)return m+&quot;M AGO&quot;;if(m&lt;1440)return Math.round(m/60)+&quot;H AGO&quot;;return fmt(d).toUpperCase();};
+ let CUR=[];
+ function paint(items){CUR=items.slice(0,24);const[l,...r]=CUR;
+  box.innerHTML=&#x27;&lt;article class=&quot;nw-lead&quot; tabindex=&quot;0&quot; data-i=&quot;0&quot;&gt;&#x27;+imgH(l)+&#x27;&lt;div&gt;&lt;span class=&quot;nw-kick&quot;&gt;&#x27;+e(l.s)+&#x27; · Top story&lt;/span&gt;&lt;h3&gt;&#x27;+e(l.t)+&#x27;&lt;/h3&gt;&#x27;+(l.sum?&#x27;&lt;p&gt;&#x27;+e(l.sum.slice(0,260))+(l.sum.length&gt;260?&#x27;…&#x27;:&#x27;&#x27;)+&#x27;&lt;/p&gt;&#x27;:&#x27;&#x27;)+&#x27;&lt;span class=&quot;nw-time&quot;&gt;&#x27;+ago(l.d)+&#x27;&lt;/span&gt;&lt;/div&gt;&lt;/article&gt;&lt;div class=&quot;nw-grid&quot;&gt;&#x27;+r.map((i,k)=&gt;&#x27;&lt;article class=&quot;nw-card&quot; tabindex=&quot;0&quot; data-i=&quot;&#x27;+(k+1)+&#x27;&quot;&gt;&#x27;+imgH(i)+&#x27;&lt;span class=&quot;nw-kick&quot;&gt;&#x27;+e(i.s)+&#x27;&lt;/span&gt;&lt;h4&gt;&#x27;+e(i.t)+&#x27;&lt;/h4&gt;&#x27;+(i.sum?&#x27;&lt;p&gt;&#x27;+e(i.sum)+&#x27;&lt;/p&gt;&#x27;:&#x27;&#x27;)+&#x27;&lt;span class=&quot;nw-time&quot;&gt;&#x27;+ago(i.d)+&#x27;&lt;/span&gt;&lt;/article&gt;&#x27;).join(&quot;&quot;)+&#x27;&lt;/div&gt;&#x27;;
+  const tk=CUR.slice(0,12).map((i,k)=&gt;&#x27;&lt;a data-i=&quot;&#x27;+k+&#x27;&quot; tabindex=&quot;-1&quot;&gt;&#x27;+e(i.t)+&#x27;&lt;/a&gt;&#x27;).join(&quot;&quot;);document.getElementById(&quot;nwTick&quot;).innerHTML=tk+tk;
+  document.getElementById(&quot;nwSub&quot;).textContent=CUR.length+&quot; stories · updated &quot;+new Date().toLocaleTimeString([], {hour:&quot;numeric&quot;,minute:&quot;2-digit&quot;});}
+ function openStory(k){const i=CUR[k];if(!i)return;const d=fmt(i.d);document.getElementById(&quot;nwBody&quot;).innerHTML=imgH(i)+&#x27;&lt;div class=&quot;bd&quot;&gt;&lt;span class=&quot;nw-kick&quot;&gt;&#x27;+e(i.s)+&#x27;&lt;/span&gt;&lt;h3&gt;&#x27;+e(i.t)+&#x27;&lt;/h3&gt;&lt;span class=&quot;nw-time&quot;&gt;&#x27;+e(d)+&#x27;&lt;/span&gt;&#x27;+(i.sum?&#x27;&lt;p&gt;&#x27;+e(i.sum)+&#x27;&lt;/p&gt;&#x27;:&#x27;&lt;p&gt;Open the full story to read more.&lt;/p&gt;&#x27;)+&#x27;&lt;a class=&quot;go&quot; href=&quot;&#x27;+e(safe(i.l))+&#x27;&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Read full story at &#x27;+e(i.s)+&#x27;&lt;/a&gt;&lt;/div&gt;&#x27;;const m=document.getElementById(&quot;nwModal&quot;);if(m.showModal)m.showModal();else m.setAttribute(&quot;open&quot;,&quot;&quot;);}
+ document.getElementById(&quot;news&quot;).addEventListener(&quot;click&quot;,ev=&gt;{const a=ev.target.closest(&quot;[data-i]&quot;);if(a&amp;&amp;!ev.target.closest(&quot;dialog&quot;))openStory(+a.dataset.i);});
+ document.getElementById(&quot;news&quot;).addEventListener(&quot;keydown&quot;,ev=&gt;{if(ev.key===&quot;Enter&quot;&amp;&amp;ev.target.matches(&quot;article[data-i]&quot;))openStory(+ev.target.dataset.i);});
+ document.getElementById(&quot;nwModal&quot;).addEventListener(&quot;click&quot;,ev=&gt;{if(ev.target.id===&quot;nwModal&quot;)ev.target.close();});
  window.loadNews=()=&gt;load(false);document.getElementById(&quot;newsRefresh&quot;).onclick=()=&gt;load(true);
  if(location.hash===&quot;#news&quot;)load(false);})();
 &lt;/script&gt;
