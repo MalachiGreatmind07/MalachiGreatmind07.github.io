@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brainapedia | Interactive Neurology Study Tool</title>
+<meta name="description" content="Brainapedia is an interactive neurology study tool with a clickable brain atlas, a dictionary of 31 conditions, a quiz, flashcards and an offline study assistant.">
+<link rel="canonical" href="https://malachigreatmind07.github.io/brainapedia/">
+<meta name="author" content="Malachi Batiste">
+<meta name="copyright" content="© 2025 Malachi Batiste. All Rights Reserved.">
+<style>
+:root{--bg:#0b1a33;--bg2:#10264a;--surface:#ffffff;--surface2:#f5f7fb;--ink:#0f1b2d;--muted:#5b6b82;--line:#e3e8f0;--brand:#2563eb;--brand2:#1d4ed8;--soft:#e8effd;--ok:#15803d;--bad:#b91c1c;--radius:14px;--shadow:0 1px 2px rgba(15,27,45,.06),0 8px 24px rgba(15,27,45,.10)}
+body.light{--bg:#eef2f8;--bg2:#e3e9f3}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.55;color:var(--ink);background:linear-gradient(180deg,var(--bg) 0,var(--bg2) 520px,var(--bg2) 100%);min-height:100vh}
+body.light .hero,body.light .sec-head h2,body.light .sec-head p{color:var(--ink)}
+button{font:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+/* countdown bar */
+.countbar{position:sticky;top:0;z-index:50;background:rgba(9,20,40,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);color:#dbe6ff}
+.countbar .wrap{display:flex;align-items:center;justify-content:center;gap:18px;padding:10px 20px;flex-wrap:wrap}
+.units{display:flex;gap:8px}
+.unit{display:flex;align-items:baseline;gap:4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px}
+.unit b{font-variant-numeric:tabular-nums;font-size:18px;color:#fff;min-width:24px;text-align:center}
+.unit span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.7}
+.countMsg{font-size:14px}
+/* hero */
+.hero{color:#fff;text-align:center;padding:56px 20px 28px}
+.eyebrow{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#93b4ff;margin-bottom:10px}
+.hero h1{margin:0;font-size:clamp(34px,5vw,52px);letter-spacing:-.02em;font-weight:750}
+.hero p{margin:10px auto 0;max-width:620px;color:#c4d3ef;font-size:17px}
+.toolbar{display:flex;gap:10px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:550;font-size:14px;transition:background .15s,border-color .15s,transform .15s}
+.btn:hover{border-color:#b9c7dd;background:var(--surface2)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand2)}
+.btn.ghostbtn{background:transparent;color:#dbe6ff;border-color:rgba(255,255,255,.25)}
+.btn.ghostbtn:hover{background:rgba(255,255,255,.08)}
+body.light .btn.ghostbtn{color:var(--ink);border-color:#b9c7dd}
+.chip{display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;color:var(--brand2);background:var(--soft);border-radius:999px;padding:4px 10px;white-space:nowrap}
+/* sections */
+section.block{margin:34px auto}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.sec-head h2{margin:0;font-size:22px;color:#fff;letter-spacing:-.01em}
+.sec-head p{margin:2px 0 0;color:#b4c4e2;font-size:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);animation:rise .5s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card-head h3{margin:0;font-size:16px}
+.card-body{padding:16px 18px}
+/* atlas */
+.atlas-grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+.stage{position:relative;overflow:hidden;background:radial-gradient(600px 300px at 50% 40%,#ffffff 0,#eef2f8 100%);min-height:440px;display:grid;place-items:center;cursor:grab}
+.stage:active{cursor:grabbing}
+#brainSVG{overflow:visible;width:100%;max-width:640px;height:auto;user-select:none;touch-action:none}
+#brainTilt{transition:transform .08s linear;transform-origin:300px 220px;transform-box:view-box}
+.lobe{cursor:pointer;transition:filter .35s,opacity .35s}
+.lobe:hover{opacity:.88}
+.lobe-tint{pointer-events:none;opacity:0;transition:opacity .25s}
+.lobe-tint.on{opacity:.38}
+.legend{position:absolute;left:14px;bottom:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 28px)}
+.legend button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 10px 4px 8px;font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--ink)}
+.legend button i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.legend button.active{border-color:var(--brand);color:var(--brand2)}
+.region-list{display:grid;gap:8px}
+.item{display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s}
+.item:hover{border-color:#9db6e8;background:#f7f9fd}
+.muted{color:var(--muted)}
+.hint{font-size:14px;color:var(--muted)}
+.region-summary{font-size:14px;margin:0 0 12px;padding:10px 12px;background:var(--surface2);border-radius:10px;border:1px solid var(--line)}
+/* dictionary */
+.dict-grid{display:grid;grid-template-columns:380px 1fr;gap:18px}
+#q{width:100%;padding:11px 14px;border:1px solid #cfd8e6;border-radius:10px;font-size:15px;outline:none;color:var(--ink)}
+#q:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+.alpha{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.alpha button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);cursor:pointer;font-size:13px;font-weight:600}
+.alpha button:hover{border-color:var(--brand);color:var(--brand2)}
+.results{display:grid;gap:8px;max-height:340px;overflow:auto;margin-top:14px;padding-right:2px}
+.viewer h3{font-size:22px;margin:0 0 8px}
+.def{font-size:16px}
+/* study */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card ul,.card ol{margin:0;padding-left:20px}
+.card li{margin:6px 0}
+/* quiz */
+.quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.qcard{padding:16px 18px}
+.qtext{font-weight:600;margin-bottom:10px}
+.choice{display:block;width:100%;margin:6px 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left;color:var(--ink);transition:border-color .15s,background .15s}
+.choice:hover{border-color:#9db6e8}
+.choice.correct{border-color:var(--ok);background:#f0fdf4;color:#14532d}
+.choice.wrong{border-color:var(--bad);background:#fef2f2;color:#7f1d1d}
+.answer{margin-top:10px;font-size:14px;padding:10px 12px;border-radius:10px;background:var(--surface2);display:none}
+/* game */
+.stats{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.bar{height:8px;width:160px;background:var(--soft);border-radius:999px;overflow:hidden}
+.bar>span{display:block;height:100%;width:0;background:var(--brand);transition:width .4s}
+.flashWrap{display:grid;place-items:center;padding:8px 0}
+.card3d{width:720px;max-width:100%;height:220px;perspective:1000px;cursor:pointer}
+.face{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s}
+.face.flip{transform:rotateY(180deg)}
+.front,.back{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:22px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#f6f8fc);backface-visibility:hidden;-webkit-backface-visibility:hidden;font-size:18px}
+.front{font-size:22px}
+.back{transform:rotateY(180deg)}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.divider{border:none;border-top:1px solid var(--line);margin:22px 0}
+.hidden{display:none!important}
+/* footer */
+footer{color:#b4c4e2;text-align:center;padding:30px 20px 110px;font-size:14px}
+body.light footer{color:var(--muted)}
+/* chat */
+#aiToggle{position:fixed;right:20px;bottom:20px;z-index:60;width:58px;height:58px;border-radius:50%;border:none;background:linear-gradient(135deg,#2563eb,#1e40af);color:#fff;font-size:24px;cursor:pointer;box-shadow:0 10px 28px rgba(37,99,235,.45);display:grid;place-items:center;transition:transform .2s}
+#aiToggle:hover{transform:scale(1.06)}
+#aiToggle .x{display:none;font-size:26px;line-height:1}
+#aiToggle.open .x{display:block}#aiToggle.open .ic{display:none}
+#aiPanel{position:fixed;right:20px;bottom:90px;z-index:60;width:380px;max-width:calc(100vw - 32px);height:560px;max-height:calc(100vh - 120px);display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.32);overflow:hidden;opacity:0;visibility:hidden;transform:translateY(14px) scale(.97);transform-origin:bottom right;transition:opacity .22s ease,transform .22s ease,visibility 0s linear .22s}
+#aiPanel.open{opacity:1;visibility:visible;transform:none;transition:opacity .22s ease,transform .22s ease}
+.ph{padding:14px 16px;background:linear-gradient(135deg,#0b1a33,#1e3a8a);color:#fff;display:flex;gap:10px;align-items:center}
+.ph .av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:18px}
+.ph .t{flex:1;line-height:1.25}.ph .t b{display:block;font-size:15px}.ph .t span{font-size:12px;color:#bcd0f5}
+.ph .t span:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:6px}
+.ph button{background:transparent;border:none;color:#fff;font-size:22px;cursor:pointer;opacity:.8;padding:4px 8px}
+#chatLog{flex:1;overflow-y:auto;padding:14px;font-size:14px;background:var(--surface2);display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
+.bub{max-width:86%;padding:9px 13px;border-radius:14px;line-height:1.5;animation:pop .2s ease both;word-wrap:break-word}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.bub.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px;color:var(--ink)}
+.bub.me{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+.bub .tag{display:inline-block;font-size:11.5px;font-weight:600;color:var(--brand2);background:var(--soft);border-radius:999px;padding:2px 8px;margin:6px 4px 0 0}
+.bub .sug{display:inline-block;margin:6px 6px 0 0;font-size:12.5px;border:1px solid #c7d6f3;background:#f5f8ff;color:var(--brand2);border-radius:999px;padding:3px 10px;cursor:pointer}
+.typing{display:flex;gap:4px;padding:12px 14px}
+.typing i{width:7px;height:7px;border-radius:50%;background:#94a3b8;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;border-top:1px solid var(--line);background:#fff;scrollbar-width:none}
+.chips button{flex:none;font-size:12.5px;border:1px solid #c7d6f3;background:#f5f8ff;color:var(--brand2);border-radius:999px;padding:5px 11px;cursor:pointer}
+.chips button:hover{background:var(--soft)}
+.composer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:#fff}
+#userInput{flex:1;min-width:0;border:1px solid #cfd8e6;border-radius:999px;padding:10px 14px;font-size:16px;outline:none;color:var(--ink)}
+#userInput:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+#sendBtn{border:none;background:var(--brand);color:#fff;border-radius:999px;padding:0 16px;font-weight:600;cursor:pointer}
+.note{padding:0 14px 10px;background:#fff;color:var(--muted);font-size:11.5px;text-align:center}
+@media (max-width:560px){#aiPanel{right:0;left:0;bottom:0;width:100%;max-width:100%;height:82vh;max-height:82vh;border-radius:18px 18px 0 0;transform:translateY(100%);transform-origin:bottom center}#aiPanel.open{transform:none}#aiToggle.open{bottom:auto;top:calc(18vh - 70px);opacity:0;pointer-events:none}}
+/* zoom */
+#brainSVG.focus .lobe:not(.active){opacity:.5}
+#brainSVG.focus .fold-layer{opacity:.6}
+#brainSVG.focus #brainTilt{filter:none}
+.lobe-tint.on{animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.22}50%{opacity:.48}}
+.glow{filter:drop-shadow(0 0 6px rgba(59,130,246,.9))}
+#zoomReset{position:absolute;top:12px;right:12px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:2}
+#zoomReset.show{opacity:1;pointer-events:auto}
+.panel-in{animation:slidein .35s ease both}
+@keyframes slidein{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+@media (max-width:980px){.atlas-grid,.dict-grid{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.stage{min-height:340px}}
+@media (max-width:560px){.hero{padding:36px 16px 18px}.unit b{font-size:15px}.countMsg{font-size:12.5px;text-align:center}.legend{position:static;margin:8px}.stage{display:block;padding-top:8px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="countbar"><div class="wrap">
+  <div class="units">
+    <div class="unit"><b id="d">00</b><span>days</span></div>
+    <div class="unit"><b id="h">00</b><span>hrs</span></div>
+    <div class="unit"><b id="m">00</b><span>min</span></div>
+    <div class="unit"><b id="s">00</b><span>sec</span></div>
+  </div>
+  <div class="countMsg" id="countMsg">Counting down to Monday, October 6, 2025 at 10:30 AM ET</div>
+</div></div>
+
+<header class="hero">
+  <div class="eyebrow">Final Presentation</div>
+  <h1>Brainapedia</h1>
+  <p>Where neurology meets design. A brain atlas, condition dictionary, study plan, and self test in one page.</p>
+  <div class="toolbar">
+    <button class="btn primary" id="presentBtn">Presentation Mode</button>
+    <button class="btn ghostbtn" id="confettiBtn">Celebrate</button>
+    <button class="btn ghostbtn" id="themeBtn">Toggle Theme</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section class="block" id="atlas">
+  <div class="sec-head"><div><h2>Interactive Brain Atlas</h2><p>Select a region to see its function and related conditions.</p></div><span class="chip">Drag to tilt · Click a region</span></div>
+  <div class="atlas-grid">
+    <div class="card stage" id="stage">
+      <svg id="brainSVG" viewBox="0 0 600 440" role="img" aria-label="Lateral view of the human brain">
+        <defs>
+          <radialGradient id="tissue" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#f6d7cf"/><stop offset=".55" stop-color="#e3aea3"/><stop offset="1" stop-color="#b9786d"/></radialGradient>
+          <radialGradient id="cbTissue" cx="45%" cy="30%" r="80%"><stop offset="0" stop-color="#eec3b8"/><stop offset=".6" stop-color="#cf8f83"/><stop offset="1" stop-color="#9c5d53"/></radialGradient>
+          <linearGradient id="stemTissue" x1="0" x2="1"><stop offset="0" stop-color="#c98a7e"/><stop offset=".45" stop-color="#e9b9ae"/><stop offset="1" stop-color="#a7685d"/></linearGradient>
+          <radialGradient id="shade" cx="35%" cy="25%" r="85%"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3a1410" stop-opacity=".35"/></radialGradient>
+          <filter id="bumps" x="0" y="0" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.028 0.04" numOctaves="3" seed="7" result="n"/>
+            <feDiffuseLighting in="n" surfaceScale="6" lighting-color="#ffffff" result="l"><feDistantLight azimuth="225" elevation="55"/></feDiffuseLighting>
+            <feComposite in="l" in2="SourceGraphic" operator="in"/>
+          </filter>
+          <filter id="hi"><feColorMatrix type="matrix" values="1.08 0 0 0 .04  0 1.08 0 0 .04  0 0 1.08 0 .06  0 0 0 1 0"/></filter>
+          <filter id="drop" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#2a0c08" flood-opacity=".25"/></filter>
+          <clipPath id="cerebrumClip"><path d="M92,262 C52,190 92,82 220,52 C300,34 410,40 478,92 C530,132 552,196 530,248 C512,282 478,292 455,286 C425,300 372,316 312,316 C250,318 196,304 168,280 C140,282 110,280 92,262 Z"/></clipPath>
+          <clipPath id="cbClip"><path d="M372,300 C392,268 462,258 510,268 C546,278 556,312 532,334 C500,360 420,360 388,338 C370,326 364,312 372,300 Z"/></clipPath>
+        </defs>
+        <g id="brainTilt" filter="url(#drop)">
+          <!-- brainstem -->
+          <path class="lobe" id="l_brainstem" data-r="Brainstem" fill="url(#stemTissue)" stroke="#8a4c43" stroke-width="1.2" d="M318,300 C340,306 368,306 384,300 C392,320 390,346 382,372 C376,392 372,410 370,428 L338,428 C340,404 338,380 332,356 C326,336 320,318 318,300 Z"/>
+          <path d="M336,330 C350,334 366,334 384,328 M338,356 C352,360 366,360 380,354" stroke="#8a4c43" stroke-opacity=".45" fill="none" stroke-width="1.2"/>
+          <!-- cerebellum -->
+          <g class="lobe" id="l_cerebellum" data-r="Cerebellum">
+            <path fill="url(#cbTissue)" stroke="#7d3f37" stroke-width="1.4" d="M372,300 C392,268 462,258 510,268 C546,278 556,312 532,334 C500,360 420,360 388,338 C370,326 364,312 372,300 Z"/>
+            <g clip-path="url(#cbClip)" fill="none" stroke="#7d3f37" stroke-opacity=".55" stroke-width="1.3">
+              <path d="M370,292 C430,280 500,278 552,292"/><path d="M366,302 C430,290 505,290 556,304"/><path d="M366,312 C432,302 505,302 556,316"/><path d="M368,322 C434,314 505,314 552,328"/><path d="M372,332 C436,326 500,326 546,340"/><path d="M380,342 C440,338 495,338 536,350"/><path d="M392,352 C440,350 490,350 520,358"/>
+            </g>
+            <path fill="url(#shade)" d="M372,300 C392,268 462,258 510,268 C546,278 556,312 532,334 C500,360 420,360 388,338 C370,326 364,312 372,300 Z" pointer-events="none"/>
+          </g>
+          <path class="lobe-tint" data-r="Cerebellum" fill="#3b82f6" d="M372,300 C392,268 462,258 510,268 C546,278 556,312 532,334 C500,360 420,360 388,338 C370,326 364,312 372,300 Z"/>
+          <path class="lobe-tint" data-r="Brainstem" fill="#3b82f6" d="M318,300 C340,306 368,306 384,300 C392,320 390,346 382,372 C376,392 372,410 370,428 L338,428 C340,404 338,380 332,356 C326,336 320,318 318,300 Z"/>
+          <!-- cerebrum lobes -->
+          <g id="cerebrum">
+            <path class="lobe" id="l_frontal" data-r="Frontal lobe" fill="url(#tissue)" d="M92,262 C52,190 92,82 220,52 C252,45 280,42 300,42 C296,90 286,150 276,206 C240,208 205,218 180,236 C165,248 160,262 168,280 C140,282 110,280 92,262 Z"/>
+            <path class="lobe" id="l_parietal" data-r="Parietal lobe" fill="url(#tissue)" d="M300,42 C370,40 430,56 470,86 C462,120 452,160 448,196 C410,196 360,198 330,202 C310,204 290,205 276,206 C286,150 296,90 300,42 Z"/>
+            <path class="lobe" id="l_occipital" data-r="Occipital lobe" fill="url(#tissue)" d="M470,86 C526,128 552,196 530,248 C514,280 480,292 455,286 C452,256 450,226 448,196 C452,160 462,120 470,86 Z"/>
+            <path class="lobe" id="l_temporal" data-r="Temporal lobe" fill="url(#tissue)" d="M180,236 C205,218 240,208 276,206 C320,203 390,196 448,196 C450,226 452,256 455,286 C425,300 372,316 312,316 C250,318 196,304 168,280 C160,262 166,246 180,236 Z"/>
+            <!-- tints for selection -->
+            <path class="lobe-tint" data-r="Frontal lobe" id="t_frontal" fill="#3b82f6" d="M92,262 C52,190 92,82 220,52 C252,45 280,42 300,42 C296,90 286,150 276,206 C240,208 205,218 180,236 C165,248 160,262 168,280 C140,282 110,280 92,262 Z"/>
+            <path class="lobe-tint" data-r="Parietal lobe" id="t_parietal" fill="#3b82f6" d="M300,42 C370,40 430,56 470,86 C462,120 452,160 448,196 C410,196 360,198 330,202 C310,204 290,205 276,206 C286,150 296,90 300,42 Z"/>
+            <path class="lobe-tint" data-r="Occipital lobe" id="t_occipital" fill="#3b82f6" d="M470,86 C526,128 552,196 530,248 C514,280 480,292 455,286 C452,256 450,226 448,196 C452,160 462,120 470,86 Z"/>
+            <path class="lobe-tint" data-r="Temporal lobe" id="t_temporal" fill="#3b82f6" d="M180,236 C205,218 240,208 276,206 C320,203 390,196 448,196 C450,226 452,256 455,286 C425,300 372,316 312,316 C250,318 196,304 168,280 C160,262 166,246 180,236 Z"/>
+            <g class="fold-layer" clip-path="url(#cerebrumClip)" pointer-events="none">
+              <rect x="40" y="30" width="530" height="300" filter="url(#bumps)" opacity=".28" style="mix-blend-mode:multiply"/>
+              <g fill="none" stroke="#7a3a31" stroke-linecap="round" stroke-opacity=".62" stroke-width="2.2">
+                <!-- central sulcus & lateral sulcus (heavier) -->
+                <path stroke-width="3.2" d="M302,44 C296,70 304,90 292,112 C284,130 296,150 286,170 C280,186 284,198 278,206"/>
+                <path stroke-width="3.6" d="M168,246 C200,224 244,212 280,208 C330,203 390,198 446,198"/>
+                <!-- parieto occipital / preoccipital -->
+                <path stroke-width="2.6" d="M470,88 C462,124 456,160 449,196 C451,232 454,262 456,284"/>
+                <!-- frontal gyri -->
+                <path d="M272,52 C266,86 272,120 262,150 C256,170 260,186 252,204"/>
+                <path d="M110,140 C150,120 190,112 236,110 C252,110 262,104 268,96"/>
+                <path d="M96,190 C140,176 180,170 222,168 C240,168 252,162 260,154"/>
+                <path d="M150,72 C170,90 168,108 190,116"/><path d="M118,108 C138,122 142,138 160,150"/>
+                <path d="M200,64 C214,80 210,98 226,110"/><path d="M104,230 C130,214 150,214 170,200"/>
+                <path d="M200,170 C210,188 196,200 212,214"/><path d="M140,176 C150,194 144,206 156,224"/>
+                <!-- parietal gyri -->
+                <path d="M316,46 C310,80 318,110 306,140 C300,160 306,180 300,204"/>
+                <path d="M326,120 C360,108 380,124 410,112 C430,104 446,112 460,104"/>
+                <path d="M340,60 C350,80 340,96 356,108"/><path d="M390,56 C396,80 386,96 402,110"/>
+                <path d="M330,160 C352,150 372,170 398,156 C416,148 430,160 452,150"/>
+                <path d="M360,170 C368,182 360,192 370,198"/><path d="M420,64 C428,84 420,96 436,104"/>
+                <!-- occipital -->
+                <path d="M484,120 C496,150 488,176 504,200"/><path d="M470,214 C492,220 506,236 526,232"/><path d="M466,250 C484,256 498,268 516,262"/>
+                <!-- temporal gyri -->
+                <path d="M196,262 C250,246 320,240 380,236 C410,234 430,230 452,232"/>
+                <path d="M200,290 C260,280 330,276 390,270 C416,268 436,262 454,262"/>
+                <path d="M240,222 C246,236 238,244 246,256"/><path d="M330,212 C336,226 326,236 336,246"/><path d="M400,206 C406,220 398,228 406,240"/>
+                <path d="M290,252 C296,266 288,274 296,286"/><path d="M370,248 C378,262 368,270 378,282"/>
+              </g>
+              <g fill="none" stroke="#7a3a31" stroke-opacity=".38" stroke-width="1.5" stroke-linecap="round"><path d="M192,85 Q188,91 191,96 Q189,102 194,116 Q184,121 183,132"/><path d="M489,259 Q499,251 500,253 Q506,248 510,239 Q519,231 528,231"/><path d="M294,81 Q305,85 308,89 Q318,90 329,89 Q339,86 350,92"/><path d="M221,255 Q233,245 233,242 Q234,231 237,226 Q240,217 239,212"/><path d="M243,239 Q239,245 232,257 Q231,258 235,267 Q243,266 252,277"/><path d="M390,275 Q399,283 411,281 Q416,280 419,271 Q426,269 438,275"/><path d="M281,93 Q273,88 268,88 Q259,97 261,95 Q260,102 261,115"/><path d="M116,73 Q111,79 117,85 Q127,87 131,91 Q148,88 153,86"/><path d="M194,159 Q198,156 207,159 Q209,164 218,176 Q226,176 224,184"/><path d="M112,283 Q112,270 112,268 Q116,267 127,258 Q141,264 146,260"/><path d="M235,218 Q246,215 247,202 Q247,201 258,188 Q270,188 271,183"/><path d="M109,276 Q109,289 103,293 Q103,291 111,302 Q119,304 117,317"/><path d="M467,88 Q474,87 485,78 Q497,73 504,70 Q508,56 512,54"/><path d="M105,203 Q93,201 93,190 Q89,186 78,191 Q72,185 65,182"/><path d="M429,135 Q430,145 431,156 Q441,162 442,161 Q444,173 457,175"/><path d="M174,133 Q178,121 181,114 Q177,110 172,96 Q169,88 161,92"/><path d="M224,191 Q220,193 210,184 Q206,190 199,191 Q193,187 185,188"/><path d="M482,172 Q491,162 493,155 Q503,147 509,149 Q510,142 520,144"/><path d="M438,103 Q448,92 448,89 Q452,79 453,72 Q446,61 444,61"/><path d="M99,288 Q109,290 117,281 Q125,291 126,289 Q126,297 135,302"/><path d="M380,239 Q383,230 380,225 Q383,219 392,217 Q404,220 412,210"/><path d="M477,156 Q472,157 463,154 Q457,160 453,155 Q449,157 442,167"/><path d="M119,294 Q129,305 129,308 Q138,306 139,313 Q142,310 152,311"/><path d="M498,99 Q498,87 508,86 Q512,83 521,89 Q521,97 532,92"/><path d="M214,274 Q219,268 219,256 Q229,254 239,252 Q243,258 255,256"/><path d="M298,76 Q294,81 293,88 Q287,102 291,106 Q279,116 279,114"/><path d="M156,98 Q166,102 168,95 Q178,100 184,95 Q195,96 195,100"/><path d="M454,260 Q448,258 438,267 Q434,260 427,259 Q425,253 415,242"/><path d="M222,275 Q215,272 204,267 Q202,263 199,247 Q203,235 210,233"/><path d="M397,180 Q394,172 386,173 Q386,178 375,175 Q366,164 356,166"/><path d="M453,210 Q449,216 435,217 Q439,222 434,232 Q438,239 445,243"/><path d="M105,159 Q113,159 123,168 Q126,172 141,167 Q154,170 156,178"/><path d="M415,158 Q412,148 416,144 Q423,133 420,132 Q425,122 424,122"/><path d="M514,100 Q523,98 535,97 Q551,96 555,103 Q557,109 566,107"/><path d="M139,293 Q138,296 131,309 Q129,306 120,311 Q112,301 111,303"/><path d="M229,139 Q242,142 244,141 Q251,141 247,153 Q260,161 264,165"/><path d="M377,262 Q386,266 389,262 Q400,255 405,260 Q408,256 420,259"/><path d="M192,198 Q191,211 193,212 Q193,215 200,229 Q192,238 192,239"/><path d="M404,285 Q401,290 398,298 Q392,297 386,306 Q380,316 385,320"/><path d="M405,160 Q409,164 421,164 Q425,173 427,179 Q424,179 416,191"/><path d="M278,252 Q280,249 290,249 Q297,245 301,239 Q310,236 308,223"/><path d="M201,140 Q199,139 187,136 Q191,126 183,124 Q183,120 178,114"/><path d="M112,257 Q104,246 107,236 Q115,225 115,221 Q118,212 122,209"/><path d="M387,290 Q385,282 392,276 Q381,270 380,265 Q385,253 380,245"/><path d="M454,289 Q448,279 448,269 Q454,256 462,253 Q462,250 458,244"/><path d="M361,183 Q355,177 353,175 Q346,173 344,168 Q330,173 326,175"/><path d="M120,289 Q120,298 119,306 Q117,314 121,319 Q121,328 129,336"/><path d="M370,191 Q365,185 360,183 Q360,172 364,165 Q369,155 379,149"/><path d="M180,176 Q184,181 181,194 Q181,209 191,212 Q183,213 188,226"/><path d="M463,61 Q459,58 457,49 Q445,39 438,39 Q435,33 426,36"/><path d="M114,61 Q125,53 132,57 Q141,60 154,56 Q161,53 167,50"/><path d="M493,164 Q486,158 489,154 Q488,152 481,144 Q479,143 468,147"/><path d="M378,273 Q375,271 367,270 Q368,264 363,250 Q372,245 379,238"/><path d="M487,128 Q493,141 499,145 Q499,153 504,163 Q507,171 513,171"/><path d="M143,268 Q150,270 160,278 Q171,283 176,286 Q184,292 188,286"/><path d="M422,250 Q434,260 435,264 Q444,265 449,271 Q455,276 459,289"/><path d="M368,102 Q368,116 376,121 Q384,126 383,128 Q381,133 385,148"/><path d="M117,166 Q112,156 119,153 Q127,146 127,146 Q127,144 138,141"/><path d="M240,198 Q229,193 228,180 Q219,178 214,170 Q212,171 201,175"/><path d="M179,120 Q177,125 169,123 Q163,118 153,115 Q155,110 150,95"/></g>
+              <g fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="1.4" stroke-linecap="round">
+                <path d="M286,52 C280,86 288,118 276,150"/><path d="M110,160 C150,146 190,140 236,138"/><path d="M320,90 C350,86 380,92 420,84"/><path d="M210,276 C270,262 330,258 400,252"/>
+              </g>
+              <path fill="url(#shade)" d="M40,30 H570 V330 H40 Z"/>
+            </g>
+            <path fill="none" stroke="#7a3a31" stroke-width="1.6" stroke-opacity=".8" pointer-events="none" d="M92,262 C52,190 92,82 220,52 C300,34 410,40 478,92 C530,132 552,196 530,248 C512,282 478,292 455,286 C425,300 372,316 312,316 C250,318 196,304 168,280 C140,282 110,280 92,262 Z"/>
+          </g>
+        </g>
+      </svg>
+      <button class="btn" id="zoomReset">Reset view</button>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3 id="atlasTitle">Region details</h3></div>
+      <div class="card-body" id="atlasBody"><p class="hint">Click a region of the brain to zoom in and see its main functions and related conditions, then open any condition for its definition.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="dictionary">
+  <div class="sec-head"><div><h2>Dictionary</h2><p>Concise, exam style definitions of key neurological conditions.</p></div></div>
+  <div class="dict-grid">
+    <div class="card"><div class="card-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong>Search</strong><span class="chip" id="count">0 matches</span></div>
+      <input id="q" type="search" placeholder="Search (e.g., stroke, PCA, Broca, ALS, MS)" aria-label="Search the dictionary">
+      <div class="alpha" id="alpha"></div>
+      <div class="results" id="results" aria-live="polite"></div>
+    </div></div>
+    <div class="card viewer"><div class="card-body">
+      <h3 id="termTitle">Welcome</h3>
+      <div class="def" id="termBody">Use the search bar or the A to Z index to find an entry, then select it to view its definition here.</div>
+      <p class="hint" id="termTip" style="margin-top:12px">Tip: click any region in the atlas to jump to its related conditions.</p>
+    </div></div>
+  </div>
+</section>
+
+<section class="block" id="study">
+  <div class="sec-head"><div><h2>Medical Student Study Plan</h2><p>A structured routine for mastering neurology.</p></div></div>
+  <div class="grid3">
+    <div class="card"><div class="card-head"><h3>Daily (3 hours or less)</h3></div><div class="card-body"><ul>
+      <li>25 new Anki cards and 150 reviews</li><li>40 to 60 minutes of active reading</li><li>20 to 40 timed, mixed Qbank questions</li><li>10 minutes updating an error log</li><li>15 to 20 minutes of teach back</li><li>7 to 9 hours of sleep, a 30 minute workout, and steady hydration</li></ul></div></div>
+    <div class="card"><div class="card-head"><h3>Weekly</h3></div><div class="card-body"><ul>
+      <li><b>Mon:</b> Foundations and 40 questions</li><li><b>Tue:</b> Tracts and lesions and 40 questions</li><li><b>Wed:</b> Neuropharmacology and 40 questions</li><li><b>Thu:</b> Infection, tumor, and trauma and 40 questions</li><li><b>Fri:</b> Vascular neurology and 40 questions</li><li><b>Sat:</b> 80 to 120 mixed questions</li><li><b>Sun:</b> Light review and rest</li></ul></div></div>
+    <div class="card"><div class="card-head"><h3>30 Day Boost</h3></div><div class="card-body"><ol>
+      <li><b>Days 1 to 7:</b> Overview and daily questions</li><li><b>Days 8 to 14:</b> Focus on weak areas</li><li><b>Days 15 to 21:</b> Full question blocks</li><li><b>Days 22 to 27:</b> High yield facts</li><li><b>Days 28 to 30:</b> Two simulated exams and plenty of sleep</li></ol></div></div>
+  </div>
+</section>
+
+<section class="block" id="quiz">
+  <div class="sec-head"><div><h2>Neuro Self Test</h2><p>Select an answer, then reveal the explanation.</p></div><button class="btn" id="newQuiz">Shuffle Questions</button></div>
+  <div class="quiz-grid" id="quizWrap"></div>
+</section>
+
+<section class="block" id="game">
+  <div class="sec-head"><div><h2>Neuro Game Mode</h2><p>Review with flashcards, then test yourself in the ranking challenge.</p></div>
+    <div class="stats"><span class="chip" id="rankBadge">Rank: none yet</span><div class="bar"><span id="rankProgress"></span></div><span class="chip" id="streak">Streak: 0</span><span class="chip" id="score">Score: 0</span></div></div>
+  <div class="card"><div class="card-body">
+    <button class="btn primary" id="startFlash">Start Flashcards</button>
+    <div id="flashPanel" class="hidden">
+      <div class="flashWrap"><div class="card3d" id="card3d" aria-label="Flashcard. Click to flip."><div class="face" id="face"><div class="front" id="front">Front</div><div class="back" id="back">Back</div></div></div></div>
+      <div class="row"><button class="btn" id="prevCard">‹ Previous</button><button class="btn primary" id="flipCard">Flip</button><button class="btn" id="nextCard">Next ›</button><button class="btn" id="shuffleCards">Shuffle</button></div>
+      <hr class="divider">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="margin:0;font-size:16px">Ranking Test</h3><button class="btn primary" id="startRank">Start Ranking Test</button></div>
+      <div id="rankPanel" class="hidden" style="margin-top:12px">
+        <div id="rankQuestion" class="qtext" style="font-size:18px">Press Start to begin.</div>
+        <div id="rankChoices"></div>
+        <div style="margin-top:10px" class="hint" id="rankStatus"></div>
+      </div>
+    </div>
+  </div></div>
+</section>
+</main>
+
+<footer>© 2025 Malachi Batiste · All Rights Reserved<br>Created and developed by Malachi Batiste</footer>
+
+<button id="aiToggle" aria-label="Open Nova, the Brainapedia study guide" aria-expanded="false"><span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span class="x">×</span></button>
+<div id="aiPanel" role="dialog" aria-label="Nova, Brainapedia study guide">
+  <div class="ph"><div class="av">N</div><div class="t"><b>Nova</b><span>Brainapedia study guide</span></div><button id="aiClose" aria-label="Close">×</button></div>
+  <div id="chatLog" aria-live="polite"></div>
+  <div class="chips" id="chips"></div>
+  <div class="composer"><input id="userInput" type="text" placeholder="Ask about a condition or brain region" autocomplete="off"><button id="sendBtn">Send</button></div>
+  <div class="note">For study only. Not medical advice.</div>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* Theme and buttons */
+$("themeBtn").onclick=()=>document.body.classList.toggle("light");
+$("presentBtn").onclick=()=>{const el=document.documentElement;if(el.requestFullscreen){el.requestFullscreen().catch(()=>{});}confetti(200);};
+$("confettiBtn").onclick=()=>confetti(240);
+
+/* Countdown */
+const T=new Date("2025-10-06T10:30:00-04:00").getTime();
+const pad=n=>String(n).padStart(2,"0");
+let wasLive=Date.now()<T;
+function tickCount(){let diff=T-Date.now();
+  if(diff<=0){["d","h","m","s"].forEach(k=>$(k).textContent="00");
+    $("countMsg").innerHTML=wasLive?"<b>Presentation time</b>":"Presented Monday, October 6, 2025 at 10:30 AM ET";
+    if(wasLive){confetti(360);wasLive=false;$("countMsg").innerHTML="<b>Presentation time</b>";}return false;}
+  const D=Math.floor(diff/864e5);diff%=864e5;const H=Math.floor(diff/36e5);diff%=36e5;const M=Math.floor(diff/6e4);diff%=6e4;
+  $("d").textContent=pad(D);$("h").textContent=pad(H);$("m").textContent=pad(M);$("s").textContent=pad(Math.floor(diff/1000));return true;}
+if(tickCount()){const iv=setInterval(()=>{if(!tickCount())clearInterval(iv);},250);}
+
+/* Dictionary data */
+const DB={
+  "Alzheimer disease":"The most common dementia. Early episodic memory loss progresses to language and executive decline; associated with amyloid and tau.",
+  "Frontotemporal dementia (FTD)":"Personality and language change; associated with tau or TDP 43.",
+  "Dementia with Lewy bodies (DLB)":"Fluctuating cognition, visual hallucinations, parkinsonism, and REM sleep behavior disorder.",
+  "Parkinson disease":"Rest tremor, rigidity, and bradykinesia; responsive to levodopa.",
+  "ALS (amyotrophic lateral sclerosis)":"Combined upper and lower motor neuron signs; riluzole and edaravone slow the course.",
+  "Multiple sclerosis (MS)":"CNS demyelination with lesions disseminated in time and space; optic neuritis and internuclear ophthalmoplegia (INO).",
+  "Neuromyelitis optica (NMOSD)":"AQP4 IgG antibodies; optic neuritis with longitudinally extensive myelitis.",
+  "MOGAD":"Optic neuritis and myelitis; responsive to steroids.",
+  "ADEM":"Postinfectious demyelination; treated with high dose steroids.",
+  "Guillain Barré syndrome (GBS)":"Ascending weakness; treated with IVIG or plasma exchange.",
+  "Ischemic stroke (MCA)":"Face and arm weakness, with or without aphasia or neglect.",
+  "Ischemic stroke (PCA)":"Contralateral homonymous hemianopia, with or without alexia.",
+  "Wallenberg (lateral medullary)":"Hoarseness and dysphagia, loss of pain and temperature in the ipsilateral face and contralateral body, ataxia, and Horner syndrome.",
+  "Gerstmann (dominant parietal)":"Agraphia, acalculia, finger agnosia, and left right disorientation.",
+  "Hemispatial neglect (nondominant parietal)":"Inattention to contralateral space and the contralateral body.",
+  "Broca area lesion":"Nonfluent aphasia with impaired repetition and good comprehension.",
+  "Wernicke area lesion":"Fluent but meaningless speech, poor comprehension, and impaired repetition.",
+  "Conduction aphasia":"Impaired repetition with fluent speech and intact comprehension.",
+  "Migraine":"Throbbing headache with or without aura; treated with triptans or NSAIDs, plus preventive therapy.",
+  "Cluster headache":"Severe orbital pain; aborted with oxygen or sumatriptan and prevented with verapamil.",
+  "Trigeminal neuralgia":"Paroxysmal facial pain; treated with carbamazepine.",
+  "Epilepsy (focal impaired awareness)":"Automatisms and postictal confusion.",
+  "Absence seizures":"3 Hz spike and wave discharges; treated with ethosuximide.",
+  "Glioblastoma (GBM)":"Ring enhancing necrotic mass; treated with resection, temozolomide, and radiation therapy.",
+  "Meningioma":"Dural tail on imaging; often benign.",
+  "Acoustic neuroma":"Unilateral sensorineural hearing loss, tinnitus, and imbalance.",
+  "Brain metastases":"Multiple lesions at the gray white junction (from lung, breast, melanoma, and others).",
+  "Epidural hematoma":"Lens shaped collection; lucid interval.",
+  "Subdural hematoma":"Crescent shaped collection; slower onset.",
+  "NPH (normal pressure hydrocephalus)":"Gait disturbance, incontinence, and cognitive decline; responsive to shunting.",
+  "Myasthenia gravis":"Fluctuating, fatigable weakness; acetylcholine receptor (AChR) antibodies."
+};
+const REGIONS={
+  "Frontal lobe":{t:"frontal",color:"#3b82f6",info:"Executive function, motor initiation, and speech production (Broca area). Lesions can cause personality change, abulia, and hemiparesis.",list:["Broca area lesion","Frontotemporal dementia (FTD)","Meningioma"]},
+  "Parietal lobe":{t:"parietal",color:"#0ea5e9",info:"Somatosensation and spatial processing. Lesions can cause neglect (nondominant side) or Gerstmann syndrome (dominant side).",list:["Gerstmann (dominant parietal)","Hemispatial neglect (nondominant parietal)","Ischemic stroke (MCA)"]},
+  "Temporal lobe":{t:"temporal",color:"#f59e0b",info:"Memory (hippocampus) and language comprehension (Wernicke area). Lesions can cause focal impaired awareness seizures and memory loss.",list:["Epilepsy (focal impaired awareness)","Wernicke area lesion","MOGAD"]},
+  "Occipital lobe":{t:"occipital",color:"#22c55e",info:"Primary vision. Lesions cause homonymous visual field loss, with or without alexia (PCA territory).",list:["Ischemic stroke (PCA)","Migraine","Brain metastases"]},
+  "Cerebellum":{color:"#a855f7",info:"Coordination and balance. Lesions cause ataxia, dysmetria, and intention tremor.",list:["Tumor (posterior fossa)","Ataxia (cerebellar)","Acoustic neuroma"]},
+  "Brainstem":{color:"#e11d48",info:"Cranial nerves, respiration, and long tracts. Lesions cause crossed signs (face versus body) and instability of vital functions.",list:["Wallenberg (lateral medullary)"]}
+};
+
+/* Dictionary UI */
+const results=$("results"),count=$("count"),q=$("q");
+function showTerm(t){$("termTitle").textContent=t;$("termBody").textContent=DB[t]||"This condition does not have a dictionary entry yet.";}
+function render(items){results.innerHTML="";count.textContent=items.length+(items.length===1?" match":" matches");
+  if(!items.length){results.innerHTML='<p class="hint">No entries found.</p>';return;}
+  items.forEach(term=>{const b=document.createElement("button");b.className="item";b.innerHTML="<b>"+esc(term)+"</b>";b.title=DB[term];b.onclick=()=>showTerm(term);results.appendChild(b);});}
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(L=>{const b=document.createElement("button");b.textContent=L;b.onclick=()=>{q.value="";render(Object.keys(DB).filter(t=>t[0].toUpperCase()===L).sort());};$("alpha").appendChild(b);});
+q.addEventListener("input",()=>{const s=q.value.trim().toLowerCase();if(!s){results.innerHTML="";count.textContent="0 matches";return;}
+  render(Object.keys(DB).filter(t=>t.toLowerCase().includes(s)||DB[t].toLowerCase().includes(s)).sort());});
+
+/* Atlas: tilt, zoom, focus */
+const svg=$("brainSVG"),tilt=$("brainTilt"),stage=$("stage");let drag=false,moved=0,lx=0,ly=0,rx=0,ry=0;
+const FULL=[0,0,600,440];let vb=FULL.slice(),zoomed=false,vbAnimating=false,raf=0;
+function applyTilt(){tilt.style.transform=(rx||ry)?`rotateX(${ry}deg) rotateY(${rx}deg)`:"";}
+function setVB(v){svg.setAttribute("viewBox",v.map(n=>n.toFixed(2)).join(" "));}
+function animateVB(to,ms=600){cancelAnimationFrame(raf);const from=vb.slice(),t0=performance.now();vbAnimating=true;
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  (function f(now){const t=Math.min(1,(now-t0)/ms),e=ease(t);vb=from.map((a,i)=>a+(to[i]-a)*e);setVB(vb);if(t<1)raf=requestAnimationFrame(f);else vbAnimating=false;})(t0);}
+function zoomTo(el){rx=ry=0;applyTilt();const b=el.getBBox();const pad=Math.max(b.width,b.height)*.12+18;let w=b.width+pad*2,h=b.height+pad*2;const ar=600/440;if(w/h>ar)h=w/ar;else w=h*ar;
+  w=Math.min(w,600);h=Math.min(h,440);animateVB([b.x+b.width/2-w/2,b.y+b.height/2-h/2,w,h]);zoomed=true;$("zoomReset").classList.add("show");}
+function resetZoom(){animateVB(FULL);zoomed=false;rx=ry=0;applyTilt();$("zoomReset").classList.remove("show");svg.classList.remove("focus");
+  document.querySelectorAll(".lobe").forEach(l=>l.classList.remove("active"));document.querySelectorAll(".lobe-tint").forEach(t=>t.classList.remove("on"));document.querySelectorAll("#legend button").forEach(b=>b.classList.remove("active"));
+  $("atlasTitle").textContent="Region details";const ab=$("atlasBody");ab.classList.remove("panel-in");void ab.offsetWidth;ab.classList.add("panel-in");ab.innerHTML='<p class="hint">Click a region of the brain to zoom in and see its main functions and related conditions.</p>';}
+svg.addEventListener("pointerdown",e=>{drag=true;moved=0;lx=e.clientX;ly=e.clientY;});
+addEventListener("pointerup",()=>drag=false);
+addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;moved+=Math.abs(dx)+Math.abs(dy);if(moved<6)return;rx=Math.max(-25,Math.min(25,rx+dx*.3));ry=Math.max(-20,Math.min(20,ry-dy*.3));lx=e.clientX;ly=e.clientY;applyTilt();});
+function showRegion(name,fromChat){const r=REGIONS[name];if(!r)return;
+  const el=document.querySelector('.lobe[data-r="'+name+'"]');
+  svg.classList.add("focus");document.querySelectorAll(".lobe").forEach(l=>l.classList.toggle("active",l===el));
+  document.querySelectorAll(".lobe-tint").forEach(t=>t.classList.toggle("on",t.dataset.r===name));
+  document.querySelectorAll("#legend button").forEach(b=>b.classList.toggle("active",b.dataset.r===name));
+  zoomTo(el);
+  $("atlasTitle").textContent=name;const body=$("atlasBody");body.classList.remove("panel-in");void body.offsetWidth;body.classList.add("panel-in");
+  body.innerHTML='<p class="region-summary">'+esc(r.info)+'</p><div class="hint" style="margin-bottom:8px">Related conditions</div><div class="region-list"></div>';
+  const list=body.querySelector(".region-list");
+  r.list.forEach(t=>{const b=document.createElement("button");b.className="item";b.innerHTML="<b>"+esc(t)+"</b>"+(DB[t]?'<div class="hint">'+esc(DB[t])+'</div>':'<div class="hint">Not yet in the dictionary.</div>');b.onclick=()=>showTerm(t);list.appendChild(b);});}
+document.querySelectorAll(".lobe").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();if(moved>=6)return;showRegion(el.dataset.r);}));
+stage.addEventListener("click",e=>{if(moved>=6||e.target.closest(".lobe,#legend,#zoomReset"))return;if(zoomed)resetZoom();});
+$("zoomReset").onclick=e=>{e.stopPropagation();resetZoom();};
+addEventListener("keydown",e=>{if(e.key==="Escape"&&zoomed)resetZoom();});
+Object.keys(REGIONS).forEach(n=>{const b=document.createElement("button");b.dataset.r=n;b.innerHTML='<i style="background:'+REGIONS[n].color+'"></i>'+n;b.onclick=e=>{e.stopPropagation();showRegion(n);};$("legend").appendChild(b);});
+
+/* Quiz */
+const BANK=[
+ {q:"Which arterial territory commonly causes contralateral homonymous hemianopia?",c:["ACA","MCA","PCA","AICA"],a:2,ex:"The PCA supplies the occipital visual cortex."},
+ {q:"Which findings make up Gerstmann syndrome?",c:["Agraphia, acalculia, finger agnosia, and left right disorientation","Ataxia and tremor","Pure motor hemiparesis","Horner syndrome with facial pain loss"],a:0,ex:"It localizes to the dominant inferior parietal lobule."},
+ {q:"What is the best acute treatment for a cluster headache attack?",c:["Acetaminophen","High flow oxygen or subcutaneous sumatriptan","Topiramate","Propranolol"],a:1,ex:"Oxygen or a subcutaneous triptan aborts the attack; verapamil is used for prevention."},
+ {q:"What is the first line treatment for absence seizures?",c:["Valproate","Ethosuximide","Levetiracetam","Lamotrigine"],a:1,ex:"Ethosuximide is first line for typical absence seizures."},
+ {q:"Which pattern describes Brown Séquard syndrome?",c:["Bilateral loss of pain and temperature only","Ipsilateral loss of motor function and proprioception with contralateral loss of pain and temperature","Contralateral motor loss only","No sensory change"],a:1,ex:"This is the spinal cord hemisection pattern."}
+];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildQuiz(){const w=$("quizWrap");w.innerHTML="";shuffle(BANK.slice()).forEach((it,n)=>{const card=document.createElement("div");card.className="card qcard";
+  card.innerHTML='<div class="qtext">Q'+(n+1)+'. '+esc(it.q)+'</div>';let done=false;
+  it.c.forEach((opt,i)=>{const b=document.createElement("button");b.className="choice";b.textContent=opt;b.onclick=()=>{if(done)return;done=true;if(i===it.a){b.classList.add("correct");sfx("good");}else{b.classList.add("wrong");card.querySelectorAll(".choice")[it.a].classList.add("correct");sfx("bad");}};card.appendChild(b);});
+  const ex=document.createElement("div");ex.className="answer";ex.innerHTML="<b>Answer:</b> "+esc(it.c[it.a])+". "+esc(it.ex);
+  const show=document.createElement("button");show.className="btn";show.style.marginTop="8px";show.textContent="Show answer";show.onclick=()=>{const o=ex.style.display==="block";ex.style.display=o?"none":"block";show.textContent=o?"Show answer":"Hide answer";};
+  card.appendChild(show);card.appendChild(ex);w.appendChild(card);});}
+$("newQuiz").onclick=buildQuiz;buildQuiz();
+
+/* Flashcards */
+const TERMS=Object.keys(DB).map(k=>({term:k,def:DB[k]}));let idx=0;const face=$("face");
+function loadCard(i){$("front").innerHTML="<b>"+esc(TERMS[i].term)+"</b>";$("back").textContent=TERMS[i].def;face.classList.remove("flip");}
+function flip(){face.classList.toggle("flip");sfx("flip");}
+$("flipCard").onclick=flip;$("card3d").onclick=flip;
+$("nextCard").onclick=()=>{idx=(idx+1)%TERMS.length;loadCard(idx);sfx("next");};
+$("prevCard").onclick=()=>{idx=(idx-1+TERMS.length)%TERMS.length;loadCard(idx);sfx("next");};
+$("shuffleCards").onclick=()=>{shuffle(TERMS);idx=0;loadCard(0);sfx("shuffle");};
+$("startFlash").onclick=()=>{$("flashPanel").classList.remove("hidden");$("startFlash").classList.add("hidden");loadCard(0);sfx("start");};
+
+/* Ranking test */
+let score=0,streak=0,timerStart=0,qPool=[],total=10;
+function tier(s){if(s>=71)return"Neuro Genius";if(s>=31)return"Intermediate Cortex";return"Beginner Neuro";}
+function updStats(){$("score").textContent="Score: "+score;$("streak").textContent="Streak: "+streak;$("rankBadge").textContent="Rank: "+tier(score);$("rankProgress").style.width=Math.min(100,score)+"%";}
+function startGame(){score=0;streak=0;updStats();$("rankBadge").textContent="Rank: none yet";qPool=shuffle(TERMS.slice()).slice(0,total);$("rankPanel").classList.remove("hidden");ask();}
+function ask(){const rq=$("rankQuestion"),rc=$("rankChoices"),rs=$("rankStatus");
+  if(!qPool.length){rq.innerHTML="Done. Your tier: "+tier(score);rc.innerHTML="";rs.textContent="Final score: "+score;sfx("start");return;}
+  const item=qPool.pop();rq.innerHTML="Question "+(total-qPool.length)+" of "+total+": <b>"+esc(item.term)+"</b>";
+  const choices=shuffle([item.def,...shuffle(TERMS.filter(x=>x.term!==item.term)).slice(0,3).map(x=>x.def)]);
+  rc.innerHTML="";let done=false;
+  choices.forEach(ch=>{const b=document.createElement("button");b.className="choice";b.textContent=ch;b.onclick=()=>{if(done)return;done=true;const dt=(performance.now()-timerStart)/1000;
+    if(ch===item.def){b.classList.add("correct");score+=10+(dt<5?3:0);streak++;sfx("good");}else{b.classList.add("wrong");[...rc.children].find(x=>x.textContent===item.def).classList.add("correct");streak=0;sfx("bad");}
+    updStats();setTimeout(ask,900);};rc.appendChild(b);});
+  timerStart=performance.now();rs.textContent="Pick the matching definition. Answers under 5 seconds earn a bonus.";}
+$("startRank").onclick=()=>{startGame();sfx("start");};
+
+/* Sounds */
+let audioCtx;function sfx(type){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);const now=audioCtx.currentTime;
+  const P={good:[880,1320,.18],bad:[200,120,.22],flip:[520,580,.08],shuffle:[720,640,.1],start:[660,990,.2],next:[740,880,.08]}[type]||[600,400,.12];
+  o.type="sine";o.frequency.setValueAtTime(P[0],now);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.15,now+.01);o.frequency.exponentialRampToValueAtTime(P[1],now+P[2]*.7);g.gain.exponentialRampToValueAtTime(.0001,now+P[2]);o.start(now);o.stop(now+P[2]+.02);}catch(e){}}
+
+/* Confetti */
+const cnv=document.createElement("canvas");cnv.id="fx";document.body.appendChild(cnv);const ctx=cnv.getContext("2d");
+function resize(){cnv.width=innerWidth;cnv.height=innerHeight;}addEventListener("resize",resize);resize();
+let pieces=[],running=false;const COLORS=["#2563eb","#60a5fa","#93c5fd","#f59e0b","#ffffff"];
+function confetti(n){pieces=Array.from({length:n},()=>({x:Math.random()*cnv.width,y:-20-Math.random()*cnv.height*.5,r:2+Math.random()*4,vx:-1+Math.random()*2,vy:1.5+Math.random()*2,a:Math.random()*6.3,c:COLORS[Math.floor(Math.random()*COLORS.length)]}));if(!running){running=true;requestAnimationFrame(draw);}}
+function draw(){ctx.clearRect(0,0,cnv.width,cnv.height);pieces.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.1;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r,-p.r,p.r*2,p.r*2+Math.sin(p.a)*2);ctx.restore();});
+  pieces=pieces.filter(p=>p.y<cnv.height+20);if(pieces.length)requestAnimationFrame(draw);else{running=false;ctx.clearRect(0,0,cnv.width,cnv.height);}}
+
+/* Nova study guide (offline, uses DB and REGIONS only) */
+const chatLog=$("chatLog"),userInput=$("userInput"),aiPanel=$("aiPanel"),aiToggle=$("aiToggle");
+function setChat(open){aiPanel.classList.toggle("open",open);aiToggle.classList.toggle("open",open);aiToggle.setAttribute("aria-expanded",open);if(open&&matchMedia("(min-width:561px)").matches)setTimeout(()=>userInput.focus(),200);}
+aiToggle.onclick=()=>setChat(!aiPanel.classList.contains("open"));$("aiClose").onclick=()=>setChat(false);
+function bubble(html,me){const d=document.createElement("div");d.className="bub "+(me?"me":"bot");d.innerHTML=html;chatLog.appendChild(d);chatLog.scrollTop=chatLog.scrollHeight;return d;}
+function norm(s){return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/'s\b/g,"").replace(/[^a-z0-9\s]/g," ").replace(/\s+/g," ").trim();}
+const EXTRA={"Alzheimer disease":["alzheimer","alzheimers"],"Parkinson disease":["parkinson","parkinsons"],"ALS (amyotrophic lateral sclerosis)":["lou gehrig","motor neuron disease"],"Multiple sclerosis (MS)":["ms"],"Guillain Barré syndrome (GBS)":["guillain barre","guillain"],"Wallenberg (lateral medullary)":["wallenberg","lateral medullary"],"Gerstmann (dominant parietal)":["gerstmann"],"Hemispatial neglect (nondominant parietal)":["neglect","hemineglect"],"Broca area lesion":["broca","broca aphasia","expressive aphasia"],"Wernicke area lesion":["wernicke","wernicke aphasia","receptive aphasia"],"Epilepsy (focal impaired awareness)":["epilepsy","focal seizure","temporal lobe epilepsy"],"Absence seizures":["absence","absence seizure"],"Glioblastoma (GBM)":["glioblastoma","gbm"],"Acoustic neuroma":["vestibular schwannoma","acoustic"],"Brain metastases":["metastases","metastasis","mets"],"Epidural hematoma":["epidural"],"Subdural hematoma":["subdural"],"NPH (normal pressure hydrocephalus)":["nph","hydrocephalus"],"Myasthenia gravis":["myasthenia","mg"],"Ischemic stroke (MCA)":["mca stroke","mca"],"Ischemic stroke (PCA)":["pca stroke","pca"],"Neuromyelitis optica (NMOSD)":["nmo","neuromyelitis"],"Dementia with Lewy bodies (DLB)":["lewy","lewy body"],"Frontotemporal dementia (FTD)":["frontotemporal","ftd"],"Trigeminal neuralgia":["trigeminal"],"Cluster headache":["cluster"]};
+const ENTRIES=Object.keys(DB).map(k=>{const al=new Set([norm(k),norm(k.replace(/\(.*?\)/g,""))]);const p=k.match(/\((.*?)\)/);if(p)al.add(norm(p[1]));(EXTRA[k]||[]).forEach(a=>al.add(norm(a)));return {k,al:[...al].filter(Boolean)};});
+const REG_ALIAS={"Frontal lobe":["frontal"],"Parietal lobe":["parietal"],"Temporal lobe":["temporal"],"Occipital lobe":["occipital"],"Cerebellum":["cerebellum","cerebellar"],"Brainstem":["brainstem","brain stem","medulla"]};
+function regionsOf(k){return Object.keys(REGIONS).filter(r=>REGIONS[r].list.includes(k));}
+function wordIn(q,a){return (" "+q+" ").includes(" "+a+" ");}
+function findTerms(q){let best=[],len=0;ENTRIES.forEach(e=>e.al.forEach(a=>{if(a.length>=2&&wordIn(q,a)){if(a.length>len){best=[e.k];len=a.length;}else if(a.length===len&&!best.includes(e.k))best.push(e.k);}}));
+  if(!best.length&&wordIn(q,"stroke"))best=["Ischemic stroke (MCA)","Ischemic stroke (PCA)"];return best;}
+function findRegion(q){for(const r in REG_ALIAS)if(REG_ALIAS[r].some(a=>wordIn(q,a)))return r;return null;}
+function lev(a,b){const m=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=m[0];m[0]=i;for(let j=1;j<=b.length;j++){const t=m[j];m[j]=Math.min(m[j]+1,m[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t;}}return m[b.length];}
+function suggest(q){const toks=q.split(" ").filter(t=>t.length>2);const sc=ENTRIES.map(e=>{let s=0;e.al.forEach(a=>a.split(" ").forEach(w=>toks.forEach(t=>{if(w.length>2){if(w.startsWith(t)||t.startsWith(w))s+=3;else if(lev(w,t)<=Math.max(1,Math.floor(w.length/4)))s+=2;}})));norm(DB[e.k]).split(" ").forEach(w=>{if(w.length>3&&toks.includes(w))s+=1;});return {k:e.k,s};}).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);return sc.slice(0,3).map(x=>x.k);}
+const sug=k=>'<button class="sug" data-q="What is '+esc(k)+'?">'+esc(k)+'</button>';
+function termCard(k,intent){const rs=regionsOf(k);const where=rs.length?"In the atlas it falls under the "+rs.map(r=>"<b>"+r.toLowerCase()+"</b>").join(" and ")+".":"It isn't tied to one region in the atlas.";
+  if(intent==="where")return "<b>"+esc(k)+"</b><br>"+where+(rs.length?"<br>"+esc(REGIONS[rs[0]].info):"");
+  if(intent==="symptoms")return "<b>"+esc(k)+"</b><br>Main features: "+esc(DB[k]);
+  return "<b>"+esc(k)+"</b><br>"+esc(DB[k])+"<br><span class='muted' style='font-size:13px'>"+where+"</span>";}
+function smartReply(raw){const q=norm(raw);if(!q)return {h:"Type a question to get started."};
+  if(/^(hi|hello|hey)\b/.test(q))return {h:"Hi. Ask about any of the 31 conditions in the dictionary or one of the six brain regions."};
+  const intent=/\bwhere\b|\blocat|\bregion\b|\blobe of\b/.test(q)?"where":/symptom|sign|feature|present|cause/.test(q)?"symptoms":"what";
+  const terms=findTerms(q),reg=findRegion(q);
+  if(terms.length===1){const rs=regionsOf(terms[0]);return {h:termCard(terms[0],intent),region:rs[0]};}
+  if(terms.length>1)return {h:"That matches more than one entry.<br>"+terms.map(k=>"• "+termCard(k,intent)).join("<br>")};
+  if(reg){const r=REGIONS[reg];return {h:"<b>"+reg+"</b><br>"+esc(r.info)+"<br>Conditions listed here:<br>"+r.list.map(k=>DB[k]?sug(k):'<span class="tag">'+esc(k)+'</span>').join(""),region:reg};}
+  const s=suggest(q);if(s.length)return {h:"I don't have that one. Did you mean one of these?<br>"+s.map(sug).join("")};
+  return {h:"I only cover the conditions in the dictionary and the six regions in the atlas. Try a condition name, an abbreviation like MS or ALS, or a region like the temporal lobe.<br>"+["Migraine","Parkinson disease","Meningioma"].map(sug).join("")};}
+let busy=false;
+function send(text){text=(text||"").trim();if(!text||busy)return;busy=true;bubble(esc(text),true);userInput.value="";
+  const t=bubble('<div class="typing"><i></i><i></i><i></i></div>');t.style.padding="0";
+  setTimeout(()=>{const r=smartReply(text);t.remove();bubble(r.h);if(r.region)showRegion(r.region,true);busy=false;},650);}
+userInput.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();send(userInput.value);}});
+$("sendBtn").onclick=()=>send(userInput.value);
+chatLog.addEventListener("click",e=>{const b=e.target.closest(".sug");if(b)send(b.dataset.q);});
+["What is MS?","Where is Broca area lesion?","Symptoms of Parkinson","Temporal lobe","What is GBS?"].forEach(x=>{const b=document.createElement("button");b.textContent=x;b.onclick=()=>send(x);$("chips").appendChild(b);});
+bubble("Ask what a condition is, where it sits in the atlas, or what its main features are. Answers come from the Brainapedia dictionary and atlas.");
+addEventListener("keydown",e=>{if(e.key==="Escape"&&aiPanel.classList.contains("open")&&!vbAnimating&&!zoomed)setChat(false);});
+</script>
+<footer style="text-align:center;padding:14px;font-size:13px;opacity:.8"><a href="https://malachi-batiste.netlify.app" style="color:inherit">Made by Malachi Batiste</a></footer>
+</body>
+</html>
