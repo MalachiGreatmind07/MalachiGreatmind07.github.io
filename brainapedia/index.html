@@ -42,6 +42,18 @@ body.light .btn.ghostbtn{color:var(--ink);border-color:#b9c7dd}
 .chip{display:inline-flex;align-items:center;font-size:12.5px;font-weight:600;color:var(--brand2);background:var(--soft);border-radius:999px;padding:4px 10px;white-space:nowrap}
 /* sections */
 section.block{margin:34px auto}
+.tabs{position:sticky;top:0;z-index:40;background:var(--surface,#fff);border-bottom:1px solid var(--line,#e5e7eb);box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.tabrow{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabrow::-webkit-scrollbar{display:none}
+.tabs a{flex:0 0 auto;padding:14px 16px;font-weight:600;font-size:15px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
+.tabs a:hover{color:var(--ink,#0f172a)}
+.tabs a.on{color:var(--ink,#0f172a);border-bottom-color:var(--brand,#2563eb)}
+main.wrap{max-width:1120px;padding:0 28px 80px}
+main section.block{display:none;margin:44px auto;opacity:0;transition:opacity .25s ease}
+main section.block.show{display:block}main section.block.vis{opacity:1}
+#roomBody #srPanel{position:static;display:flex;width:auto;max-width:none;height:min(620px,70vh);max-height:none;box-shadow:none}
+#roomBody #srJoin{position:static;display:inline-block}
+@media (max-width:700px){main.wrap{padding:0 16px 80px}main section.block{margin:28px auto}.tabs a{padding:12px 13px;font-size:14px}}
 .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .sec-head h2{margin:0;font-size:22px;color:#fff;letter-spacing:-.01em}
 .sec-head p{margin:2px 0 0;color:#b4c4e2;font-size:14px}
@@ -51,8 +63,8 @@ section.block{margin:34px auto}
 .card-head h3{margin:0;font-size:16px}
 .card-body{padding:16px 18px}
 /* atlas */
-.atlas-grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
-.stage{position:relative;overflow:hidden;background:radial-gradient(600px 300px at 50% 40%,#ffffff 0,#eef2f8 100%);min-height:440px;display:grid;place-items:center;cursor:grab}
+.atlas-grid{display:grid;grid-template-columns:1fr 360px;gap:24px}
+.stage{position:relative;overflow:hidden;background:radial-gradient(600px 300px at 50% 40%,#ffffff 0,#eef2f8 100%);min-height:520px;display:grid;place-items:center;cursor:grab}
 .stage:active{cursor:grabbing}
 #brainSVG{position:relative;z-index:0;overflow:visible;width:100%;max-width:640px;height:auto;user-select:none;touch-action:none}
 #brainTilt{transition:transform .08s linear;transform-origin:300px 220px;transform-box:view-box}
@@ -153,6 +165,17 @@ body.light footer{color:var(--muted)}
 #neural{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0;z-index:1}
 #zoomReset{position:absolute;top:12px;right:12px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:2}
 #zoomReset.show{opacity:1;pointer-events:auto}
+#goDeep{position:absolute;top:12px;right:132px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:2}
+#goDeep.show{opacity:1;pointer-events:auto}
+#deep{position:absolute;inset:0;z-index:6;background:radial-gradient(circle at 35% 50%,#10264d 0,#060d1c 80%);opacity:0;transform:scale(.9);transition:opacity .45s ease,transform .6s cubic-bezier(.2,.7,.2,1);pointer-events:none;cursor:default}
+#deep.on{opacity:1;transform:none;pointer-events:auto}
+#deepCv{position:absolute;inset:0;width:100%;height:100%}
+.deepbar{position:absolute;top:12px;left:12px;display:flex;gap:8px;z-index:2}
+#dzToggle[aria-pressed=true]{background:#e11d48;color:#fff;border-color:#e11d48}
+.dmark{position:absolute;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:#e11d48;box-shadow:0 0 0 5px rgba(225,29,72,.28);cursor:pointer;padding:0;display:none}
+.dmark.sel{background:#f59e0b;box-shadow:0 0 0 6px rgba(245,158,11,.35)}
+#deep.dz .dmark{display:block}
+.dmark span{position:absolute;left:50%;top:24px;transform:translateX(-50%);white-space:nowrap;font:600 12px system-ui,sans-serif;color:#fff;background:rgba(15,23,42,.85);padding:2px 7px;border-radius:6px}
 .panel-in{animation:slidein .35s ease both}
 @keyframes slidein{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:70}
@@ -176,7 +199,7 @@ body.light footer{color:var(--muted)}
 <header class="hero">
   <div class="eyebrow">Final Presentation</div>
   <h1>Brainapedia</h1>
-  <p>Where neurology meets design. A brain atlas, condition dictionary, study plan, and self test in one page.</p>
+  <p>Where neurology meets design. A brain atlas, condition dictionary, study plan, and self test.</p>
   <div class="toolbar">
     <button class="btn primary" id="presentBtn">Presentation Mode</button>
     <button class="btn ghostbtn" id="confettiBtn">Celebrate</button>
@@ -184,6 +207,9 @@ body.light footer{color:var(--muted)}
   </div>
 </header>
 
+<nav class="tabs" id="tabs" aria-label="Sections"><div class="wrap tabrow">
+<a href="#atlas" data-t="atlas">Atlas</a><a href="#dictionary" data-t="dictionary">Dictionary</a><a href="#study" data-t="study">Study Plan</a><a href="#quiz" data-t="quiz">Quiz</a><a href="#game" data-t="game">Flashcards</a><a href="#room" data-t="room">Study Room</a>
+</div></nav>
 <main class="wrap">
 
 <section class="block" id="atlas">
@@ -278,6 +304,8 @@ body.light footer{color:var(--muted)}
       </svg>
       <canvas id="neural" aria-hidden="true"></canvas>
       <button class="btn" id="zoomReset">Reset view</button>
+      <button class="btn" id="goDeep" title="Or scroll up, or click the region again">Go deeper</button>
+      <div id="deep" aria-hidden="true"><canvas id="deepCv"></canvas><div id="deepMarks"></div><div class="deepbar"><button class="btn" id="deepBack">Back</button><button class="btn" id="dzToggle" aria-pressed="false">Disease view</button></div></div>
       <div class="legend" id="legend"></div>
     </div>
     <div class="card">
@@ -338,6 +366,10 @@ body.light footer{color:var(--muted)}
       </div>
     </div>
   </div></div>
+</section>
+<section class="block" id="room">
+  <div class="sec-head"><div><h2>Study Room</h2><p>Talk through topics with other students in real time.</p></div></div>
+  <div id="roomBody"></div>
 </section>
 </main>
 
@@ -436,14 +468,14 @@ function animateVB(to,ms=600,done){cancelAnimationFrame(raf);const from=vb.slice
   const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
   (function f(now){const t=Math.min(1,(now-t0)/ms),e=ease(t);vb=from.map((a,i)=>a+(to[i]-a)*e);setVB(vb);if(t<1)raf=requestAnimationFrame(f);else{vbAnimating=false;done&&done();}})(t0);}
 function zoomTo(el){rx=ry=0;applyTilt();const b=el.getBBox();const pad=Math.max(b.width,b.height)*.12+18;let w=b.width+pad*2,h=b.height+pad*2;const ar=600/440;if(w/h>ar)h=w/ar;else w=h*ar;
-  w=Math.min(w,600);h=Math.min(h,440);Neural.stop(true);animateVB([b.x+b.width/2-w/2,b.y+b.height/2-h/2,w,h],600,()=>Neural.start(el,(REGIONS[el.dataset.r]||{}).color||"#3b82f6"));zoomed=true;$("zoomReset").classList.add("show");}
-function resetZoom(){Neural.stop();animateVB(FULL);zoomed=false;rx=ry=0;applyTilt();$("zoomReset").classList.remove("show");svg.classList.remove("focus");
+  w=Math.min(w,600);h=Math.min(h,440);Neural.stop(true);animateVB([b.x+b.width/2-w/2,b.y+b.height/2-h/2,w,h],600,()=>Neural.start(el,(REGIONS[el.dataset.r]||{}).color||"#3b82f6"));zoomed=true;$("zoomReset").classList.add("show");$("goDeep").classList.add("show");}
+function resetZoom(){$("goDeep").classList.remove("show");Neural.stop();animateVB(FULL);zoomed=false;rx=ry=0;applyTilt();$("zoomReset").classList.remove("show");svg.classList.remove("focus");
   document.querySelectorAll(".lobe").forEach(l=>l.classList.remove("active"));document.querySelectorAll(".lobe-tint").forEach(t=>t.classList.remove("on"));document.querySelectorAll("#legend button").forEach(b=>b.classList.remove("active"));
   $("atlasTitle").textContent="Region details";const ab=$("atlasBody");ab.classList.remove("panel-in");void ab.offsetWidth;ab.classList.add("panel-in");ab.innerHTML='<p class="hint">Pick a region on the brain to see its role and related conditions.</p>';}
 svg.addEventListener("pointerdown",e=>{drag=true;moved=0;lx=e.clientX;ly=e.clientY;});
 addEventListener("pointerup",()=>{if(drag&&moved>=6&&zoomed){rx=ry=0;applyTilt();Neural.refresh();}drag=false;});
 addEventListener("pointermove",e=>{if(!drag)return;const dx=e.clientX-lx,dy=e.clientY-ly;moved+=Math.abs(dx)+Math.abs(dy);if(moved<6)return;if(zoomed)Neural.hide();rx=Math.max(-25,Math.min(25,rx+dx*.3));ry=Math.max(-20,Math.min(20,ry-dy*.3));lx=e.clientX;ly=e.clientY;applyTilt();});
-function showRegion(name,fromChat){const r=REGIONS[name];if(!r)return;
+function showRegion(name,fromChat){const r=REGIONS[name];if(!r)return;if(typeof Deep!=="undefined"&&Deep.isOpen())Deep.close(true);
   const el=document.querySelector('.lobe[data-r="'+name+'"]');
   svg.classList.add("focus");document.querySelectorAll(".lobe").forEach(l=>l.classList.toggle("active",l===el));
   document.querySelectorAll(".lobe-tint").forEach(t=>t.classList.toggle("on",t.dataset.r===name));
@@ -452,9 +484,9 @@ function showRegion(name,fromChat){const r=REGIONS[name];if(!r)return;
   $("atlasTitle").textContent=name;const body=$("atlasBody");body.classList.remove("panel-in");void body.offsetWidth;body.classList.add("panel-in");
   body.innerHTML='<p class="region-summary">'+esc(r.info)+'</p><div class="hint" style="margin-bottom:8px">Related conditions</div><div class="region-list"></div>';
   const list=body.querySelector(".region-list");
-  r.list.forEach(t=>{const b=document.createElement("button");b.className="item";b.innerHTML="<b>"+esc(t)+"</b>"+(DB[t]?'<div class="hint">'+esc(DB[t])+'</div>':'<div class="hint">No entry yet.</div>');b.onclick=()=>showTerm(t);list.appendChild(b);});}
-document.querySelectorAll(".lobe").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();if(moved>=6)return;showRegion(el.dataset.r);}));
-stage.addEventListener("click",e=>{if(moved>=6||e.target.closest(".lobe,#legend,#zoomReset"))return;if(zoomed)resetZoom();});
+  r.list.forEach(t=>{const b=document.createElement("button");b.className="item";b.innerHTML="<b>"+esc(t)+"</b>"+(DB[t]?'<div class="hint">'+esc(DB[t])+'</div>':'<div class="hint">No entry yet.</div>');b.onclick=()=>{showTerm(t);go("dictionary");};list.appendChild(b);});}
+document.querySelectorAll(".lobe").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();if(moved>=6)return;if(zoomed&&!vbAnimating&&el.classList.contains("active")){Deep.open();return;}showRegion(el.dataset.r);}));
+stage.addEventListener("click",e=>{if(moved>=6||e.target.closest(".lobe,#legend,#zoomReset,#goDeep,#deep"))return;if(zoomed)resetZoom();});
 $("zoomReset").onclick=e=>{e.stopPropagation();resetZoom();};
 addEventListener("keydown",e=>{if(e.key==="Escape"&&zoomed)resetZoom();});
 Object.keys(REGIONS).forEach(n=>{const b=document.createElement("button");b.dataset.r=n;b.innerHTML='<i style="background:'+REGIONS[n].color+'"></i>'+n;b.onclick=e=>{e.stopPropagation();showRegion(n);};$("legend").appendChild(b);});
@@ -510,11 +542,105 @@ function frame(ts){if(!on)return;raf=requestAnimationFrame(frame);const dt=Math.
 var fr=0,fo=0;function fade(t){cancelAnimationFrame(fr);if(RM){fo=t;cv.style.opacity=t;return;}var s0=fo,t0=performance.now();(function st(n){var k=Math.min(1,(n-t0)/600);fo=s0+(t-s0)*k*(2-k);cv.style.opacity=fo.toFixed(3);if(k<1)fr=requestAnimationFrame(st);})(t0);}
 function start(e,c){stop(true);el=e;col=c;setup();on=true;cv.classList.add("on");fade(1);if(!RM){last=0;raf=requestAnimationFrame(frame);}}
 function stop(now){on=false;cancelAnimationFrame(raf);cv.classList.remove("on");if(now){cancelAnimationFrame(fr);fo=0;cv.style.opacity=0;}else fade(0);if(now){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);}}
+function pause(){cancelAnimationFrame(raf);}
 function hide(){if(on){cv.classList.remove("on");fade(0);}}
-function refresh(){if(el&&zoomed&&!vbAnimating){start(el,col);}}
+function refresh(){if(el&&zoomed&&!vbAnimating&&!Deep.isOpen()){start(el,col);}}
 addEventListener("resize",()=>{if(zoomed)refresh();});
-document.addEventListener("visibilitychange",()=>{if(document.hidden)cancelAnimationFrame(raf);else if(on&&!RM){last=0;raf=requestAnimationFrame(frame);}});
-return {start,stop,hide,refresh};})();
+document.addEventListener("visibilitychange",()=>{if(document.hidden)cancelAnimationFrame(raf);else if(on&&!RM&&curTab==="atlas"){last=0;raf=requestAnimationFrame(frame);}});
+return {start,stop,hide,refresh,pause};})();
+
+/* Deep neuron view */
+const Deep=(()=>{const box=$("deep"),cv=$("deepCv"),ctx=cv.getContext("2d"),marks=$("deepMarks");
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches,MOB=matchMedia("(max-width:700px)").matches||(navigator.hardwareConcurrency||8)<=4;
+const LW=1000,LH=560;let isOpen=false,raf=0,W=0,H=0,dpr=1,S=1,OX=0,OY=0,stat=null,parts=[],dz=false,lastP=0,region=null,sel=null;
+let seed=7;const rnd=(a,b)=>{seed=(seed*16807)%2147483647;return a+(seed/2147483647)*(b-a);};
+const ay=x=>300+12*Math.sin((x-300)/90);
+const SOMA={x:230,y:300,r:50},SEG=[[332,412],[426,506],[520,600],[614,694],[708,788]],NODES=[326,419,513,607,701,795];
+const BOUT=[[905,190],[945,265],[945,345],[905,420]];
+const DIS=[
+ {k:"Multiple sclerosis (MS)",short:"MS",x:466,y:ay(466),cell:"The immune system strips myelin in the brain and spinal cord, so signals slow down or stop at the damaged stretch."},
+ {k:"Guillain Barré syndrome (GBS)",short:"GBS",x:748,y:ay(748),cell:"The immune system attacks the myelin of peripheral nerves, outside the brain and spinal cord."},
+ {k:"Alzheimer disease",short:"Alzheimer",x:340,y:168,cell:"Amyloid plaques collect between neurons, and tau tangles build up inside them."},
+ {k:"ALS (amyotrophic lateral sclerosis)",short:"ALS",x:230,y:352,cell:"Upper and lower motor neurons degenerate, so muscles lose their nerve supply."},
+ {k:"Parkinson disease",short:"Parkinson",x:905,y:190,cell:"Dopamine neurons in the substantia nigra are lost, so less dopamine reaches the synapse."},
+ {k:"Myasthenia gravis",short:"Myasthenia",x:990,y:345,cell:"Antibodies block acetylcholine receptors on the muscle side of the synapse, so the signal to the muscle weakens."}
+].filter(d=>DB[d.k]);
+const P=(x,y)=>[OX+x*S,OY+y*S];
+const bez=(i,t)=>{const [bx,by]=BOUT[i],x0=800,y0=ay(800),cx=850,cy=y0+(by-y0)*.2,u=1-t;return [u*u*x0+2*u*t*cx+t*t*(bx-13),u*u*y0+2*u*t*cy+t*t*by];};
+let glow=null;function mkGlow(){glow=document.createElement("canvas");glow.width=glow.height=64;const g=glow.getContext("2d"),r=g.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,"rgba(255,250,220,1)");r.addColorStop(.25,"rgba(253,224,71,.8)");r.addColorStop(1,"rgba(253,186,116,0)");g.fillStyle=r;g.fillRect(0,0,64,64);}
+let spinePt=null;
+function build(){seed=7;stat=document.createElement("canvas");stat.width=W*dpr;stat.height=H*dpr;const c=stat.getContext("2d");c.scale(dpr,dpr);
+ c.save();c.translate(OX,OY);c.scale(S,S);c.lineCap="round";c.lineJoin="round";
+ // dendrites
+ c.strokeStyle="#7dd3fc";c.shadowColor="rgba(56,189,248,.6)";c.shadowBlur=MOB?0:8*S;spinePt=null;
+ const br=(x,y,a,len,d,w)=>{const ex=x+Math.cos(a)*len,ey=y+Math.sin(a)*len,mx=(x+ex)/2+rnd(-12,12),my=(y+ey)/2+rnd(-12,12);
+  c.lineWidth=w;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(mx,my,ex,ey);c.stroke();
+  if(d<=2){const n=Math.floor(len/(MOB?16:10));c.lineWidth=1.4;for(let i=1;i<n;i++){const t=i/n,u=1-t,px=u*u*x+2*u*t*mx+t*t*ex,py=u*u*y+2*u*t*my+t*t*ey,s=(i%2?1:-1),pa=a+s*1.4;
+   const sx=px+Math.cos(pa)*6,sy=py+Math.sin(pa)*6;c.beginPath();c.moveTo(px,py);c.lineTo(sx,sy);c.stroke();c.beginPath();c.arc(sx,sy,2,0,7);c.fillStyle="#bae6fd";c.fill();
+   if(!spinePt&&px<170&&py>340)spinePt=[sx,sy];}}
+  if(d>0){br(ex,ey,a-rnd(.3,.6),len*.72,d-1,w*.7);br(ex,ey,a+rnd(.3,.6),len*.72,d-1,w*.7);}};
+ [1.75,2.3,2.8,3.2,3.6,4.1,4.6,5.1].forEach(a=>br(SOMA.x+Math.cos(a)*44,SOMA.y+Math.sin(a)*44,a,rnd(60,80),MOB?2:3,7));
+ c.shadowBlur=0;
+ // axon core
+ c.strokeStyle="#7dd3fc";c.lineWidth=4;c.beginPath();for(let x=300;x<=800;x+=5)x===300?c.moveTo(x,ay(x)):c.lineTo(x,ay(x));c.stroke();
+ // hillock
+ c.fillStyle="#3b82f6";c.beginPath();c.moveTo(272,280);c.quadraticCurveTo(300,296,326,ay(326)-3);c.lineTo(326,ay(326)+3);c.quadraticCurveTo(300,304,272,320);c.fill();
+ // soma
+ let g=c.createRadialGradient(215,285,6,230,300,54);g.addColorStop(0,"#93c5fd");g.addColorStop(.6,"#2563eb");g.addColorStop(1,"#1e3a8a");c.fillStyle=g;c.shadowColor="rgba(59,130,246,.7)";c.shadowBlur=MOB?0:18*S;
+ c.beginPath();c.arc(SOMA.x,SOMA.y,SOMA.r,0,7);c.fill();c.shadowBlur=0;
+ g=c.createRadialGradient(220,290,2,225,295,20);g.addColorStop(0,"#e9d5ff");g.addColorStop(1,"#7c3aed");c.fillStyle=g;c.beginPath();c.ellipse(225,295,20,17,.3,0,7);c.fill();
+ c.fillStyle="#3b0764";c.beginPath();c.arc(229,291,5,0,7);c.fill();
+ // myelin
+ SEG.forEach(([a,b],i)=>{const y=ay((a+b)/2),gg=c.createLinearGradient(0,y-10,0,y+10);gg.addColorStop(0,"#f8fafc");gg.addColorStop(.5,"#cbd5e1");gg.addColorStop(1,"#64748b");c.fillStyle=gg;
+  c.beginPath();for(let x=a;x<=b;x+=4)c.lineTo(x,ay(x)-10);for(let x=b;x>=a;x-=4)c.lineTo(x,ay(x)+10);c.closePath();c.fill();
+  c.strokeStyle="rgba(100,116,139,.6)";c.lineWidth=1;for(let x=a+8;x<b-4;x+=8){c.beginPath();c.moveTo(x,ay(x)-9);c.lineTo(x+3,ay(x)+9);c.stroke();}
+  if(dz&&(i===1||i===4)){c.fillStyle="rgba(225,29,72,.55)";for(let k=0;k<5;k++){const x=a+10+k*14+rnd(-3,3);c.beginPath();c.ellipse(x,ay(x)+rnd(-4,4),rnd(4,7),rnd(3,6),0,0,7);c.fill();}}});
+ // terminals
+ c.strokeStyle="#7dd3fc";c.lineWidth=3;BOUT.forEach((b,i)=>{c.beginPath();for(let t=0;t<=1.001;t+=.05){const [x,y]=bez(i,t);t?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();});
+ BOUT.forEach(([x,y],i)=>{const gg=c.createRadialGradient(x-4,y-4,2,x,y,14);gg.addColorStop(0,"#bfdbfe");gg.addColorStop(1,dz&&i===0?"#475569":"#2563eb");c.fillStyle=gg;c.beginPath();c.arc(x,y,14,0,7);c.fill();
+  c.fillStyle="rgba(254,240,138,.85)";for(let k=0;k<5;k++){c.beginPath();c.arc(x+rnd(-7,5),y+rnd(-7,7),2.2,0,7);c.fill();}
+  c.strokeStyle="#a78bfa";c.lineWidth=3;c.beginPath();c.arc(x+44,y,24,Math.PI*.72,Math.PI*1.28);c.stroke();
+  c.strokeStyle=dz&&i===2?"#e11d48":"#c4b5fd";c.lineWidth=2;for(let k=-2;k<=2;k++){const an=Math.PI+k*.11,rx=x+44+Math.cos(an)*24,ry=y+Math.sin(an)*24;c.beginPath();c.moveTo(rx,ry);c.lineTo(rx+4,ry);c.stroke();}});
+ if(dz){c.fillStyle="rgba(245,158,11,.55)";[[340,168,16],[372,190,9],[110,470,13]].forEach(([x,y,r])=>{c.beginPath();for(let k=0;k<10;k++){const an=k/10*6.283,rr=r*rnd(.75,1.15);c.lineTo(x+Math.cos(an)*rr,y+Math.sin(an)*rr);}c.closePath();c.fill();});
+  c.strokeStyle="rgba(244,114,182,.9)";c.lineWidth=1.6;for(let k=0;k<3;k++){c.beginPath();let x=200+k*12,y=318;c.moveTo(x,y);for(let j=0;j<6;j++){x+=4;y+=(j%2?5:-5);c.lineTo(x,y);}c.stroke();}
+  c.strokeStyle="rgba(225,29,72,.6)";c.setLineDash([4,4]);c.lineWidth=2;c.beginPath();c.arc(SOMA.x,SOMA.y,SOMA.r+6,0,7);c.stroke();c.setLineDash([]);}
+ c.restore();
+ // labels in screen space
+ const L=[["Dendrites",150,226,70,70],["Dendritic spine",...(spinePt||[120,380]),60,520],["Cell body (soma)",262,265,330,95],["Nucleus",222,292,170,145],["Axon hillock",300,ay(300)+4,330,440],["Myelin sheath",460,ay(460)-10,470,120],["Node of Ranvier",513,ay(513)+3,580,440],["Axon",650,ay(650),690,175],["Axon terminal",905,175,850,95],["Synapse",968,345,860,530],["Neurotransmitter",968,300,985,475]];
+ const fs=MOB?10:12;c.font="500 "+fs+"px system-ui,sans-serif";c.textBaseline="middle";
+ if(!dz)L.forEach(([t,px,py,lx,ly])=>{const [a,b]=P(px,py),[x,y]=P(lx,ly);c.strokeStyle="rgba(203,213,225,.55)";c.lineWidth=1;c.beginPath();c.moveTo(a,b);c.lineTo(x,y);c.stroke();
+  c.fillStyle="#e2e8f0";c.beginPath();c.arc(a,b,2,0,7);c.fill();const w=c.measureText(t).width+12;let bx=Math.min(Math.max(x-w/2,4),W-w-4);
+  c.fillStyle="rgba(15,23,42,.82)";c.beginPath();c.roundRect?c.roundRect(bx,y-fs*.9,w,fs*1.8,6):c.rect(bx,y-fs*.9,w,fs*1.8);c.fill();c.fillStyle="#e2e8f0";c.fillText(t,bx+6,y+.5);});}
+function place(){marks.innerHTML="";DIS.forEach(d=>{const b=document.createElement("button");b.className="dmark"+(sel===d.k?" sel":"");const [x,y]=P(d.x,d.y);b.style.left=x+"px";b.style.top=y+"px";b.setAttribute("aria-label",d.k);b.innerHTML="<span>"+esc(d.short)+"</span>";
+ b.onclick=e=>{e.stopPropagation();pick(d);};marks.appendChild(b);});}
+function pick(d){sel=d.k;place();showTerm(d.k);$("atlasTitle").textContent=d.k;const ab=$("atlasBody");ab.innerHTML='<p class="region-summary">'+esc(d.cell)+'</p><p class="hint" style="margin:10px 0 14px">'+esc(DB[d.k])+'</p><button class="btn" id="openDict">Open in dictionary</button>';$("openDict").onclick=()=>go("dictionary");}
+function resize(){const r=box.getBoundingClientRect();W=r.width;H=r.height;if(!W||!H)return;dpr=Math.min(devicePixelRatio||1,MOB?1.5:2);cv.width=W*dpr;cv.height=H*dpr;
+ const pad=MOB?8:40;S=Math.min((W-pad*2)/LW,(H-pad*2-30)/LH);OX=(W-LW*S)/2;OY=(H-LH*S)/2+14;build();place();draw(performance.now());}
+function draw(now){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.drawImage(stat,0,0);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalCompositeOperation="lighter";
+ const p=RM?.4:(now%2000)/2000,gs=46*S+10;const G=(x,y,s=1,a=1)=>{const [X,Y]=P(x,y);ctx.globalAlpha=a;ctx.drawImage(glow,X-gs*s/2,Y-gs*s/2,gs*s,gs*s);};
+ if(p<.1){const x=280+(p/.1)*46;G(x,ay(x),.9);}
+ else if(p<.62){const f=(p-.1)/.52*NODES.length,i=Math.min(NODES.length-1,Math.floor(f)),fr=f-i;G(NODES[i],ay(NODES[i]),1.2,1-fr*.6);if(i>0)G(NODES[i-1],ay(NODES[i-1]),.8,.35*(1-fr));
+  if(i<NODES.length-1){const x=NODES[i]+(NODES[i+1]-NODES[i])*fr;G(x,ay(x),.5,.35);}}
+ else if(p<.8){const t=(p-.62)/.18;BOUT.forEach((b,i)=>{const [x,y]=bez(i,t);G(x,y,.7);});}
+ if(!RM&&lastP<.8&&p>=.8)BOUT.forEach(([x,y],i)=>{if(dz&&i===0)return;for(let k=0;k<(MOB?5:10);k++)parts.push({x:x+10,y:y+rnd(-8,8),vx:rnd(.6,1.4),vy:rnd(-.35,.35),l:1});});
+ lastP=p;ctx.globalAlpha=1;ctx.fillStyle="#fde047";parts=parts.filter(q=>(q.l-=.022)>0);parts.forEach(q=>{q.x+=q.vx;q.y+=q.vy;if(q.x>BOUT[0][0]+60)q.vx=0;const [X,Y]=P(q.x,q.y);ctx.globalAlpha=q.l;ctx.beginPath();ctx.arc(X,Y,Math.max(1.5,2.6*S*2),0,7);ctx.fill();});
+ ctx.globalAlpha=1;ctx.globalCompositeOperation="source-over";}
+function loop(now){if(!isOpen)return;draw(now);raf=requestAnimationFrame(loop);}
+function open(){if(isOpen||!zoomed)return;const a=document.querySelector(".lobe.active");region=a?a.dataset.r:null;isOpen=true;sel=null;if(!glow)mkGlow();Neural.pause();
+ box.classList.add("on");box.setAttribute("aria-hidden","false");$("goDeep").classList.remove("show");$("zoomReset").classList.remove("show");resize();if(!RM){cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);}
+ $("atlasTitle").textContent="Inside a neuron";$("atlasBody").innerHTML='<p class="region-summary">A single neuron from the '+esc((region||"").toLowerCase())+'. Signals start at the axon hillock and jump between nodes of Ranvier on the way to the synapse.</p>'+(DIS.length?'<p class="hint" style="margin-top:10px">Turn on Disease view to see where some conditions act.</p>':'');}
+function close(silent){if(!isOpen)return;isOpen=false;cancelAnimationFrame(raf);parts=[];box.classList.remove("on");box.setAttribute("aria-hidden","true");setDz(false,true);
+ if(!silent&&region)showRegion(region);}
+function setDz(v,quiet){dz=v;box.classList.toggle("dz",v);$("dzToggle").setAttribute("aria-pressed",v);if(!quiet&&isOpen){build();place();draw(performance.now());}}
+$("deepBack").onclick=e=>{e.stopPropagation();close();};$("dzToggle").onclick=e=>{e.stopPropagation();setDz(!dz);};
+$("goDeep").onclick=e=>{e.stopPropagation();open();};
+box.addEventListener("click",e=>e.stopPropagation());
+let wt=0;$("stage").addEventListener("wheel",e=>{if(!zoomed||vbAnimating)return;const now=performance.now();if(now-wt<700){e.preventDefault();return;}
+ if(!isOpen&&e.deltaY<0){e.preventDefault();wt=now;open();}else if(isOpen&&e.deltaY>0){e.preventDefault();wt=now;close();}},{passive:false});
+addEventListener("keydown",e=>{if(e.key==="Escape"&&isOpen){e.stopImmediatePropagation();close();}},true);
+addEventListener("resize",()=>{if(isOpen)resize();});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)cancelAnimationFrame(raf);else if(isOpen&&!RM&&curTab==="atlas")raf=requestAnimationFrame(loop);});
+return {open,close,isOpen:()=>isOpen,pause:()=>cancelAnimationFrame(raf),resume:()=>{if(isOpen){resize();if(!RM){cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);}}}};})();
 
 /* Quiz */
 const BANK=[
@@ -605,13 +731,28 @@ function smartReply(raw){const q=norm(raw);if(!q)return {h:"Ask me about a condi
 let busy=false;
 function send(text){text=(text||"").trim();if(!text||busy)return;busy=true;bubble(esc(text),true);userInput.value="";
   const t=bubble('<div class="typing"><i></i><i></i><i></i></div>');t.style.padding="0";
-  setTimeout(()=>{const r=smartReply(text);t.remove();bubble(r.h);if(r.region)showRegion(r.region,true);busy=false;},650);}
+  setTimeout(()=>{const r=smartReply(text);t.remove();bubble(r.h);if(r.region){go("atlas");showRegion(r.region,true);}busy=false;},650);}
 userInput.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();send(userInput.value);}});
 $("sendBtn").onclick=()=>send(userInput.value);
 chatLog.addEventListener("click",e=>{const b=e.target.closest(".sug");if(b)send(b.dataset.q);});
 ["What is MS?","Where is Broca area lesion?","Symptoms of Parkinson","Temporal lobe","What is GBS?"].forEach(x=>{const b=document.createElement("button");b.textContent=x;b.onclick=()=>send(x);$("chips").appendChild(b);});
 bubble("Ask me about a condition or a part of the brain.");
 addEventListener("keydown",e=>{if(e.key==="Escape"&&aiPanel.classList.contains("open")&&!vbAnimating&&!zoomed)setChat(false);});
+
+/* Tabs */
+const TABS=["atlas","dictionary","study","quiz","game","room"];let curTab=null;
+function go(t){if(location.hash!=="#"+t)location.hash=t;showTab(t);}
+function showTab(t){if(!TABS.includes(t))t="atlas";if(t===curTab)return;const prev=curTab;curTab=t;
+  document.querySelectorAll("#tabs a").forEach(a=>{const on=a.dataset.t===t;a.classList.toggle("on",on);if(on)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current");});
+  TABS.forEach(id=>{const s=$(id);if(id!==t)s.classList.remove("show","vis");});
+  const s=$(t);s.classList.add("show");requestAnimationFrame(()=>requestAnimationFrame(()=>s.classList.add("vis")));
+  if(prev==="atlas"){Neural.pause();Deep.pause();}if(t==="atlas"&&prev)requestAnimationFrame(()=>Deep.resume());if(t==="atlas"&&prev)requestAnimationFrame(()=>{if(!Deep.isOpen())Neural.refresh();});
+  const on=document.querySelector("#tabs a.on");if(on)on.scrollIntoView({block:"nearest",inline:"nearest"});
+  const cb=document.querySelector(".countbar"),h=cb?cb.offsetHeight:0,tb=$("tabs");tb.style.top=h+"px";const y=tb.offsetTop-h;
+  if((prev||location.hash)&&window.scrollY>y-1)requestAnimationFrame(()=>window.scrollTo({top:y,behavior:"instant"}));}
+addEventListener("resize",()=>{const cb=document.querySelector(".countbar");$("tabs").style.top=(cb?cb.offsetHeight:0)+"px";});
+addEventListener("hashchange",()=>showTab(location.hash.slice(1)));
+showTab(location.hash.slice(1));
 </script>
 <!-- Brainapedia Study Room live chat -->
 <style>
@@ -688,6 +829,10 @@ if(framed||!store){
 </script>
 <!-- end Study Room -->
 
+<script type="module">
+const rb=document.getElementById("roomBody"),p=document.getElementById("srPanel"),j=document.getElementById("srJoin"),tg=document.getElementById("srToggle"),c=document.getElementById("srClose");
+if(p){rb.append(p);p.classList.add("open");if(tg)tg.remove();if(c)c.remove();}else if(j){rb.append(j);}
+</script>
 <footer style="text-align:center;padding:14px;font-size:13px;opacity:.8"><a href="https://malachi-batiste.netlify.app" style="color:inherit">Made by Malachi Batiste</a></footer>
 </body>
 </html>
